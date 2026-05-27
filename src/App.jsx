@@ -379,10 +379,22 @@ export default function App() {
           </div>
 
           <a
-            href={index === 0 ? "#demo-stavebna" : index === 3 ? "#demo-wellness" : "#kontakt"}
+            href={
+              index === 0 ? "#demo-stavebna" :
+              index === 1 ? "#demo-moda" :
+              index === 2 ? "#demo-autoservis" :
+              index === 3 ? "#demo-wellness" :
+              index === 4 ? "#demo-gastro" :
+              index === 5 ? "#demo-ubytovanie" :
+              index === 6 ? "#demo-reality" :
+              index === 7 ? "#demo-fitness" :
+              index === 8 ? "#demo-technika" :
+              index === 9 ? "#demo-landing" :
+              "#kontakt"
+            }
             className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-white px-5 py-4 text-sm font-black text-black transition hover:bg-cyan-300 hover:shadow-[0_0_35px_rgba(34,211,238,0.75)]"
           >
-            {index === 0 || index === 3 ? "Pozrieť ukážku" : "Chcem túto šablónu"}
+            {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].includes(index) ? "Pozrieť ukážku" : "Chcem túto šablónu"}
             <ArrowRight className="h-4 w-4" />
           </a>
         </div>
@@ -679,6 +691,330 @@ export default function App() {
         </div>
       </section>
 
+
+      <section id="demo-autoservis" className="relative z-10 mx-auto max-w-7xl px-5 py-20 scroll-mt-24">
+        <div className="mb-12 text-center">
+          <div className="mb-3 text-sm font-black uppercase tracking-[0.35em] text-red-300">
+            Demo šablóna
+          </div>
+
+          <h2 className="text-4xl font-black sm:text-5xl">
+            Ukážka: Autoservis, pneuservis a detailing
+          </h2>
+
+          <p className="mx-auto mt-4 max-w-2xl text-slate-300">
+            Predajná šablóna pre autoservis, ktorá hneď ukáže služby,
+            dôveryhodnosť, rýchly kontakt a objednanie termínu.
+          </p>
+        </div>
+
+        <div className="relative overflow-hidden rounded-[2.8rem] border border-red-400/25 bg-black/50 p-5 shadow-[0_0_70px_rgba(248,113,113,0.16)]">
+          <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-red-400/20 blur-3xl" />
+          <div className="absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-cyan-300/18 blur-3xl" />
+
+          <div className="relative rounded-[2.2rem] border border-white/10 bg-[#050816] p-6 md:p-10">
+            <div className="mb-8 flex flex-col justify-between gap-5 md:flex-row md:items-center">
+              <div>
+                <div className="text-2xl font-black">
+                  AUTO<span className="text-red-300">MAX</span>
+                  <span className="text-cyan-300"> PRO</span>
+                </div>
+                <div className="text-xs uppercase tracking-[0.3em] text-slate-400">
+                  autoservis / pneuservis / detailing
+                </div>
+              </div>
+
+              <a
+                href="#kontakt"
+                className="rounded-full bg-red-300 px-6 py-3 text-sm font-black text-black shadow-[0_0_35px_rgba(248,113,113,0.75)] transition hover:scale-105 hover:bg-white"
+              >
+                Objednať termín
+              </a>
+            </div>
+
+            <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
+              <div>
+                <div className="mb-5 inline-flex rounded-full border border-red-300/30 bg-red-300/10 px-4 py-2 text-sm font-black text-red-200">
+                  Servis, ktorý pôsobí rýchlo a profesionálne
+                </div>
+
+                <h3 className="text-4xl font-black leading-tight sm:text-5xl">
+                  Web pre autoservis, ktorý z návštevníka spraví objednávku.
+                </h3>
+
+                <p className="mt-6 text-lg leading-8 text-slate-300">
+                  Šablóna postavená na rýchlom kontakte, jasnom cenníku,
+                  dôvere a okamžitom objednaní termínu z mobilu.
+                </p>
+
+                <div className="mt-8 flex flex-col gap-4 sm:flex-row">
+                  <a
+                    href="#kontakt"
+                    className="inline-flex items-center justify-center gap-2 rounded-full bg-red-300 px-7 py-4 font-black text-black shadow-[0_0_45px_rgba(248,113,113,0.75)] transition hover:scale-105 hover:bg-white"
+                  >
+                    Chcem autoservis web
+                    <ArrowRight className="h-5 w-5" />
+                  </a>
+
+                  <a
+                    href="#sablony"
+                    className="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/5 px-7 py-4 font-black text-white hover:border-red-300 hover:text-red-200"
+                  >
+                    Späť na šablóny
+                  </a>
+                </div>
+              </div>
+
+              <div className="grid gap-4">
+                <div className="rounded-[2rem] border border-red-300/20 bg-red-300/10 p-6">
+                  <div className="text-sm font-black uppercase tracking-[0.24em] text-red-300">
+                    Hlavné služby
+                  </div>
+                  <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                    {[
+                      "Autoservis",
+                      "Pneuservis",
+                      "Výmena oleja",
+                      "Detailing a čistenie",
+                    ].map((item) => (
+                      <div
+                        key={item}
+                        className="rounded-2xl border border-white/10 bg-black/35 p-4 text-sm font-bold"
+                      >
+                        {item}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-3">
+                  {[
+                    { number: "24h", label: "rýchly termín" },
+                    { number: "4.9★", label: "recenzie" },
+                    { number: "SOS", label: "urgent kontakt" },
+                  ].map((item) => (
+                    <div
+                      key={item.label}
+                      className="rounded-[1.6rem] border border-white/10 bg-white/[0.06] p-5 text-center"
+                    >
+                      <div className="text-3xl font-black text-red-300">
+                        {item.number}
+                      </div>
+                      <div className="mt-1 text-xs text-slate-400">
+                        {item.label}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="rounded-[2rem] border border-cyan-300/20 bg-cyan-300/10 p-6">
+                  <div className="text-sm font-black uppercase tracking-[0.24em] text-cyan-300">
+                    Čo šablóna obsahuje
+                  </div>
+
+                  <div className="mt-5 flex flex-wrap gap-2">
+                    {[
+                      "Rýchly kontakt",
+                      "Služby",
+                      "Cenník",
+                      "Objednávka termínu",
+                      "Recenzie",
+                      "Mapa",
+                    ].map((item) => (
+                      <span
+                        key={item}
+                        className="rounded-full border border-white/10 bg-black/35 px-3 py-1 text-xs font-bold text-slate-200"
+                      >
+                        {item}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+
+      {/* DEMO ŠABLÓNA: E-SHOP OBLEČENIE */}
+      <section id="demo-moda" className="relative z-10 mx-auto max-w-7xl px-5 py-20 scroll-mt-24">
+        <div className="mb-12 text-center">
+          <div className="mb-3 text-sm font-black uppercase tracking-[0.35em] text-pink-300">Demo šablóna</div>
+          <h2 className="text-4xl font-black sm:text-5xl">Ukážka: Luxusný e-shop s oblečením</h2>
+          <p className="mx-auto mt-4 max-w-2xl text-slate-300">Prémiová módna šablóna pre kolekcie, butik, doplnky a značku, ktorá musí vyzerať draho hneď na prvej obrazovke.</p>
+        </div>
+        <div className="relative overflow-hidden rounded-[2.8rem] border border-pink-300/25 bg-black/50 p-5 shadow-[0_0_70px_rgba(244,114,182,0.18)]">
+          <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-pink-400/25 blur-3xl" />
+          <div className="absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-violet-500/20 blur-3xl" />
+          <div className="relative rounded-[2.2rem] border border-white/10 bg-[#070611] p-6 md:p-10">
+            <div className="mb-8 flex flex-col justify-between gap-5 md:flex-row md:items-center">
+              <div><div className="text-2xl font-black">NOIR<span className="text-pink-300">MODE</span></div><div className="text-xs uppercase tracking-[0.3em] text-slate-400">premium fashion / collections / e-shop</div></div>
+              <a href="#kontakt" className="rounded-full bg-pink-300 px-6 py-3 text-sm font-black text-black shadow-[0_0_35px_rgba(244,114,182,0.75)] transition hover:scale-105 hover:bg-white">Chcem módny e-shop</a>
+            </div>
+            <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
+              <div>
+                <div className="mb-5 inline-flex rounded-full border border-pink-300/30 bg-pink-300/10 px-4 py-2 text-sm font-black text-pink-200">Nová kolekcia musí vyzerať ako značka</div>
+                <h3 className="text-4xl font-black leading-tight sm:text-5xl">E-shop, ktorý predáva štýl, nie iba produkty.</h3>
+                <p className="mt-6 text-lg leading-8 text-slate-300">Veľký hero blok, produktové kolekcie, lookbook, zľavová výzva a kontaktné prvky pripravené na okamžitý predaj.</p>
+                <div className="mt-8 flex flex-col gap-4 sm:flex-row">
+                  <a href="#kontakt" className="inline-flex items-center justify-center gap-2 rounded-full bg-pink-300 px-7 py-4 font-black text-black shadow-[0_0_45px_rgba(244,114,182,0.75)] transition hover:scale-105 hover:bg-white">Chcem túto šablónu <ArrowRight className="h-5 w-5" /></a>
+                  <a href="#sablony" className="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/5 px-7 py-4 font-black text-white hover:border-pink-300 hover:text-pink-200">Späť na šablóny</a>
+                </div>
+              </div>
+              <div className="grid gap-4">
+                <div className="rounded-[2rem] border border-pink-300/20 bg-pink-300/10 p-6">
+                  <div className="text-sm font-black uppercase tracking-[0.24em] text-pink-300">Sekcie e-shopu</div>
+                  <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                    {["Hero kolekcia", "Top produkty", "Lookbook", "Zľavový banner"].map((item) => <div key={item} className="rounded-2xl border border-white/10 bg-black/35 p-4 text-sm font-bold">{item}</div>)}
+                  </div>
+                </div>
+                <div className="grid gap-4 sm:grid-cols-3">
+                  {[{number:"NEW",label:"kolekcia"},{number:"24/7",label:"online predaj"},{number:"VIP",label:"značka"}].map((item) => <div key={item.label} className="rounded-[1.6rem] border border-white/10 bg-white/[0.06] p-5 text-center"><div className="text-3xl font-black text-pink-300">{item.number}</div><div className="mt-1 text-xs text-slate-400">{item.label}</div></div>)}
+                </div>
+                <div className="rounded-[2rem] border border-violet-300/20 bg-violet-300/10 p-6">
+                  <div className="text-sm font-black uppercase tracking-[0.24em] text-violet-300">Obsahuje</div>
+                  <div className="mt-5 flex flex-wrap gap-2">{["Kolekcie", "Produkty", "Veľkosti", "Lookbook", "CTA", "Formulár"].map((item) => <span key={item} className="rounded-full border border-white/10 bg-black/35 px-3 py-1 text-xs font-bold text-slate-200">{item}</span>)}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* DEMO ŠABLÓNA: GASTRO */}
+      <section id="demo-gastro" className="relative z-10 mx-auto max-w-7xl px-5 py-20 scroll-mt-24">
+        <div className="mb-12 text-center">
+          <div className="mb-3 text-sm font-black uppercase tracking-[0.35em] text-orange-300">Demo šablóna</div>
+          <h2 className="text-4xl font-black sm:text-5xl">Ukážka: Reštaurácia, bistro a donáška</h2>
+          <p className="mx-auto mt-4 max-w-2xl text-slate-300">Gastro šablóna, ktorá predáva chuť cez prvý vizuálny dojem, menu, rezervácie a jasnú výzvu na objednávku.</p>
+        </div>
+        <div className="relative overflow-hidden rounded-[2.8rem] border border-orange-300/25 bg-black/50 p-5 shadow-[0_0_70px_rgba(251,146,60,0.16)]">
+          <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-orange-400/22 blur-3xl" />
+          <div className="absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-red-500/16 blur-3xl" />
+          <div className="relative rounded-[2.2rem] border border-white/10 bg-[#0b0604] p-6 md:p-10">
+            <div className="mb-8 flex flex-col justify-between gap-5 md:flex-row md:items-center">
+              <div><div className="text-2xl font-black">FLAME<span className="text-orange-300">BISTRO</span></div><div className="text-xs uppercase tracking-[0.3em] text-slate-400">restaurant / daily menu / delivery</div></div>
+              <a href="#kontakt" className="rounded-full bg-orange-300 px-6 py-3 text-sm font-black text-black shadow-[0_0_35px_rgba(251,146,60,0.75)] transition hover:scale-105 hover:bg-white">Rezervovať stôl</a>
+            </div>
+            <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
+              <div>
+                <div className="mb-5 inline-flex rounded-full border border-orange-300/30 bg-orange-300/10 px-4 py-2 text-sm font-black text-orange-200">Chuť musí byť vidieť ešte pred menu</div>
+                <h3 className="text-4xl font-black leading-tight sm:text-5xl">Web pre gastro, ktorý núti zákazníka objednať.</h3>
+                <p className="mt-6 text-lg leading-8 text-slate-300">Denné menu, fotky jedál, rezervácia, donáška, otváracie hodiny a rýchly kontakt v jednom predajnom rozložení.</p>
+                <div className="mt-8 flex flex-col gap-4 sm:flex-row"><a href="#kontakt" className="inline-flex items-center justify-center gap-2 rounded-full bg-orange-300 px-7 py-4 font-black text-black shadow-[0_0_45px_rgba(251,146,60,0.75)] transition hover:scale-105 hover:bg-white">Chcem gastro web <ArrowRight className="h-5 w-5" /></a><a href="#sablony" className="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/5 px-7 py-4 font-black text-white hover:border-orange-300 hover:text-orange-200">Späť na šablóny</a></div>
+              </div>
+              <div className="grid gap-4">
+                <div className="rounded-[2rem] border border-orange-300/20 bg-orange-300/10 p-6"><div className="text-sm font-black uppercase tracking-[0.24em] text-orange-300">Gastro funkcie</div><div className="mt-5 grid gap-3 sm:grid-cols-2">{["Denné menu", "Rezervácie", "Donáška", "Otváracie hodiny"].map((item) => <div key={item} className="rounded-2xl border border-white/10 bg-black/35 p-4 text-sm font-bold">{item}</div>)}</div></div>
+                <div className="grid gap-4 sm:grid-cols-3">{[{number:"MENU",label:"online"},{number:"5★",label:"recenzie"},{number:"FAST",label:"objednávka"}].map((item) => <div key={item.label} className="rounded-[1.6rem] border border-white/10 bg-white/[0.06] p-5 text-center"><div className="text-3xl font-black text-orange-300">{item.number}</div><div className="mt-1 text-xs text-slate-400">{item.label}</div></div>)}</div>
+                <div className="rounded-[2rem] border border-red-300/20 bg-red-300/10 p-6"><div className="text-sm font-black uppercase tracking-[0.24em] text-red-300">Obsahuje</div><div className="mt-5 flex flex-wrap gap-2">{["Jedlá", "Galéria", "Mapa", "Rezervácia", "Donáška", "Kontakt"].map((item) => <span key={item} className="rounded-full border border-white/10 bg-black/35 px-3 py-1 text-xs font-bold text-slate-200">{item}</span>)}</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* DEMO ŠABLÓNA: UBYTOVANIE */}
+      <section id="demo-ubytovanie" className="relative z-10 mx-auto max-w-7xl px-5 py-20 scroll-mt-24">
+        <div className="mb-12 text-center">
+          <div className="mb-3 text-sm font-black uppercase tracking-[0.35em] text-sky-300">Demo šablóna</div>
+          <h2 className="text-4xl font-black sm:text-5xl">Ukážka: Apartmán, penzión a chata</h2>
+          <p className="mx-auto mt-4 max-w-2xl text-slate-300">Rezervačná šablóna pre ubytovanie, ktorá buduje dôveru cez atmosféru, vybavenie, galériu a rýchly dopyt.</p>
+        </div>
+        <div className="relative overflow-hidden rounded-[2.8rem] border border-sky-300/25 bg-black/50 p-5 shadow-[0_0_70px_rgba(125,211,252,0.16)]">
+          <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-sky-300/22 blur-3xl" />
+          <div className="absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-emerald-400/14 blur-3xl" />
+          <div className="relative rounded-[2.2rem] border border-white/10 bg-[#041018] p-6 md:p-10">
+            <div className="mb-8 flex flex-col justify-between gap-5 md:flex-row md:items-center"><div><div className="text-2xl font-black">VILLA<span className="text-sky-300">NOVA</span></div><div className="text-xs uppercase tracking-[0.3em] text-slate-400">apartments / stay / booking</div></div><a href="#kontakt" className="rounded-full bg-sky-300 px-6 py-3 text-sm font-black text-black shadow-[0_0_35px_rgba(125,211,252,0.75)] transition hover:scale-105 hover:bg-white">Overiť dostupnosť</a></div>
+            <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
+              <div><div className="mb-5 inline-flex rounded-full border border-sky-300/30 bg-sky-300/10 px-4 py-2 text-sm font-black text-sky-200">Atmosféra predáva rezerváciu</div><h3 className="text-4xl font-black leading-tight sm:text-5xl">Ubytovací web, ktorý vytvorí chuť prísť.</h3><p className="mt-6 text-lg leading-8 text-slate-300">Veľký vizuálny úvod, typy izieb, vybavenie, okolie, recenzie a rýchly dopyt na termín pobytu.</p><div className="mt-8 flex flex-col gap-4 sm:flex-row"><a href="#kontakt" className="inline-flex items-center justify-center gap-2 rounded-full bg-sky-300 px-7 py-4 font-black text-black shadow-[0_0_45px_rgba(125,211,252,0.75)] transition hover:scale-105 hover:bg-white">Chcem web pre ubytovanie <ArrowRight className="h-5 w-5" /></a><a href="#sablony" className="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/5 px-7 py-4 font-black text-white hover:border-sky-300 hover:text-sky-200">Späť na šablóny</a></div></div>
+              <div className="grid gap-4"><div className="rounded-[2rem] border border-sky-300/20 bg-sky-300/10 p-6"><div className="text-sm font-black uppercase tracking-[0.24em] text-sky-300">Rezervačné bloky</div><div className="mt-5 grid gap-3 sm:grid-cols-2">{["Izby", "Galéria", "Vybavenie", "Dostupnosť"].map((item) => <div key={item} className="rounded-2xl border border-white/10 bg-black/35 p-4 text-sm font-bold">{item}</div>)}</div></div><div className="grid gap-4 sm:grid-cols-3">{[{number:"4.9",label:"hodnotenie"},{number:"24h",label:"odpoveď"},{number:"TOP",label:"lokalita"}].map((item) => <div key={item.label} className="rounded-[1.6rem] border border-white/10 bg-white/[0.06] p-5 text-center"><div className="text-3xl font-black text-sky-300">{item.number}</div><div className="mt-1 text-xs text-slate-400">{item.label}</div></div>)}</div><div className="rounded-[2rem] border border-emerald-300/20 bg-emerald-300/10 p-6"><div className="text-sm font-black uppercase tracking-[0.24em] text-emerald-300">Obsahuje</div><div className="mt-5 flex flex-wrap gap-2">{["Hero", "Izby", "Okolie", "Recenzie", "Mapa", "Dopyt"].map((item) => <span key={item} className="rounded-full border border-white/10 bg-black/35 px-3 py-1 text-xs font-bold text-slate-200">{item}</span>)}</div></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      {/* DEMO ŠABLÓNA: REALITY */}
+      <section id="demo-reality" className="relative z-10 mx-auto max-w-7xl px-5 py-20 scroll-mt-24">
+        <div className="mb-12 text-center">
+          <div className="mb-3 text-sm font-black uppercase tracking-[0.35em] text-violet-300">Demo šablóna</div>
+          <h2 className="text-4xl font-black sm:text-5xl">Ukážka: Reality, maklér a developer</h2>
+          <p className="mx-auto mt-4 max-w-2xl text-slate-300">Prémiová realitná šablóna pre ponuky, predaj, prenájom a zber dopytov od záujemcov.</p>
+        </div>
+        <div className="relative overflow-hidden rounded-[2.8rem] border border-violet-300/25 bg-black/50 p-5 shadow-[0_0_70px_rgba(167,139,250,0.16)]">
+          <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-violet-300/22 blur-3xl" />
+          <div className="absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-cyan-400/14 blur-3xl" />
+          <div className="relative rounded-[2.2rem] border border-white/10 bg-[#09051a] p-6 md:p-10">
+            <div className="mb-8 flex flex-col justify-between gap-5 md:flex-row md:items-center"><div><div className="text-2xl font-black">ESTATE<span className="text-violet-300">LUX</span></div><div className="text-xs uppercase tracking-[0.3em] text-slate-400">real estate / premium listings</div></div><a href="#kontakt" className="rounded-full bg-violet-300 px-6 py-3 text-sm font-black text-black shadow-[0_0_35px_rgba(167,139,250,0.75)] transition hover:scale-105 hover:bg-white">Mám záujem o predaj</a></div>
+            <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
+              <div><div className="mb-5 inline-flex rounded-full border border-violet-300/30 bg-violet-300/10 px-4 py-2 text-sm font-black text-violet-200">Nehnuteľnosť musí vyzerať hodnotne</div><h3 className="text-4xl font-black leading-tight sm:text-5xl">Realitný web, ktorý predáva dôveru, lokalitu a hodnotu.</h3><p className="mt-6 text-lg leading-8 text-slate-300">Ponuky nehnuteľností, detail bytu alebo domu, galéria, maklér, kontakt a formulár pre klienta, ktorý chce predať alebo kúpiť.</p><div className="mt-8 flex flex-col gap-4 sm:flex-row"><a href="#kontakt" className="inline-flex items-center justify-center gap-2 rounded-full bg-violet-300 px-7 py-4 font-black text-black shadow-[0_0_45px_rgba(167,139,250,0.75)] transition hover:scale-105 hover:bg-white">Chcem realitný web <ArrowRight className="h-5 w-5" /></a><a href="#sablony" className="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/5 px-7 py-4 font-black text-white hover:border-violet-300 hover:text-violet-200">Späť na šablóny</a></div></div>
+              <div className="grid gap-4"><div className="rounded-[2rem] border border-violet-300/20 bg-violet-300/10 p-6"><div className="text-sm font-black uppercase tracking-[0.24em] text-violet-300">Realitné bloky</div><div className="mt-5 grid gap-3 sm:grid-cols-2">{["Ponuky", "Detail nehnuteľnosti", "Galéria", "Kontakt makléra"].map((item) => <div key={item} className="rounded-2xl border border-white/10 bg-black/35 p-4 text-sm font-bold">{item}</div>)}</div></div><div className="grid gap-4 sm:grid-cols-3">{[{number:"360°",label:"dojem"},{number:"TOP",label:"ponuky"},{number:"LEAD",label:"dopyt"}].map((item) => <div key={item.label} className="rounded-[1.6rem] border border-white/10 bg-white/[0.06] p-5 text-center"><div className="text-3xl font-black text-violet-300">{item.number}</div><div className="mt-1 text-xs text-slate-400">{item.label}</div></div>)}</div><div className="rounded-[2rem] border border-cyan-300/20 bg-cyan-300/10 p-6"><div className="text-sm font-black uppercase tracking-[0.24em] text-cyan-300">Obsahuje</div><div className="mt-5 flex flex-wrap gap-2">{["Filter", "Detail", "Mapa", "Galéria", "Maklér", "Dopyt"].map((item) => <span key={item} className="rounded-full border border-white/10 bg-black/35 px-3 py-1 text-xs font-bold text-slate-200">{item}</span>)}</div></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* DEMO ŠABLÓNA: FITNESS */}
+      <section id="demo-fitness" className="relative z-10 mx-auto max-w-7xl px-5 py-20 scroll-mt-24">
+        <div className="mb-12 text-center">
+          <div className="mb-3 text-sm font-black uppercase tracking-[0.35em] text-lime-300">Demo šablóna</div>
+          <h2 className="text-4xl font-black sm:text-5xl">Ukážka: Fitness, tréner a wellness program</h2>
+          <p className="mx-auto mt-4 max-w-2xl text-slate-300">Energetická šablóna pre trénerov, fyzio, výživové programy, wellness a športové služby.</p>
+        </div>
+        <div className="relative overflow-hidden rounded-[2.8rem] border border-lime-300/25 bg-black/50 p-5 shadow-[0_0_70px_rgba(190,242,100,0.14)]">
+          <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-lime-300/18 blur-3xl" />
+          <div className="absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-emerald-400/16 blur-3xl" />
+          <div className="relative rounded-[2.2rem] border border-white/10 bg-[#07120a] p-6 md:p-10">
+            <div className="mb-8 flex flex-col justify-between gap-5 md:flex-row md:items-center"><div><div className="text-2xl font-black">BODY<span className="text-lime-300">EDGE</span></div><div className="text-xs uppercase tracking-[0.3em] text-slate-400">fitness / coaching / results</div></div><a href="#kontakt" className="rounded-full bg-lime-300 px-6 py-3 text-sm font-black text-black shadow-[0_0_35px_rgba(190,242,100,0.75)] transition hover:scale-105 hover:bg-white">Rezervovať konzultáciu</a></div>
+            <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
+              <div><div className="mb-5 inline-flex rounded-full border border-lime-300/30 bg-lime-300/10 px-4 py-2 text-sm font-black text-lime-200">Energia, výsledok, akcia</div><h3 className="text-4xl font-black leading-tight sm:text-5xl">Web pre trénera, ktorý predáva zmenu postavy aj disciplínu.</h3><p className="mt-6 text-lg leading-8 text-slate-300">Programy, balíky, výsledky klientov, konzultácie a jasná cesta od záujmu k objednávke.</p><div className="mt-8 flex flex-col gap-4 sm:flex-row"><a href="#kontakt" className="inline-flex items-center justify-center gap-2 rounded-full bg-lime-300 px-7 py-4 font-black text-black shadow-[0_0_45px_rgba(190,242,100,0.75)] transition hover:scale-105 hover:bg-white">Chcem fitness web <ArrowRight className="h-5 w-5" /></a><a href="#sablony" className="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/5 px-7 py-4 font-black text-white hover:border-lime-300 hover:text-lime-200">Späť na šablóny</a></div></div>
+              <div className="grid gap-4"><div className="rounded-[2rem] border border-lime-300/20 bg-lime-300/10 p-6"><div className="text-sm font-black uppercase tracking-[0.24em] text-lime-300">Fitness sekcie</div><div className="mt-5 grid gap-3 sm:grid-cols-2">{["Programy", "Premeny", "Cenník", "Konzultácia"].map((item) => <div key={item} className="rounded-2xl border border-white/10 bg-black/35 p-4 text-sm font-bold">{item}</div>)}</div></div><div className="grid gap-4 sm:grid-cols-3">{[{number:"8t",label:"program"},{number:"1:1",label:"coach"},{number:"GO",label:"akcia"}].map((item) => <div key={item.label} className="rounded-[1.6rem] border border-white/10 bg-white/[0.06] p-5 text-center"><div className="text-3xl font-black text-lime-300">{item.number}</div><div className="mt-1 text-xs text-slate-400">{item.label}</div></div>)}</div><div className="rounded-[2rem] border border-emerald-300/20 bg-emerald-300/10 p-6"><div className="text-sm font-black uppercase tracking-[0.24em] text-emerald-300">Obsahuje</div><div className="mt-5 flex flex-wrap gap-2">{["Balíky", "Výsledky", "Recenzie", "Rezervácia", "Blog", "Dopyt"].map((item) => <span key={item} className="rounded-full border border-white/10 bg-black/35 px-3 py-1 text-xs font-bold text-slate-200">{item}</span>)}</div></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* DEMO ŠABLÓNA: TECHNIKA */}
+      <section id="demo-technika" className="relative z-10 mx-auto max-w-7xl px-5 py-20 scroll-mt-24">
+        <div className="mb-12 text-center">
+          <div className="mb-3 text-sm font-black uppercase tracking-[0.35em] text-cyan-300">Demo šablóna</div>
+          <h2 className="text-4xl font-black sm:text-5xl">Ukážka: Technika, náradie a elektronika</h2>
+          <p className="mx-auto mt-4 max-w-2xl text-slate-300">Čistá technická šablóna pre produkty, parametre, kategórie a rýchly dopyt alebo objednávku.</p>
+        </div>
+        <div className="relative overflow-hidden rounded-[2.8rem] border border-cyan-300/25 bg-black/50 p-5 shadow-[0_0_70px_rgba(34,211,238,0.16)]">
+          <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-cyan-300/22 blur-3xl" />
+          <div className="absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-blue-500/16 blur-3xl" />
+          <div className="relative rounded-[2.2rem] border border-white/10 bg-[#06101f] p-6 md:p-10">
+            <div className="mb-8 flex flex-col justify-between gap-5 md:flex-row md:items-center"><div><div className="text-2xl font-black">TECH<span className="text-cyan-300">FORCE</span></div><div className="text-xs uppercase tracking-[0.3em] text-slate-400">tools / electronics / pro gear</div></div><a href="#kontakt" className="rounded-full bg-cyan-300 px-6 py-3 text-sm font-black text-black shadow-[0_0_35px_rgba(34,211,238,0.75)] transition hover:scale-105 hover:bg-white">Vyžiadať ponuku</a></div>
+            <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
+              <div><div className="mb-5 inline-flex rounded-full border border-cyan-300/30 bg-cyan-300/10 px-4 py-2 text-sm font-black text-cyan-200">Produkty musia byť jasné</div><h3 className="text-4xl font-black leading-tight sm:text-5xl">Technický web, kde zákazník rýchlo pochopí produkt aj výhodu.</h3><p className="mt-6 text-lg leading-8 text-slate-300">Kategórie, technické parametre, skladovosť, výhody, CTA a profesionálny dojem pre technické firmy.</p><div className="mt-8 flex flex-col gap-4 sm:flex-row"><a href="#kontakt" className="inline-flex items-center justify-center gap-2 rounded-full bg-cyan-300 px-7 py-4 font-black text-black shadow-[0_0_45px_rgba(34,211,238,0.75)] transition hover:scale-105 hover:bg-white">Chcem technický web <ArrowRight className="h-5 w-5" /></a><a href="#sablony" className="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/5 px-7 py-4 font-black text-white hover:border-cyan-300 hover:text-cyan-200">Späť na šablóny</a></div></div>
+              <div className="grid gap-4"><div className="rounded-[2rem] border border-cyan-300/20 bg-cyan-300/10 p-6"><div className="text-sm font-black uppercase tracking-[0.24em] text-cyan-300">Produktové bloky</div><div className="mt-5 grid gap-3 sm:grid-cols-2">{["Kategórie", "Parametre", "Výhody", "Dopyt"].map((item) => <div key={item} className="rounded-2xl border border-white/10 bg-black/35 p-4 text-sm font-bold">{item}</div>)}</div></div><div className="grid gap-4 sm:grid-cols-3">{[{number:"PRO",label:"vzhľad"},{number:"SKU",label:"produkty"},{number:"B2B",label:"dopyty"}].map((item) => <div key={item.label} className="rounded-[1.6rem] border border-white/10 bg-white/[0.06] p-5 text-center"><div className="text-3xl font-black text-cyan-300">{item.number}</div><div className="mt-1 text-xs text-slate-400">{item.label}</div></div>)}</div><div className="rounded-[2rem] border border-blue-300/20 bg-blue-300/10 p-6"><div className="text-sm font-black uppercase tracking-[0.24em] text-blue-300">Obsahuje</div><div className="mt-5 flex flex-wrap gap-2">{["Produkty", "Kategórie", "Parametre", "FAQ", "Dopyt", "Kontakt"].map((item) => <span key={item} className="rounded-full border border-white/10 bg-black/35 px-3 py-1 text-xs font-bold text-slate-200">{item}</span>)}</div></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* DEMO ŠABLÓNA: LANDING PAGE */}
+      <section id="demo-landing" className="relative z-10 mx-auto max-w-7xl px-5 py-20 scroll-mt-24">
+        <div className="mb-12 text-center">
+          <div className="mb-3 text-sm font-black uppercase tracking-[0.35em] text-fuchsia-300">Demo šablóna</div>
+          <h2 className="text-4xl font-black sm:text-5xl">Ukážka: Predajná landing page pre reklamu</h2>
+          <p className="mx-auto mt-4 max-w-2xl text-slate-300">Jedna ostrá stránka pre kampaň, službu, akciu alebo produkt, ktorá tlačí zákazníka na vyplnenie formulára.</p>
+        </div>
+        <div className="relative overflow-hidden rounded-[2.8rem] border border-fuchsia-300/25 bg-black/50 p-5 shadow-[0_0_70px_rgba(217,70,239,0.18)]">
+          <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-fuchsia-300/22 blur-3xl" />
+          <div className="absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-cyan-400/18 blur-3xl" />
+          <div className="relative rounded-[2.2rem] border border-white/10 bg-[#13051a] p-6 md:p-10">
+            <div className="mb-8 flex flex-col justify-between gap-5 md:flex-row md:items-center"><div><div className="text-2xl font-black">CLICK<span className="text-fuchsia-300">BOOST</span></div><div className="text-xs uppercase tracking-[0.3em] text-slate-400">campaign / lead page / conversion</div></div><a href="#kontakt" className="rounded-full bg-fuchsia-300 px-6 py-3 text-sm font-black text-black shadow-[0_0_35px_rgba(217,70,239,0.75)] transition hover:scale-105 hover:bg-white">Spustiť kampaň</a></div>
+            <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
+              <div><div className="mb-5 inline-flex rounded-full border border-fuchsia-300/30 bg-fuchsia-300/10 px-4 py-2 text-sm font-black text-fuchsia-200">Jedna stránka, jeden cieľ</div><h3 className="text-4xl font-black leading-tight sm:text-5xl">Landing page, ktorá nenechá zákazníka blúdiť.</h3><p className="mt-6 text-lg leading-8 text-slate-300">Silný nadpis, dôkaz, výhody, cena, FAQ a formulár. Ideálne pre Google Ads, Facebook reklamu a rýchle testovanie ponuky.</p><div className="mt-8 flex flex-col gap-4 sm:flex-row"><a href="#kontakt" className="inline-flex items-center justify-center gap-2 rounded-full bg-fuchsia-300 px-7 py-4 font-black text-black shadow-[0_0_45px_rgba(217,70,239,0.75)] transition hover:scale-105 hover:bg-white">Chcem landing page <ArrowRight className="h-5 w-5" /></a><a href="#sablony" className="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/5 px-7 py-4 font-black text-white hover:border-fuchsia-300 hover:text-fuchsia-200">Späť na šablóny</a></div></div>
+              <div className="grid gap-4"><div className="rounded-[2rem] border border-fuchsia-300/20 bg-fuchsia-300/10 p-6"><div className="text-sm font-black uppercase tracking-[0.24em] text-fuchsia-300">Konverzné bloky</div><div className="mt-5 grid gap-3 sm:grid-cols-2">{["Hero", "Výhody", "Dôkaz", "Formulár"].map((item) => <div key={item} className="rounded-2xl border border-white/10 bg-black/35 p-4 text-sm font-bold">{item}</div>)}</div></div><div className="grid gap-4 sm:grid-cols-3">{[{number:"CTA",label:"akcia"},{number:"ADS",label:"reklama"},{number:"LEAD",label:"formulár"}].map((item) => <div key={item.label} className="rounded-[1.6rem] border border-white/10 bg-white/[0.06] p-5 text-center"><div className="text-3xl font-black text-fuchsia-300">{item.number}</div><div className="mt-1 text-xs text-slate-400">{item.label}</div></div>)}</div><div className="rounded-[2rem] border border-cyan-300/20 bg-cyan-300/10 p-6"><div className="text-sm font-black uppercase tracking-[0.24em] text-cyan-300">Obsahuje</div><div className="mt-5 flex flex-wrap gap-2">{["Nadpis", "CTA", "Recenzie", "Cena", "FAQ", "Formulár"].map((item) => <span key={item} className="rounded-full border border-white/10 bg-black/35 px-3 py-1 text-xs font-bold text-slate-200">{item}</span>)}</div></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
       <section id="cennik" className="relative z-10 mx-auto max-w-7xl px-5 py-20">
         <div className="mb-12 text-center">
           <div className="mb-3 text-sm font-black uppercase tracking-[0.35em] text-lime-300">Cenník</div>
