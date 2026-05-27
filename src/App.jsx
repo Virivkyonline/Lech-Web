@@ -152,6 +152,28 @@ export default function App() {
     error: "",
   });
 
+  const [accountMode, setAccountMode] = useState("register");
+  const [account, setAccount] = useState(null);
+  const [accountStatus, setAccountStatus] = useState({ loading: false, success: "", error: "" });
+  const [accountForm, setAccountForm] = useState({
+    email: "",
+    password: "",
+    companyName: "",
+    plan: "Start Web",
+    template: "Stavebná firma",
+  });
+  const [siteForm, setSiteForm] = useState({
+    slug: "",
+    title: "",
+    headline: "",
+    subheadline: "",
+    phone: "",
+    email: "",
+    primaryCta: "Nezáväzný dopyt",
+    servicesText: "",
+  });
+  const [siteStatus, setSiteStatus] = useState({ loading: false, success: "", error: "", publicUrl: "" });
+
   function handleInputChange(event) {
     const { name, value } = event.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -178,6 +200,81 @@ export default function App() {
       setFormData({ name: "", contact: "", type: "Chcem firemný web", message: "" });
     } catch (error) {
       setFormStatus({ loading: false, success: "", error: error.message || "Chyba pri odosielaní formulára." });
+    }
+  }
+
+  function handleAccountInput(event) {
+    const { name, value } = event.target;
+    setAccountForm((prev) => ({ ...prev, [name]: value }));
+  }
+
+  function handleSiteInput(event) {
+    const { name, value } = event.target;
+    setSiteForm((prev) => ({ ...prev, [name]: value }));
+  }
+
+  async function handleRegister(event) {
+    event.preventDefault();
+    setAccountStatus({ loading: true, success: "", error: "" });
+    try {
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(accountForm),
+      });
+      const data = await response.json();
+      if (!response.ok || !data.success) throw new Error(data.error || "Registrácia zlyhala.");
+      setAccount(data.account);
+      setSiteForm((prev) => ({
+        ...prev,
+        title: data.account.companyName || "Moja firma",
+        slug: (data.account.companyName || data.account.email || "moj-web").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""),
+        email: data.account.email,
+      }));
+      setAccountStatus({ loading: false, success: "Účet je vytvorený. Máte 14 dní skúšobnú dobu.", error: "" });
+    } catch (error) {
+      setAccountStatus({ loading: false, success: "", error: error.message || "Registrácia zlyhala." });
+    }
+  }
+
+  async function handleLogin(event) {
+    event.preventDefault();
+    setAccountStatus({ loading: true, success: "", error: "" });
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: accountForm.email, password: accountForm.password }),
+      });
+      const data = await response.json();
+      if (!response.ok || !data.success) throw new Error(data.error || "Prihlásenie zlyhalo.");
+      setAccount(data.account);
+      setSiteForm((prev) => ({ ...prev, title: data.account.companyName || prev.title, email: data.account.email }));
+      setAccountStatus({ loading: false, success: "Ste prihlásený.", error: "" });
+    } catch (error) {
+      setAccountStatus({ loading: false, success: "", error: error.message || "Prihlásenie zlyhalo." });
+    }
+  }
+
+  async function handleSaveSite(event) {
+    event.preventDefault();
+    if (!account?.id) {
+      setSiteStatus({ loading: false, success: "", error: "Najprv sa registrujte alebo prihláste.", publicUrl: "" });
+      return;
+    }
+
+    setSiteStatus({ loading: true, success: "", error: "", publicUrl: "" });
+    try {
+      const response = await fetch("/api/site/save", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ accountId: account.id, ...siteForm, template: account.template }),
+      });
+      const data = await response.json();
+      if (!response.ok || !data.success) throw new Error(data.error || "Uloženie webu zlyhalo.");
+      setSiteStatus({ loading: false, success: "Web je uložený a publikovaný.", error: "", publicUrl: data.publicUrl || "" });
+    } catch (error) {
+      setSiteStatus({ loading: false, success: "", error: error.message || "Uloženie webu zlyhalo.", publicUrl: "" });
     }
   }
 
@@ -391,6 +488,87 @@ export default function App() {
               Ak nie je, zákazník uvidí obrazovku „Služba pozastavená – obnovte predplatné“.
             </p>
           </div>
+        </div>
+      </section>
+
+      <section id="klientsky-ucet" className="relative z-10 mx-auto max-w-7xl px-5 py-20">
+        <div className="mb-12 max-w-3xl">
+          <div className="mb-3 text-sm font-black uppercase tracking-[0.35em] text-cyan-300">
+            Klientsky účet + builder
+          </div>
+          <h2 className="text-4xl font-black sm:text-5xl">
+            Zákazník si vytvorí účet a vyskladá si svoj prvý web.
+          </h2>
+          <p className="mt-5 text-lg leading-8 text-slate-300">
+            Táto verzia pridáva základ registrácie, prihlásenie, 14-dňový trial, výber balíka, výber šablóny a jednoduchý formulár na vytvorenie prvého publikovaného webu.
+          </p>
+        </div>
+
+        <div className="grid gap-6 lg:grid-cols-2">
+          <div className="rounded-[2rem] border border-cyan-300/20 bg-cyan-300/10 p-6">
+            <div className="mb-5 flex gap-3">
+              <button type="button" onClick={() => setAccountMode("register")} className={`rounded-full px-4 py-2 text-sm font-black ${accountMode === "register" ? "bg-cyan-300 text-black" : "bg-white/10 text-white"}`}>Registrácia</button>
+              <button type="button" onClick={() => setAccountMode("login")} className={`rounded-full px-4 py-2 text-sm font-black ${accountMode === "login" ? "bg-fuchsia-300 text-black" : "bg-white/10 text-white"}`}>Prihlásenie</button>
+            </div>
+
+            <form onSubmit={accountMode === "register" ? handleRegister : handleLogin} className="grid gap-4">
+              {accountMode === "register" && (
+                <input name="companyName" value={accountForm.companyName} onChange={handleAccountInput} className="rounded-2xl border border-white/10 bg-black/60 px-5 py-4 text-white outline-none placeholder:text-slate-500 focus:border-cyan-300" placeholder="Názov firmy" />
+              )}
+              <input name="email" value={accountForm.email} onChange={handleAccountInput} type="email" className="rounded-2xl border border-white/10 bg-black/60 px-5 py-4 text-white outline-none placeholder:text-slate-500 focus:border-cyan-300" placeholder="E-mail" required />
+              <input name="password" value={accountForm.password} onChange={handleAccountInput} type="password" className="rounded-2xl border border-white/10 bg-black/60 px-5 py-4 text-white outline-none placeholder:text-slate-500 focus:border-cyan-300" placeholder="Heslo min. 8 znakov" required />
+
+              {accountMode === "register" && (
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <select name="plan" value={accountForm.plan} onChange={handleAccountInput} className="rounded-2xl border border-white/10 bg-black/60 px-5 py-4 text-white outline-none focus:border-cyan-300">
+                    {plans.map((plan) => <option key={plan.name}>{plan.name}</option>)}
+                  </select>
+                  <select name="template" value={accountForm.template} onChange={handleAccountInput} className="rounded-2xl border border-white/10 bg-black/60 px-5 py-4 text-white outline-none focus:border-cyan-300">
+                    {templates.map((template) => <option key={template.name}>{template.name}</option>)}
+                  </select>
+                </div>
+              )}
+
+              {accountStatus.success && <div className="rounded-2xl border border-lime-300/40 bg-lime-300/10 px-5 py-4 text-sm font-bold text-lime-200">{accountStatus.success}</div>}
+              {accountStatus.error && <div className="rounded-2xl border border-red-400/40 bg-red-400/10 px-5 py-4 text-sm font-bold text-red-200">{accountStatus.error}</div>}
+
+              <button type="submit" disabled={accountStatus.loading} className="rounded-2xl bg-cyan-300 px-6 py-4 font-black text-black shadow-[0_0_45px_rgba(34,211,238,0.75)] transition hover:scale-[1.02] hover:bg-white disabled:opacity-60">
+                {accountStatus.loading ? "Pracujem..." : accountMode === "register" ? "Vytvoriť účet a trial" : "Prihlásiť sa"}
+              </button>
+            </form>
+
+            {account && (
+              <div className="mt-5 rounded-2xl border border-white/10 bg-black/40 p-5 text-sm leading-7 text-slate-300">
+                <div><strong>Účet:</strong> {account.email}</div>
+                <div><strong>Licencia:</strong> {account.licenseStatus}</div>
+                <div><strong>Trial do:</strong> {account.trialUntil ? new Date(account.trialUntil).toLocaleDateString("sk-SK") : "—"}</div>
+              </div>
+            )}
+          </div>
+
+          <form onSubmit={handleSaveSite} className="rounded-[2rem] border border-fuchsia-300/20 bg-fuchsia-300/10 p-6">
+            <h3 className="text-2xl font-black">Rýchly builder webu</h3>
+            <p className="mt-3 text-sm leading-7 text-slate-300">Vyplň základné údaje a systém vytvorí prvú verejnú ukážku webu. Keď licencia vyprší alebo ju admin pozastaví, verejný web sa vypne.</p>
+
+            <div className="mt-5 grid gap-4">
+              <input name="slug" value={siteForm.slug} onChange={handleSiteInput} className="rounded-2xl border border-white/10 bg-black/60 px-5 py-4 text-white outline-none placeholder:text-slate-500 focus:border-fuchsia-300" placeholder="URL názov napr. autoservis-presov" required />
+              <input name="title" value={siteForm.title} onChange={handleSiteInput} className="rounded-2xl border border-white/10 bg-black/60 px-5 py-4 text-white outline-none placeholder:text-slate-500 focus:border-fuchsia-300" placeholder="Názov firmy" required />
+              <input name="headline" value={siteForm.headline} onChange={handleSiteInput} className="rounded-2xl border border-white/10 bg-black/60 px-5 py-4 text-white outline-none placeholder:text-slate-500 focus:border-fuchsia-300" placeholder="Hlavný nadpis webu" required />
+              <textarea name="subheadline" value={siteForm.subheadline} onChange={handleSiteInput} className="min-h-24 rounded-2xl border border-white/10 bg-black/60 px-5 py-4 text-white outline-none placeholder:text-slate-500 focus:border-fuchsia-300" placeholder="Krátky predajný popis" required />
+              <div className="grid gap-4 sm:grid-cols-2">
+                <input name="phone" value={siteForm.phone} onChange={handleSiteInput} className="rounded-2xl border border-white/10 bg-black/60 px-5 py-4 text-white outline-none placeholder:text-slate-500 focus:border-fuchsia-300" placeholder="Telefón" />
+                <input name="email" value={siteForm.email} onChange={handleSiteInput} type="email" className="rounded-2xl border border-white/10 bg-black/60 px-5 py-4 text-white outline-none placeholder:text-slate-500 focus:border-fuchsia-300" placeholder="E-mail" />
+              </div>
+              <textarea name="servicesText" value={siteForm.servicesText} onChange={handleSiteInput} className="min-h-24 rounded-2xl border border-white/10 bg-black/60 px-5 py-4 text-white outline-none placeholder:text-slate-500 focus:border-fuchsia-300" placeholder="Služby, každá na nový riadok" />
+
+              {siteStatus.success && <div className="rounded-2xl border border-lime-300/40 bg-lime-300/10 px-5 py-4 text-sm font-bold text-lime-200">{siteStatus.success} {siteStatus.publicUrl && <a className="underline" href={siteStatus.publicUrl} target="_blank" rel="noreferrer">Otvoriť web</a>}</div>}
+              {siteStatus.error && <div className="rounded-2xl border border-red-400/40 bg-red-400/10 px-5 py-4 text-sm font-bold text-red-200">{siteStatus.error}</div>}
+
+              <button type="submit" disabled={siteStatus.loading} className="rounded-2xl bg-fuchsia-400 px-6 py-4 font-black text-black shadow-[0_0_45px_rgba(217,70,239,0.75)] transition hover:scale-[1.02] hover:bg-white disabled:opacity-60">
+                {siteStatus.loading ? "Ukladám..." : "Vytvoriť / uložiť web"}
+              </button>
+            </div>
+          </form>
         </div>
       </section>
 
