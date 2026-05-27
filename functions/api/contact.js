@@ -31,7 +31,6 @@ export async function onRequestPost({ request, env }) {
     const emailHtml = `
       <div style="font-family: Arial, sans-serif; background:#03040a; color:#ffffff; padding:24px; border-radius:16px;">
         <h1 style="color:#22d3ee; margin-top:0;">Nový dopyt z Lech-Web</h1>
-
         <div style="background:#0f172a; padding:18px; border-radius:14px; border:1px solid rgba(34,211,238,0.35);">
           <p><strong>Meno / firma:</strong> ${escapeHtml(name)}</p>
           <p><strong>Kontakt:</strong> ${escapeHtml(contact)}</p>

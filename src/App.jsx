@@ -18,12 +18,24 @@ import {
   Flame,
   Crown,
   Brain,
+  Hammer,
+  Scissors,
+  Car,
+  Shirt,
+  Utensils,
+  Bed,
+  Home,
+  Dumbbell,
+  Cpu,
+  Megaphone,
 } from "lucide-react";
 
 const templates = [
   {
     name: "Stavebná firma",
     tag: "Najlepšie pre remeslá",
+    icon: Hammer,
+    accent: "cyan",
     text: "Pre stavebné firmy, kontajnery, garáže, montáže, strechy, ploty a technické služby.",
     forWho: "Stavebníci, montážnici, predajcovia kontajnerov",
     includes: ["Služby", "Realizácie", "Dopytový formulár"],
@@ -31,6 +43,8 @@ const templates = [
   {
     name: "E-shop oblečenie",
     tag: "Móda a kolekcie",
+    icon: Shirt,
+    accent: "fuchsia",
     text: "Luxusný predajný vzhľad pre oblečenie, doplnky, kolekcie, butik alebo prémiovú značku.",
     forWho: "Butiky, módne značky, predajcovia oblečenia",
     includes: ["Kolekcie", "Produkty", "Lookbook"],
@@ -38,6 +52,8 @@ const templates = [
   {
     name: "Autoservis",
     tag: "Rýchle dopyty",
+    icon: Car,
+    accent: "cyan",
     text: "Silný web pre autoservis, pneuservis, detailing, požičovňu alebo predaj áut.",
     forWho: "Autoservisy, pneuservisy, detailing centrá",
     includes: ["Služby", "Cenník", "Objednávka termínu"],
@@ -45,6 +61,8 @@ const templates = [
   {
     name: "Beauty salón",
     tag: "Luxusný vzhľad",
+    icon: Scissors,
+    accent: "fuchsia",
     text: "Moderný neónový web pre kozmetiku, nechty, kaderníctvo, masáže a estetické služby.",
     forWho: "Salóny krásy, kozmetika, wellness",
     includes: ["Služby", "Cenník", "Rezervácia"],
@@ -52,6 +70,8 @@ const templates = [
   {
     name: "Reštaurácia",
     tag: "Chuť predáva",
+    icon: Utensils,
+    accent: "lime",
     text: "Predajný web pre reštaurácie, kaviarne, bistrá, donášku a denné menu.",
     forWho: "Gastro prevádzky, kaviarne, donáška",
     includes: ["Menu", "Rezervácia", "Otváracie hodiny"],
@@ -59,6 +79,8 @@ const templates = [
   {
     name: "Ubytovanie",
     tag: "Rezervácie",
+    icon: Bed,
+    accent: "cyan",
     text: "Atmosférický web pre apartmány, penzióny, chaty, hotely a krátkodobé ubytovanie.",
     forWho: "Apartmány, penzióny, chaty, hotely",
     includes: ["Izby", "Galéria", "Rezervácia"],
@@ -66,6 +88,8 @@ const templates = [
   {
     name: "Reality",
     tag: "Prémiový predaj",
+    icon: Home,
+    accent: "fuchsia",
     text: "Web pre realitných maklérov, developerov, prenájmy a predaj nehnuteľností.",
     forWho: "Makléri, developeri, realitné kancelárie",
     includes: ["Ponuky", "Detail nehnuteľnosti", "Kontakt"],
@@ -73,6 +97,8 @@ const templates = [
   {
     name: "Fitness",
     tag: "Energia a výkon",
+    icon: Dumbbell,
+    accent: "lime",
     text: "Web pre trénerov, výživových poradcov, wellness, fyzio a športové programy.",
     forWho: "Tréneri, fyzio, wellness, fitness centrá",
     includes: ["Programy", "Cenník", "Konzultácia"],
@@ -80,6 +106,8 @@ const templates = [
   {
     name: "Technika",
     tag: "Čistý predaj",
+    icon: Cpu,
+    accent: "cyan",
     text: "Moderný web alebo e-shop pre elektroniku, náradie, príslušenstvo a technické produkty.",
     forWho: "Technické obchody, predajcovia náradia",
     includes: ["Produkty", "Parametre", "Dopyt"],
@@ -87,9 +115,114 @@ const templates = [
   {
     name: "Landing page",
     tag: "Na reklamu",
+    icon: Megaphone,
+    accent: "fuchsia",
     text: "Jedna silná predajná stránka pre Facebook, Google reklamu, kampaň alebo špeciálnu ponuku.",
     forWho: "Reklamy, kampane, rýchly predaj",
     includes: ["Hero", "Výhody", "Formulár"],
+  },
+];
+
+const demoTemplates = [
+  {
+    brand: "STAVEX PRO",
+    category: "stavebné práce / kontajnery / montáže",
+    badge: "Moderná stavebná firma bez nudného webu",
+    title: "Kontajnery, montáže a stavebné riešenia, ktoré pôsobia profesionálne na prvý pohľad.",
+    desc: "Prémiová šablóna pre firmy, ktoré potrebujú ukázať služby, realizácie, dôveryhodnosť a získať dopyt čo najrýchlejšie.",
+    services: ["Predaj kontajnerov", "Montážne práce", "Stavebné úpravy", "Garáže a prístrešky"],
+    stats: [{ number: "120+", label: "realizácií" }, { number: "48h", label: "rýchly dopyt" }, { number: "EU", label: "pôsobnosť" }],
+    glow: "from-cyan-300 via-fuchsia-500 to-violet-500",
+  },
+  {
+    brand: "AURORA BEAUTY",
+    category: "beauty / wellness / spa",
+    badge: "Prémiový salón, ktorý vyzerá draho",
+    title: "Kozmetika, masáže a wellness prezentované ako luxusná značka.",
+    desc: "Šablóna pre salóny, ktoré chcú viac rezervácií, krajší prvý dojem a vyššiu dôveru pri prémiových službách.",
+    services: ["Kozmetika", "Masáže", "Nechty", "Spa balíky"],
+    stats: [{ number: "4.9★", label: "hodnotenia" }, { number: "24/7", label: "rezervácie" }, { number: "VIP", label: "balíky" }],
+    glow: "from-fuchsia-300 via-violet-500 to-cyan-400",
+  },
+  {
+    brand: "AUTO NEON SERVIS",
+    category: "autoservis / pneuservis / detailing",
+    badge: "Technický web, ktorý zbiera termíny",
+    title: "Servis, pneumatiky a detailing s jasným CTA na objednanie termínu.",
+    desc: "Šablóna pre autoservisy, ktoré chcú pôsobiť moderne, rýchlo vysvetliť služby a dostať zákazníka do formulára.",
+    services: ["Diagnostika", "Pneuservis", "Detailing", "STK príprava"],
+    stats: [{ number: "30 min", label: "rýchly kontakt" }, { number: "8+", label: "služieb" }, { number: "TOP", label: "dôvera" }],
+    glow: "from-cyan-300 via-blue-500 to-fuchsia-400",
+  },
+  {
+    brand: "E.V. COLLECTION",
+    category: "móda / kolekcie / butik",
+    badge: "E-shop, ktorý predáva vizuálom",
+    title: "Módna značka s lookbookom, kolekciami a luxusným produktovým dojmom.",
+    desc: "Pre butiky a módne značky, kde musí stránka vyzerať prémiovo ešte pred kliknutím na produkt.",
+    services: ["Kolekcie", "Lookbook", "Produkty", "Zľavy"],
+    stats: [{ number: "NEW", label: "kolekcie" }, { number: "VIP", label: "štýl" }, { number: "SHOP", label: "predaj" }],
+    glow: "from-fuchsia-300 via-pink-500 to-cyan-400",
+  },
+  {
+    brand: "NIGHT BISTRO",
+    category: "reštaurácia / kaviareň / donáška",
+    badge: "Gastro web, ktorý robí chuť",
+    title: "Menu, denné ponuky a rezervácie v modernom neónovom gastro štýle.",
+    desc: "Šablóna pre podniky, ktoré chcú na mobile okamžite ukázať menu, otváracie hodiny a rezerváciu.",
+    services: ["Menu", "Denné menu", "Rezervácie", "Donáška"],
+    stats: [{ number: "12:00", label: "denné menu" }, { number: "MAP", label: "lokalita" }, { number: "BOOK", label: "stôl" }],
+    glow: "from-lime-300 via-cyan-400 to-fuchsia-400",
+  },
+  {
+    brand: "LUX APARTMENTS",
+    category: "apartmány / penzión / chata",
+    badge: "Rezervačný web s atmosférou",
+    title: "Ubytovanie, ktoré vyzerá dôveryhodne a prémiovo na prvý pohľad.",
+    desc: "Pre apartmány, chaty a penzióny, kde zákazník potrebuje vidieť izby, galériu, okolie a rýchly kontakt.",
+    services: ["Izby", "Galéria", "Okolie", "Rezervácia"],
+    stats: [{ number: "4.8★", label: "hostia" }, { number: "360°", label: "galéria" }, { number: "BOOK", label: "pobyt" }],
+    glow: "from-cyan-300 via-teal-400 to-fuchsia-400",
+  },
+  {
+    brand: "REALITY PRIME",
+    category: "maklér / developer / prenájom",
+    badge: "Prémiový predaj nehnuteľností",
+    title: "Realitná prezentácia, ktorá buduje dôveru a predáva hodnotu.",
+    desc: "Šablóna pre maklérov a developerov s ponukami, detailom nehnuteľnosti a formulárom pre predaj alebo kúpu.",
+    services: ["Ponuky", "Detail", "Hypotéka", "Kontakt"],
+    stats: [{ number: "50+", label: "ponúk" }, { number: "VIP", label: "predaj" }, { number: "LEAD", label: "dopyty" }],
+    glow: "from-fuchsia-300 via-cyan-500 to-blue-500",
+  },
+  {
+    brand: "POWER BODY",
+    category: "fitness / tréner / výživa",
+    badge: "Energia, výkon a jasný program",
+    title: "Tréningové programy a konzultácie v dizajne, ktorý motivuje.",
+    desc: "Pre trénerov, fyzio a wellness služby, kde treba ukázať výsledky, balíky a rýchlu konzultáciu.",
+    services: ["Tréningy", "Výživa", "Fyzio", "Programy"],
+    stats: [{ number: "12W", label: "program" }, { number: "1:1", label: "koučing" }, { number: "GO", label: "akcia" }],
+    glow: "from-lime-300 via-fuchsia-400 to-cyan-400",
+  },
+  {
+    brand: "TECH STORE",
+    category: "technika / náradie / elektronika",
+    badge: "Čistý technický predaj",
+    title: "Produkty, parametre a dopyty pre technický sortiment bez chaosu.",
+    desc: "Pre predajcov techniky a náradia, ktorí potrebujú jasný katalóg, parametre a rýchly dopyt.",
+    services: ["Produkty", "Parametre", "Kategórie", "Dopyt"],
+    stats: [{ number: "SKU", label: "produkty" }, { number: "FAST", label: "rýchlosť" }, { number: "B2B", label: "predaj" }],
+    glow: "from-cyan-300 via-blue-500 to-lime-300",
+  },
+  {
+    brand: "AD BLAST",
+    category: "landing page / reklama / kampaň",
+    badge: "Jedna stránka, jeden cieľ",
+    title: "Landing page pre reklamu, ktorá tlačí zákazníka na jednu akciu.",
+    desc: "Pre Facebook, Google alebo lokálnu kampaň. Žiadne blúdenie, len problém, riešenie, dôkaz a formulár.",
+    services: ["Hero", "Výhody", "Dôkazy", "Formulár"],
+    stats: [{ number: "1", label: "cieľ" }, { number: "CTA", label: "klik" }, { number: "ADS", label: "reklama" }],
+    glow: "from-fuchsia-300 via-violet-500 to-lime-300",
   },
 ];
 
@@ -200,6 +333,7 @@ export default function App() {
 
         <nav className="hidden items-center gap-8 text-sm font-semibold text-slate-300 md:flex">
           <a href="#sablony" className="hover:text-cyan-300">Šablóny</a>
+          <a href="#ukazky" className="hover:text-cyan-300">Ukážky</a>
           <a href="#funkcie" className="hover:text-cyan-300">Funkcie</a>
           <a href="#cennik" className="hover:text-cyan-300">Cenník</a>
           <a href="#kontakt" className="hover:text-cyan-300">Kontakt</a>
@@ -230,15 +364,15 @@ export default function App() {
               Chcem dychberúci web
               <ArrowRight className="h-5 w-5 transition group-hover:translate-x-1" />
             </a>
-            <a href="#cennik" className="inline-flex items-center justify-center rounded-full border border-fuchsia-300/50 bg-fuchsia-500/10 px-8 py-4 font-black text-fuchsia-100 backdrop-blur transition hover:border-fuchsia-300 hover:bg-fuchsia-400 hover:text-black hover:shadow-[0_0_45px_rgba(217,70,239,0.8)]">
-              Pozrieť predplatné
+            <a href="#ukazky" className="inline-flex items-center justify-center rounded-full border border-fuchsia-300/50 bg-fuchsia-500/10 px-8 py-4 font-black text-fuchsia-100 backdrop-blur transition hover:border-fuchsia-300 hover:bg-fuchsia-400 hover:text-black hover:shadow-[0_0_45px_rgba(217,70,239,0.8)]">
+              Pozrieť reálne ukážky
             </a>
           </div>
 
           <div className="mt-11 grid max-w-xl grid-cols-3 gap-4">
             <div className="rounded-3xl border border-cyan-300/25 bg-white/5 p-4 shadow-[0_0_25px_rgba(34,211,238,0.12)]"><div className="text-3xl font-black text-cyan-300">0 €</div><div className="text-xs text-slate-400">vytvorenie webu</div></div>
             <div className="rounded-3xl border border-fuchsia-300/25 bg-white/5 p-4 shadow-[0_0_25px_rgba(217,70,239,0.12)]"><div className="text-3xl font-black text-fuchsia-300">39 €</div><div className="text-xs text-slate-400">od / mesiac</div></div>
-            <div className="rounded-3xl border border-lime-300/25 bg-white/5 p-4 shadow-[0_0_25px_rgba(190,242,100,0.1)]"><div className="text-3xl font-black text-lime-300">WOW</div><div className="text-xs text-slate-400">prvý dojem</div></div>
+            <div className="rounded-3xl border border-lime-300/25 bg-white/5 p-4 shadow-[0_0_25px_rgba(190,242,100,0.1)]"><div className="text-3xl font-black text-lime-300">10</div><div className="text-xs text-slate-400">reálnych ukážok</div></div>
           </div>
         </motion.div>
 
@@ -302,728 +436,231 @@ export default function App() {
         </div>
       </section>
 
-      <section
-  id="sablony"
-  className="relative z-10 mx-auto max-w-7xl px-5 py-20"
->
-  <div className="mb-12 flex flex-col justify-between gap-6 md:flex-row md:items-end">
-    <div>
-      <div className="mb-3 text-sm font-black uppercase tracking-[0.35em] text-fuchsia-300">
-        Neon šablóny
-      </div>
-
-      <h2 className="text-4xl font-black sm:text-5xl">
-        10 šablón, ktoré predávajú skôr, než zákazník začne čítať.
-      </h2>
-    </div>
-
-    <div className="max-w-md">
-      <p className="text-slate-300">
-        Každá šablóna je pripravená ako predajný systém: prvý dojem,
-        dôvera, jasná ponuka a tlačidlo na akciu. Žiadna lacná kópia.
-      </p>
-      <a
-        href="#demo-stavebna"
-        className="mt-5 inline-flex items-center gap-2 rounded-full border border-cyan-300/50 bg-cyan-300/10 px-5 py-3 text-sm font-black text-cyan-100 transition hover:bg-cyan-300 hover:text-black hover:shadow-[0_0_35px_rgba(34,211,238,0.75)]"
-      >
-        Pozrieť prvú reálnu ukážku
-        <ArrowRight className="h-4 w-4" />
-      </a>
-    </div>
-  </div>
-
-  <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-    {templates.map((item, index) => (
-      <div
-        key={item.name}
-        className="group relative overflow-hidden rounded-[2rem] border border-white/10 bg-black/45 p-6 transition hover:-translate-y-1 hover:border-cyan-300/70 hover:shadow-[0_0_45px_rgba(34,211,238,0.25)]"
-      >
-        <div className="absolute -right-12 -top-12 h-32 w-32 rounded-full bg-cyan-300/10 blur-3xl transition group-hover:bg-cyan-300/25" />
-        <div className="absolute -bottom-12 -left-12 h-32 w-32 rounded-full bg-fuchsia-400/10 blur-3xl transition group-hover:bg-fuchsia-400/25" />
-
-        <div className="relative">
-          <div className="mb-5 flex items-center justify-between gap-4">
-            <div className="rounded-full bg-cyan-300 px-3 py-1 text-xs font-black text-black shadow-[0_0_25px_rgba(34,211,238,0.65)]">
-              {item.tag}
-            </div>
-
-            <div className="text-sm font-black text-fuchsia-300">
-              {String(index + 1).padStart(2, "0")}
-            </div>
+      <section id="sablony" className="relative z-10 mx-auto max-w-7xl px-5 py-20">
+        <div className="mb-12 flex flex-col justify-between gap-6 md:flex-row md:items-end">
+          <div>
+            <div className="mb-3 text-sm font-black uppercase tracking-[0.35em] text-fuchsia-300">Neon šablóny</div>
+            <h2 className="text-4xl font-black sm:text-5xl">10 šablón, ktoré predávajú skôr, než zákazník začne čítať.</h2>
           </div>
+          <p className="max-w-md text-slate-300">Každá šablóna je pripravená ako predajný systém: prvý dojem, dôvera, jasná ponuka a tlačidlo na akciu. Žiadna lacná kópia.</p>
+        </div>
 
-          <h3 className="text-2xl font-black">{item.name}</h3>
+        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+          {templates.map((item, index) => {
+            const Icon = item.icon;
+            return (
+              <div key={item.name} className="group relative overflow-hidden rounded-[2rem] border border-white/10 bg-black/45 p-6 transition hover:-translate-y-1 hover:border-cyan-300/70 hover:shadow-[0_0_45px_rgba(34,211,238,0.25)]">
+                <div className="absolute -right-12 -top-12 h-32 w-32 rounded-full bg-cyan-300/10 blur-3xl transition group-hover:bg-cyan-300/25" />
+                <div className="absolute -bottom-12 -left-12 h-32 w-32 rounded-full bg-fuchsia-400/10 blur-3xl transition group-hover:bg-fuchsia-400/25" />
+                <div className="relative">
+                  <div className="mb-5 flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-2 rounded-full bg-cyan-300 px-3 py-1 text-xs font-black text-black shadow-[0_0_25px_rgba(34,211,238,0.65)]"><Icon className="h-4 w-4" />{item.tag}</div>
+                    <div className="text-sm font-black text-fuchsia-300">{String(index + 1).padStart(2, "0")}</div>
+                  </div>
+                  <h3 className="text-2xl font-black">{item.name}</h3>
+                  <p className="mt-4 min-h-20 text-sm leading-7 text-slate-300">{item.text}</p>
+                  <div className="mt-5 rounded-2xl border border-white/10 bg-white/[0.05] p-4">
+                    <div className="text-xs font-black uppercase tracking-[0.22em] text-cyan-300">Pre koho</div>
+                    <div className="mt-2 text-sm text-slate-300">{item.forWho}</div>
+                  </div>
+                  <div className="mt-5 flex flex-wrap gap-2">
+                    {item.includes.map((feature) => <span key={feature} className="rounded-full border border-fuchsia-300/25 bg-fuchsia-300/10 px-3 py-1 text-xs font-bold text-fuchsia-100">{feature}</span>)}
+                  </div>
+                  <a href="#kontakt" className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-white px-5 py-4 text-sm font-black text-black transition hover:bg-cyan-300 hover:shadow-[0_0_35px_rgba(34,211,238,0.75)]">
+                    Chcem túto šablónu <ArrowRight className="h-4 w-4" />
+                  </a>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
 
-          <p className="mt-4 min-h-20 text-sm leading-7 text-slate-300">
-            {item.text}
+      <section id="ukazky" className="relative z-10 mx-auto max-w-7xl px-5 py-20">
+        <div className="mb-12 text-center">
+          <div className="mb-3 text-sm font-black uppercase tracking-[0.35em] text-cyan-300">Reálne ukážky</div>
+          <h2 className="text-4xl font-black sm:text-5xl">Každá šablóna má vlastnú predajnú atmosféru.</h2>
+          <p className="mx-auto mt-4 max-w-2xl text-slate-300">
+            Toto sú živé ukážky štýlov, ktoré vie Lech-Web pripraviť pre rôzne typy klientov. Nie sú to len názvy — každá šablóna má vlastný predajný scenár.
           </p>
+        </div>
 
-          <div className="mt-5 rounded-2xl border border-white/10 bg-white/[0.05] p-4">
-            <div className="text-xs font-black uppercase tracking-[0.22em] text-cyan-300">
-              Pre koho
+        <div className="grid gap-8">
+          {demoTemplates.map((demo, index) => (
+            <section key={demo.brand} className="relative overflow-hidden rounded-[2.8rem] border border-white/10 bg-black/50 p-5 shadow-[0_0_70px_rgba(34,211,238,0.12)]">
+              <div className={`absolute -inset-10 bg-gradient-to-r ${demo.glow} opacity-20 blur-3xl`} />
+              <div className="relative rounded-[2.2rem] border border-white/10 bg-[#050816] p-6 md:p-10">
+                <div className="mb-8 flex flex-col justify-between gap-5 md:flex-row md:items-center">
+                  <div>
+                    <div className="text-2xl font-black">
+                      {demo.brand.split(" ")[0]} <span className="text-cyan-300">{demo.brand.split(" ").slice(1).join(" ")}</span>
+                    </div>
+                    <div className="text-xs uppercase tracking-[0.3em] text-slate-400">{demo.category}</div>
+                  </div>
+                  <div className="rounded-full bg-cyan-300 px-4 py-2 text-sm font-black text-black shadow-[0_0_35px_rgba(34,211,238,0.7)]">Ukážka {String(index + 1).padStart(2, "0")}</div>
+                </div>
+
+                <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
+                  <div>
+                    <div className="mb-5 inline-flex rounded-full border border-lime-300/30 bg-lime-300/10 px-4 py-2 text-sm font-black text-lime-200">{demo.badge}</div>
+                    <h3 className="text-4xl font-black leading-tight sm:text-5xl">{demo.title}</h3>
+                    <p className="mt-6 text-lg leading-8 text-slate-300">{demo.desc}</p>
+                    <div className="mt-8 flex flex-col gap-4 sm:flex-row">
+                      <a href="#kontakt" className="inline-flex items-center justify-center gap-2 rounded-full bg-fuchsia-400 px-7 py-4 font-black text-black shadow-[0_0_45px_rgba(217,70,239,0.75)] transition hover:scale-105 hover:bg-white">
+                        Chcem podobný web <ArrowRight className="h-5 w-5" />
+                      </a>
+                      <a href="#sablony" className="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/5 px-7 py-4 font-black text-white hover:border-cyan-300 hover:text-cyan-200">
+                        Späť na šablóny
+                      </a>
+                    </div>
+                  </div>
+
+                  <div className="grid gap-4">
+                    <div className="rounded-[2rem] border border-cyan-300/20 bg-cyan-300/10 p-6">
+                      <div className="text-sm font-black uppercase tracking-[0.24em] text-cyan-300">Hlavné bloky</div>
+                      <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                        {demo.services.map((item) => (
+                          <div key={item} className="rounded-2xl border border-white/10 bg-black/35 p-4 text-sm font-bold">{item}</div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="grid gap-4 sm:grid-cols-3">
+                      {demo.stats.map((item) => (
+                        <div key={item.label} className="rounded-[1.6rem] border border-white/10 bg-white/[0.06] p-5 text-center">
+                          <div className="text-3xl font-black text-cyan-300">{item.number}</div>
+                          <div className="mt-1 text-xs text-slate-400">{item.label}</div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="rounded-[2rem] border border-fuchsia-300/20 bg-fuchsia-300/10 p-6">
+                      <div className="text-sm font-black uppercase tracking-[0.24em] text-fuchsia-300">Čo obsahuje</div>
+                      <div className="mt-5 flex flex-wrap gap-2">
+                        {["Hero", "Služby", "Dôvera", "CTA", "Kontakt", "Formulár"].map((item) => (
+                          <span key={item} className="rounded-full border border-white/10 bg-black/35 px-3 py-1 text-xs font-bold text-slate-200">{item}</span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          ))}
+        </div>
+      </section>
+
+
+      <section className="relative z-10 mx-auto max-w-7xl px-5 py-20">
+        <div className="mb-12 text-center">
+          <div className="mb-3 text-sm font-black uppercase tracking-[0.35em] text-fuchsia-300">Ako to funguje</div>
+          <h2 className="text-4xl font-black sm:text-5xl">Od dopytu po ostrý web bez chaosu.</h2>
+          <p className="mx-auto mt-4 max-w-2xl text-slate-300">
+            Klient nemusí riešiť hosting, programátora ani technické veci. Vyberie šablónu, dodá podklady a Lech-Web sa postará o spustenie aj mesačnú prevádzku.
+          </p>
+        </div>
+
+        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+          {[
+            { step: "01", title: "Vyberie šablónu", text: "Klient si vyberie odbor alebo ukážku, ktorá najviac sedí jeho firme." },
+            { step: "02", title: "Dodá podklady", text: "Logo, kontakt, služby, fotky, cenník a krátky popis firmy." },
+            { step: "03", title: "Spustíme demo", text: "Vytvoríme web bez vstupnej platby a klient má 14 dní na skúšku." },
+            { step: "04", title: "Mesačná prevádzka", text: "Po skúške web beží ako služba s hostingom, servisom a podporou." },
+          ].map((item) => (
+            <div key={item.step} className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-black/45 p-6 transition hover:-translate-y-1 hover:border-lime-300/50 hover:shadow-[0_0_35px_rgba(190,242,100,0.18)]">
+              <div className="absolute -right-10 -top-10 h-28 w-28 rounded-full bg-lime-300/10 blur-3xl" />
+              <div className="relative">
+                <div className="mb-6 text-4xl font-black text-lime-300 drop-shadow-[0_0_16px_rgba(190,242,100,0.7)]">{item.step}</div>
+                <h3 className="text-xl font-black">{item.title}</h3>
+                <p className="mt-3 text-sm leading-7 text-slate-300">{item.text}</p>
+              </div>
             </div>
-            <div className="mt-2 text-sm text-slate-300">
-              {item.forWho}
-            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="relative z-10 mx-auto max-w-7xl px-5 py-20">
+        <div className="rounded-[2.8rem] border border-white/10 bg-white/[0.04] p-6 md:p-10">
+          <div className="mb-10 max-w-3xl">
+            <div className="mb-3 text-sm font-black uppercase tracking-[0.35em] text-cyan-300">Najčastejšie otázky</div>
+            <h2 className="text-4xl font-black sm:text-5xl">Odpovede, ktoré predajú službu ešte pred telefonátom.</h2>
           </div>
 
-          <div className="mt-5 flex flex-wrap gap-2">
-            {item.includes.map((feature) => (
-              <span
-                key={feature}
-                className="rounded-full border border-fuchsia-300/25 bg-fuchsia-300/10 px-3 py-1 text-xs font-bold text-fuchsia-100"
-              >
-                {feature}
-              </span>
+          <div className="grid gap-4 md:grid-cols-2">
+            {[
+              { q: "Prečo je vytvorenie webu za 0 €?", a: "Web je poskytovaný ako mesačná digitálna služba. Klient neplatí vysoký štart, ale pravidelnú prevádzku, servis a starostlivosť." },
+              { q: "Môže si klient web odniesť inam?", a: "Klient vlastní svoj obsah, ale zdrojový kód, šablóny a systém ostávajú súčasťou služby Lech-Web." },
+              { q: "Čo ak sa klientovi web nebude páčiť?", a: "Na začiatku má 14 dní skúšobnú dobu zadarmo. Počas nej sa vie rozhodnúť bez poplatku." },
+              { q: "Čo je v mesačnej platbe?", a: "Hosting, technická prevádzka, formulár, základná starostlivosť, malé úpravy a podpora podľa vybraného balíka." },
+              { q: "Dá sa platiť ročne?", a: "Áno. Ročná platba má zľavu 10 % a dvojročná platba má zľavu 20 %." },
+              { q: "Je to vhodné aj pre e-shop?", a: "Áno. Mini E-shop je určený pre jednoduchý predaj produktov, kategórie, objednávky a e-mailové notifikácie." },
+            ].map((item) => (
+              <div key={item.q} className="rounded-[1.8rem] border border-white/10 bg-black/45 p-6 transition hover:border-cyan-300/50 hover:bg-cyan-300/5">
+                <h3 className="text-lg font-black text-cyan-200">{item.q}</h3>
+                <p className="mt-3 text-sm leading-7 text-slate-300">{item.a}</p>
+              </div>
             ))}
           </div>
-
-          <a
-            href={
-              index === 0 ? "#demo-stavebna" :
-              index === 1 ? "#demo-moda" :
-              index === 2 ? "#demo-autoservis" :
-              index === 3 ? "#demo-wellness" :
-              index === 4 ? "#demo-gastro" :
-              index === 5 ? "#demo-ubytovanie" :
-              index === 6 ? "#demo-reality" :
-              index === 7 ? "#demo-fitness" :
-              index === 8 ? "#demo-technika" :
-              index === 9 ? "#demo-landing" :
-              "#kontakt"
-            }
-            className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-white px-5 py-4 text-sm font-black text-black transition hover:bg-cyan-300 hover:shadow-[0_0_35px_rgba(34,211,238,0.75)]"
-          >
-            {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].includes(index) ? "Pozrieť ukážku" : "Chcem túto šablónu"}
-            <ArrowRight className="h-4 w-4" />
-          </a>
         </div>
-      </div>
-    ))}
-  </div>
-</section>
+      </section>
 
-      {/* DEMO ŠABLÓNA: STAVEBNÁ FIRMA */}
-      <section id="demo-stavebna" className="relative z-10 mx-auto max-w-7xl px-5 py-20 scroll-mt-24">
+
+
+      <section className="relative z-10 mx-auto max-w-7xl px-5 py-20">
         <div className="mb-12 text-center">
-          <div className="mb-3 text-sm font-black uppercase tracking-[0.35em] text-cyan-300">
-            Demo šablóna
-          </div>
-
-          <h2 className="text-4xl font-black sm:text-5xl">
-            Ukážka: Stavebná firma, kontajnery a technické služby
-          </h2>
-
-          <p className="mx-auto mt-4 max-w-2xl text-slate-300">
-            Takto môže vyzerať klientsky web vytvorený v systéme Lech-Web.
-            Silný prvý dojem, jasná ponuka a rýchly dopytový formulár.
+          <div className="mb-3 text-sm font-black uppercase tracking-[0.35em] text-fuchsia-300">Prečo Lech-Web</div>
+          <h2 className="text-4xl font-black sm:text-5xl">Nie je to len web. Je to mesačne spravovaná predajná služba.</h2>
+          <p className="mx-auto mt-4 max-w-3xl text-slate-300">
+            Klient nedostane iba peknú stránku. Dostane technickú prevádzku, formulár, údržbu, malé úpravy, hosting, podporu a systém, ktorý ostáva pod kontrolou Lech-Web.
           </p>
         </div>
 
-        <div className="relative overflow-hidden rounded-[2.8rem] border border-cyan-300/25 bg-black/50 p-5 shadow-[0_0_70px_rgba(34,211,238,0.18)]">
-          <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-cyan-300/20 blur-3xl" />
-          <div className="absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-fuchsia-400/20 blur-3xl" />
-
-          <div className="relative rounded-[2.2rem] border border-white/10 bg-[#050816] p-6 md:p-10">
-            <div className="mb-8 flex flex-col justify-between gap-5 md:flex-row md:items-center">
-              <div>
-                <div className="text-2xl font-black">
-                  STAVEX<span className="text-cyan-300">PRO</span>
-                </div>
-                <div className="text-xs uppercase tracking-[0.3em] text-slate-400">
-                  stavebné práce / kontajnery / montáže
-                </div>
-              </div>
-
-              <a
-                href="#kontakt"
-                className="rounded-full bg-cyan-300 px-6 py-3 text-sm font-black text-black shadow-[0_0_35px_rgba(34,211,238,0.75)] transition hover:scale-105 hover:bg-white"
-              >
-                Nezáväzný dopyt
-              </a>
+        <div className="grid gap-5 lg:grid-cols-2">
+          <div className="rounded-[2rem] border border-red-400/20 bg-red-400/5 p-6">
+            <div className="mb-5 inline-flex rounded-full border border-red-300/30 bg-red-300/10 px-4 py-2 text-xs font-black uppercase tracking-[0.22em] text-red-200">
+              Obyčajný jednorazový web
             </div>
-
-            <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
-              <div>
-                <div className="mb-5 inline-flex rounded-full border border-lime-300/30 bg-lime-300/10 px-4 py-2 text-sm font-black text-lime-200">
-                  Moderná stavebná firma bez nudného webu
+            <div className="space-y-4 text-sm leading-7 text-slate-300">
+              {[
+                "Klient zaplatí raz a web začne starnúť.",
+                "Nikto nerieši rýchlosť, formuláre ani malé zmeny.",
+                "Dizajn často vyzerá ako lacná šablóna bez emócie.",
+                "Po čase treba znovu platiť za opravy a zásahy.",
+              ].map((item) => (
+                <div key={item} className="flex gap-3 rounded-2xl border border-white/10 bg-black/30 p-4">
+                  <span className="mt-2 h-2 w-2 rounded-full bg-red-300 shadow-[0_0_12px_rgba(252,165,165,0.8)]" />
+                  <span>{item}</span>
                 </div>
+              ))}
+            </div>
+          </div>
 
-                <h3 className="text-4xl font-black leading-tight sm:text-5xl">
-                  Kontajnery, montáže a stavebné riešenia, ktoré pôsobia
-                  profesionálne na prvý pohľad.
-                </h3>
-
-                <p className="mt-6 text-lg leading-8 text-slate-300">
-                  Prémiová šablóna pre firmy, ktoré potrebujú ukázať služby,
-                  realizácie, dôveryhodnosť a získať dopyt od zákazníka čo najrýchlejšie.
-                </p>
-
-                <div className="mt-8 flex flex-col gap-4 sm:flex-row">
-                  <a
-                    href="#kontakt"
-                    className="inline-flex items-center justify-center gap-2 rounded-full bg-fuchsia-400 px-7 py-4 font-black text-black shadow-[0_0_45px_rgba(217,70,239,0.75)] transition hover:scale-105 hover:bg-white"
-                  >
-                    Chcem podobný web
-                    <ArrowRight className="h-5 w-5" />
-                  </a>
-
-                  <a
-                    href="#sablony"
-                    className="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/5 px-7 py-4 font-black text-white hover:border-cyan-300 hover:text-cyan-200"
-                  >
-                    Späť na šablóny
-                  </a>
+          <div className="rounded-[2rem] border border-cyan-300/30 bg-cyan-300/10 p-6 shadow-[0_0_45px_rgba(34,211,238,0.16)]">
+            <div className="mb-5 inline-flex rounded-full border border-cyan-300/40 bg-cyan-300 px-4 py-2 text-xs font-black uppercase tracking-[0.22em] text-black shadow-[0_0_28px_rgba(34,211,238,0.75)]">
+              Lech-Web predplatné
+            </div>
+            <div className="space-y-4 text-sm leading-7 text-slate-200">
+              {[
+                "0 € vstupná platba a 14 dní skúška zdarma.",
+                "Mesačná prevádzka, hosting, technická starostlivosť a podpora.",
+                "Luxusný neon dizajn, ktorý okamžite zastaví pohľad.",
+                "Zdrojový kód, šablóny a systém ostávajú súčasťou služby.",
+              ].map((item) => (
+                <div key={item} className="flex gap-3 rounded-2xl border border-cyan-300/15 bg-black/35 p-4">
+                  <span className="mt-2 h-2 w-2 rounded-full bg-lime-300 shadow-[0_0_12px_rgba(190,242,100,0.9)]" />
+                  <span>{item}</span>
                 </div>
-              </div>
-
-              <div className="grid gap-4">
-                <div className="rounded-[2rem] border border-cyan-300/20 bg-cyan-300/10 p-6">
-                  <div className="text-sm font-black uppercase tracking-[0.24em] text-cyan-300">
-                    Hlavné služby
-                  </div>
-                  <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                    {[
-                      "Predaj kontajnerov",
-                      "Montážne práce",
-                      "Stavebné úpravy",
-                      "Garáže a prístrešky",
-                    ].map((item) => (
-                      <div
-                        key={item}
-                        className="rounded-2xl border border-white/10 bg-black/35 p-4 text-sm font-bold"
-                      >
-                        {item}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="grid gap-4 sm:grid-cols-3">
-                  {[
-                    { number: "120+", label: "realizácií" },
-                    { number: "48h", label: "rýchly dopyt" },
-                    { number: "EU", label: "pôsobnosť" },
-                  ].map((item) => (
-                    <div
-                      key={item.label}
-                      className="rounded-[1.6rem] border border-white/10 bg-white/[0.06] p-5 text-center"
-                    >
-                      <div className="text-3xl font-black text-cyan-300">
-                        {item.number}
-                      </div>
-                      <div className="mt-1 text-xs text-slate-400">
-                        {item.label}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="rounded-[2rem] border border-fuchsia-300/20 bg-fuchsia-300/10 p-6">
-                  <div className="text-sm font-black uppercase tracking-[0.24em] text-fuchsia-300">
-                    Čo šablóna obsahuje
-                  </div>
-
-                  <div className="mt-5 flex flex-wrap gap-2">
-                    {[
-                      "Hero sekcia",
-                      "Služby",
-                      "Realizácie",
-                      "Referencie",
-                      "Kontakt",
-                      "Dopytový formulár",
-                    ].map((item) => (
-                      <span
-                        key={item}
-                        className="rounded-full border border-white/10 bg-black/35 px-3 py-1 text-xs font-bold text-slate-200"
-                      >
-                        {item}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
         </div>
       </section>
 
-
-      {/* DEMO ŠABLÓNA: WELLNESS / VÍRIVKY */}
-      <section id="demo-wellness" className="relative z-10 mx-auto max-w-7xl px-5 py-20 scroll-mt-24">
-        <div className="mb-12 text-center">
-          <div className="mb-3 text-sm font-black uppercase tracking-[0.35em] text-fuchsia-300">
-            Demo šablóna
-          </div>
-
-          <h2 className="text-4xl font-black sm:text-5xl">
-            Ukážka: Wellness, vírivky, spa a relax služby
-          </h2>
-
-          <p className="mx-auto mt-4 max-w-2xl text-slate-300">
-            Druhá ukážka šablóny pre prémiový predaj relaxu, víriviek, wellness pobytov, spa služieb a beauty prevádzok.
-          </p>
-        </div>
-
-        <div className="relative overflow-hidden rounded-[2.8rem] border border-fuchsia-300/25 bg-black/50 p-5 shadow-[0_0_80px_rgba(217,70,239,0.2)]">
-          <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-fuchsia-400/25 blur-3xl" />
-          <div className="absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-cyan-300/20 blur-3xl" />
-
-          <div className="relative rounded-[2.2rem] border border-white/10 bg-[#070512] p-6 md:p-10">
-            <div className="mb-8 flex flex-col justify-between gap-5 md:flex-row md:items-center">
-              <div>
-                <div className="text-2xl font-black">
-                  LUX<span className="text-fuchsia-300">SPA</span><span className="text-cyan-300">ZONE</span>
-                </div>
-                <div className="text-xs uppercase tracking-[0.3em] text-slate-400">
-                  wellness / vírivky / spa / relax
-                </div>
-              </div>
-
-              <a
-                href="#kontakt"
-                className="rounded-full bg-fuchsia-400 px-6 py-3 text-sm font-black text-black shadow-[0_0_35px_rgba(217,70,239,0.8)] transition hover:scale-105 hover:bg-white"
-              >
-                Chcem wellness web
-              </a>
-            </div>
-
-            <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
-              <div>
-                <div className="mb-5 inline-flex rounded-full border border-cyan-300/30 bg-cyan-300/10 px-4 py-2 text-sm font-black text-cyan-200">
-                  Luxusný relax sa musí predávať obrazom a emóciou
-                </div>
-
-                <h3 className="text-4xl font-black leading-tight sm:text-5xl">
-                  Prémiový web pre vírivky, spa a wellness služby, ktorý pôsobí draho už pri prvom pohľade.
-                </h3>
-
-                <p className="mt-6 text-lg leading-8 text-slate-300">
-                  Táto šablóna je postavená pre firmy, ktoré predávajú zážitok: vírivky, relax, krásu, pobyty a služby, kde rozhoduje atmosféra, dôvera a túžba objednať sa.
-                </p>
-
-                <div className="mt-8 flex flex-col gap-4 sm:flex-row">
-                  <a
-                    href="#kontakt"
-                    className="inline-flex items-center justify-center gap-2 rounded-full bg-cyan-300 px-7 py-4 font-black text-black shadow-[0_0_45px_rgba(34,211,238,0.8)] transition hover:scale-105 hover:bg-white"
-                  >
-                    Chcem podobný web
-                    <ArrowRight className="h-5 w-5" />
-                  </a>
-
-                  <a
-                    href="#sablony"
-                    className="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/5 px-7 py-4 font-black text-white hover:border-fuchsia-300 hover:text-fuchsia-200"
-                  >
-                    Späť na šablóny
-                  </a>
-                </div>
-              </div>
-
-              <div className="grid gap-4">
-                <div className="rounded-[2rem] border border-fuchsia-300/20 bg-fuchsia-300/10 p-6">
-                  <div className="text-sm font-black uppercase tracking-[0.24em] text-fuchsia-300">
-                    Hlavné bloky webu
-                  </div>
-                  <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                    {[
-                      "Predaj víriviek",
-                      "Wellness služby",
-                      "Galéria atmosféry",
-                      "Rezervácia / dopyt",
-                    ].map((item) => (
-                      <div
-                        key={item}
-                        className="rounded-2xl border border-white/10 bg-black/35 p-4 text-sm font-bold"
-                      >
-                        {item}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="grid gap-4 sm:grid-cols-3">
-                  {[
-                    { number: "WOW", label: "prvý dojem" },
-                    { number: "24/7", label: "dopyty" },
-                    { number: "AI", label: "texty" },
-                  ].map((item) => (
-                    <div
-                      key={item.label}
-                      className="rounded-[1.6rem] border border-white/10 bg-white/[0.06] p-5 text-center"
-                    >
-                      <div className="text-3xl font-black text-fuchsia-300">
-                        {item.number}
-                      </div>
-                      <div className="mt-1 text-xs text-slate-400">
-                        {item.label}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="rounded-[2rem] border border-cyan-300/20 bg-cyan-300/10 p-6">
-                  <div className="text-sm font-black uppercase tracking-[0.24em] text-cyan-300">
-                    Čo šablóna obsahuje
-                  </div>
-
-                  <div className="mt-5 flex flex-wrap gap-2">
-                    {[
-                      "Luxusný hero",
-                      "Služby",
-                      "Cenník",
-                      "Galéria",
-                      "Recenzie",
-                      "Formulár",
-                    ].map((item) => (
-                      <span
-                        key={item}
-                        className="rounded-full border border-white/10 bg-black/35 px-3 py-1 text-xs font-bold text-slate-200"
-                      >
-                        {item}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-
-      <section id="demo-autoservis" className="relative z-10 mx-auto max-w-7xl px-5 py-20 scroll-mt-24">
-        <div className="mb-12 text-center">
-          <div className="mb-3 text-sm font-black uppercase tracking-[0.35em] text-red-300">
-            Demo šablóna
-          </div>
-
-          <h2 className="text-4xl font-black sm:text-5xl">
-            Ukážka: Autoservis, pneuservis a detailing
-          </h2>
-
-          <p className="mx-auto mt-4 max-w-2xl text-slate-300">
-            Predajná šablóna pre autoservis, ktorá hneď ukáže služby,
-            dôveryhodnosť, rýchly kontakt a objednanie termínu.
-          </p>
-        </div>
-
-        <div className="relative overflow-hidden rounded-[2.8rem] border border-red-400/25 bg-black/50 p-5 shadow-[0_0_70px_rgba(248,113,113,0.16)]">
-          <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-red-400/20 blur-3xl" />
-          <div className="absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-cyan-300/18 blur-3xl" />
-
-          <div className="relative rounded-[2.2rem] border border-white/10 bg-[#050816] p-6 md:p-10">
-            <div className="mb-8 flex flex-col justify-between gap-5 md:flex-row md:items-center">
-              <div>
-                <div className="text-2xl font-black">
-                  AUTO<span className="text-red-300">MAX</span>
-                  <span className="text-cyan-300"> PRO</span>
-                </div>
-                <div className="text-xs uppercase tracking-[0.3em] text-slate-400">
-                  autoservis / pneuservis / detailing
-                </div>
-              </div>
-
-              <a
-                href="#kontakt"
-                className="rounded-full bg-red-300 px-6 py-3 text-sm font-black text-black shadow-[0_0_35px_rgba(248,113,113,0.75)] transition hover:scale-105 hover:bg-white"
-              >
-                Objednať termín
-              </a>
-            </div>
-
-            <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
-              <div>
-                <div className="mb-5 inline-flex rounded-full border border-red-300/30 bg-red-300/10 px-4 py-2 text-sm font-black text-red-200">
-                  Servis, ktorý pôsobí rýchlo a profesionálne
-                </div>
-
-                <h3 className="text-4xl font-black leading-tight sm:text-5xl">
-                  Web pre autoservis, ktorý z návštevníka spraví objednávku.
-                </h3>
-
-                <p className="mt-6 text-lg leading-8 text-slate-300">
-                  Šablóna postavená na rýchlom kontakte, jasnom cenníku,
-                  dôvere a okamžitom objednaní termínu z mobilu.
-                </p>
-
-                <div className="mt-8 flex flex-col gap-4 sm:flex-row">
-                  <a
-                    href="#kontakt"
-                    className="inline-flex items-center justify-center gap-2 rounded-full bg-red-300 px-7 py-4 font-black text-black shadow-[0_0_45px_rgba(248,113,113,0.75)] transition hover:scale-105 hover:bg-white"
-                  >
-                    Chcem autoservis web
-                    <ArrowRight className="h-5 w-5" />
-                  </a>
-
-                  <a
-                    href="#sablony"
-                    className="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/5 px-7 py-4 font-black text-white hover:border-red-300 hover:text-red-200"
-                  >
-                    Späť na šablóny
-                  </a>
-                </div>
-              </div>
-
-              <div className="grid gap-4">
-                <div className="rounded-[2rem] border border-red-300/20 bg-red-300/10 p-6">
-                  <div className="text-sm font-black uppercase tracking-[0.24em] text-red-300">
-                    Hlavné služby
-                  </div>
-                  <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                    {[
-                      "Autoservis",
-                      "Pneuservis",
-                      "Výmena oleja",
-                      "Detailing a čistenie",
-                    ].map((item) => (
-                      <div
-                        key={item}
-                        className="rounded-2xl border border-white/10 bg-black/35 p-4 text-sm font-bold"
-                      >
-                        {item}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="grid gap-4 sm:grid-cols-3">
-                  {[
-                    { number: "24h", label: "rýchly termín" },
-                    { number: "4.9★", label: "recenzie" },
-                    { number: "SOS", label: "urgent kontakt" },
-                  ].map((item) => (
-                    <div
-                      key={item.label}
-                      className="rounded-[1.6rem] border border-white/10 bg-white/[0.06] p-5 text-center"
-                    >
-                      <div className="text-3xl font-black text-red-300">
-                        {item.number}
-                      </div>
-                      <div className="mt-1 text-xs text-slate-400">
-                        {item.label}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="rounded-[2rem] border border-cyan-300/20 bg-cyan-300/10 p-6">
-                  <div className="text-sm font-black uppercase tracking-[0.24em] text-cyan-300">
-                    Čo šablóna obsahuje
-                  </div>
-
-                  <div className="mt-5 flex flex-wrap gap-2">
-                    {[
-                      "Rýchly kontakt",
-                      "Služby",
-                      "Cenník",
-                      "Objednávka termínu",
-                      "Recenzie",
-                      "Mapa",
-                    ].map((item) => (
-                      <span
-                        key={item}
-                        className="rounded-full border border-white/10 bg-black/35 px-3 py-1 text-xs font-bold text-slate-200"
-                      >
-                        {item}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-
-
-      {/* DEMO ŠABLÓNA: E-SHOP OBLEČENIE */}
-      <section id="demo-moda" className="relative z-10 mx-auto max-w-7xl px-5 py-20 scroll-mt-24">
-        <div className="mb-12 text-center">
-          <div className="mb-3 text-sm font-black uppercase tracking-[0.35em] text-pink-300">Demo šablóna</div>
-          <h2 className="text-4xl font-black sm:text-5xl">Ukážka: Luxusný e-shop s oblečením</h2>
-          <p className="mx-auto mt-4 max-w-2xl text-slate-300">Prémiová módna šablóna pre kolekcie, butik, doplnky a značku, ktorá musí vyzerať draho hneď na prvej obrazovke.</p>
-        </div>
-        <div className="relative overflow-hidden rounded-[2.8rem] border border-pink-300/25 bg-black/50 p-5 shadow-[0_0_70px_rgba(244,114,182,0.18)]">
-          <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-pink-400/25 blur-3xl" />
-          <div className="absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-violet-500/20 blur-3xl" />
-          <div className="relative rounded-[2.2rem] border border-white/10 bg-[#070611] p-6 md:p-10">
-            <div className="mb-8 flex flex-col justify-between gap-5 md:flex-row md:items-center">
-              <div><div className="text-2xl font-black">NOIR<span className="text-pink-300">MODE</span></div><div className="text-xs uppercase tracking-[0.3em] text-slate-400">premium fashion / collections / e-shop</div></div>
-              <a href="#kontakt" className="rounded-full bg-pink-300 px-6 py-3 text-sm font-black text-black shadow-[0_0_35px_rgba(244,114,182,0.75)] transition hover:scale-105 hover:bg-white">Chcem módny e-shop</a>
-            </div>
-            <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
-              <div>
-                <div className="mb-5 inline-flex rounded-full border border-pink-300/30 bg-pink-300/10 px-4 py-2 text-sm font-black text-pink-200">Nová kolekcia musí vyzerať ako značka</div>
-                <h3 className="text-4xl font-black leading-tight sm:text-5xl">E-shop, ktorý predáva štýl, nie iba produkty.</h3>
-                <p className="mt-6 text-lg leading-8 text-slate-300">Veľký hero blok, produktové kolekcie, lookbook, zľavová výzva a kontaktné prvky pripravené na okamžitý predaj.</p>
-                <div className="mt-8 flex flex-col gap-4 sm:flex-row">
-                  <a href="#kontakt" className="inline-flex items-center justify-center gap-2 rounded-full bg-pink-300 px-7 py-4 font-black text-black shadow-[0_0_45px_rgba(244,114,182,0.75)] transition hover:scale-105 hover:bg-white">Chcem túto šablónu <ArrowRight className="h-5 w-5" /></a>
-                  <a href="#sablony" className="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/5 px-7 py-4 font-black text-white hover:border-pink-300 hover:text-pink-200">Späť na šablóny</a>
-                </div>
-              </div>
-              <div className="grid gap-4">
-                <div className="rounded-[2rem] border border-pink-300/20 bg-pink-300/10 p-6">
-                  <div className="text-sm font-black uppercase tracking-[0.24em] text-pink-300">Sekcie e-shopu</div>
-                  <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                    {["Hero kolekcia", "Top produkty", "Lookbook", "Zľavový banner"].map((item) => <div key={item} className="rounded-2xl border border-white/10 bg-black/35 p-4 text-sm font-bold">{item}</div>)}
-                  </div>
-                </div>
-                <div className="grid gap-4 sm:grid-cols-3">
-                  {[{number:"NEW",label:"kolekcia"},{number:"24/7",label:"online predaj"},{number:"VIP",label:"značka"}].map((item) => <div key={item.label} className="rounded-[1.6rem] border border-white/10 bg-white/[0.06] p-5 text-center"><div className="text-3xl font-black text-pink-300">{item.number}</div><div className="mt-1 text-xs text-slate-400">{item.label}</div></div>)}
-                </div>
-                <div className="rounded-[2rem] border border-violet-300/20 bg-violet-300/10 p-6">
-                  <div className="text-sm font-black uppercase tracking-[0.24em] text-violet-300">Obsahuje</div>
-                  <div className="mt-5 flex flex-wrap gap-2">{["Kolekcie", "Produkty", "Veľkosti", "Lookbook", "CTA", "Formulár"].map((item) => <span key={item} className="rounded-full border border-white/10 bg-black/35 px-3 py-1 text-xs font-bold text-slate-200">{item}</span>)}</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* DEMO ŠABLÓNA: GASTRO */}
-      <section id="demo-gastro" className="relative z-10 mx-auto max-w-7xl px-5 py-20 scroll-mt-24">
-        <div className="mb-12 text-center">
-          <div className="mb-3 text-sm font-black uppercase tracking-[0.35em] text-orange-300">Demo šablóna</div>
-          <h2 className="text-4xl font-black sm:text-5xl">Ukážka: Reštaurácia, bistro a donáška</h2>
-          <p className="mx-auto mt-4 max-w-2xl text-slate-300">Gastro šablóna, ktorá predáva chuť cez prvý vizuálny dojem, menu, rezervácie a jasnú výzvu na objednávku.</p>
-        </div>
-        <div className="relative overflow-hidden rounded-[2.8rem] border border-orange-300/25 bg-black/50 p-5 shadow-[0_0_70px_rgba(251,146,60,0.16)]">
-          <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-orange-400/22 blur-3xl" />
-          <div className="absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-red-500/16 blur-3xl" />
-          <div className="relative rounded-[2.2rem] border border-white/10 bg-[#0b0604] p-6 md:p-10">
-            <div className="mb-8 flex flex-col justify-between gap-5 md:flex-row md:items-center">
-              <div><div className="text-2xl font-black">FLAME<span className="text-orange-300">BISTRO</span></div><div className="text-xs uppercase tracking-[0.3em] text-slate-400">restaurant / daily menu / delivery</div></div>
-              <a href="#kontakt" className="rounded-full bg-orange-300 px-6 py-3 text-sm font-black text-black shadow-[0_0_35px_rgba(251,146,60,0.75)] transition hover:scale-105 hover:bg-white">Rezervovať stôl</a>
-            </div>
-            <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
-              <div>
-                <div className="mb-5 inline-flex rounded-full border border-orange-300/30 bg-orange-300/10 px-4 py-2 text-sm font-black text-orange-200">Chuť musí byť vidieť ešte pred menu</div>
-                <h3 className="text-4xl font-black leading-tight sm:text-5xl">Web pre gastro, ktorý núti zákazníka objednať.</h3>
-                <p className="mt-6 text-lg leading-8 text-slate-300">Denné menu, fotky jedál, rezervácia, donáška, otváracie hodiny a rýchly kontakt v jednom predajnom rozložení.</p>
-                <div className="mt-8 flex flex-col gap-4 sm:flex-row"><a href="#kontakt" className="inline-flex items-center justify-center gap-2 rounded-full bg-orange-300 px-7 py-4 font-black text-black shadow-[0_0_45px_rgba(251,146,60,0.75)] transition hover:scale-105 hover:bg-white">Chcem gastro web <ArrowRight className="h-5 w-5" /></a><a href="#sablony" className="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/5 px-7 py-4 font-black text-white hover:border-orange-300 hover:text-orange-200">Späť na šablóny</a></div>
-              </div>
-              <div className="grid gap-4">
-                <div className="rounded-[2rem] border border-orange-300/20 bg-orange-300/10 p-6"><div className="text-sm font-black uppercase tracking-[0.24em] text-orange-300">Gastro funkcie</div><div className="mt-5 grid gap-3 sm:grid-cols-2">{["Denné menu", "Rezervácie", "Donáška", "Otváracie hodiny"].map((item) => <div key={item} className="rounded-2xl border border-white/10 bg-black/35 p-4 text-sm font-bold">{item}</div>)}</div></div>
-                <div className="grid gap-4 sm:grid-cols-3">{[{number:"MENU",label:"online"},{number:"5★",label:"recenzie"},{number:"FAST",label:"objednávka"}].map((item) => <div key={item.label} className="rounded-[1.6rem] border border-white/10 bg-white/[0.06] p-5 text-center"><div className="text-3xl font-black text-orange-300">{item.number}</div><div className="mt-1 text-xs text-slate-400">{item.label}</div></div>)}</div>
-                <div className="rounded-[2rem] border border-red-300/20 bg-red-300/10 p-6"><div className="text-sm font-black uppercase tracking-[0.24em] text-red-300">Obsahuje</div><div className="mt-5 flex flex-wrap gap-2">{["Jedlá", "Galéria", "Mapa", "Rezervácia", "Donáška", "Kontakt"].map((item) => <span key={item} className="rounded-full border border-white/10 bg-black/35 px-3 py-1 text-xs font-bold text-slate-200">{item}</span>)}</div></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* DEMO ŠABLÓNA: UBYTOVANIE */}
-      <section id="demo-ubytovanie" className="relative z-10 mx-auto max-w-7xl px-5 py-20 scroll-mt-24">
-        <div className="mb-12 text-center">
-          <div className="mb-3 text-sm font-black uppercase tracking-[0.35em] text-sky-300">Demo šablóna</div>
-          <h2 className="text-4xl font-black sm:text-5xl">Ukážka: Apartmán, penzión a chata</h2>
-          <p className="mx-auto mt-4 max-w-2xl text-slate-300">Rezervačná šablóna pre ubytovanie, ktorá buduje dôveru cez atmosféru, vybavenie, galériu a rýchly dopyt.</p>
-        </div>
-        <div className="relative overflow-hidden rounded-[2.8rem] border border-sky-300/25 bg-black/50 p-5 shadow-[0_0_70px_rgba(125,211,252,0.16)]">
-          <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-sky-300/22 blur-3xl" />
-          <div className="absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-emerald-400/14 blur-3xl" />
-          <div className="relative rounded-[2.2rem] border border-white/10 bg-[#041018] p-6 md:p-10">
-            <div className="mb-8 flex flex-col justify-between gap-5 md:flex-row md:items-center"><div><div className="text-2xl font-black">VILLA<span className="text-sky-300">NOVA</span></div><div className="text-xs uppercase tracking-[0.3em] text-slate-400">apartments / stay / booking</div></div><a href="#kontakt" className="rounded-full bg-sky-300 px-6 py-3 text-sm font-black text-black shadow-[0_0_35px_rgba(125,211,252,0.75)] transition hover:scale-105 hover:bg-white">Overiť dostupnosť</a></div>
-            <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
-              <div><div className="mb-5 inline-flex rounded-full border border-sky-300/30 bg-sky-300/10 px-4 py-2 text-sm font-black text-sky-200">Atmosféra predáva rezerváciu</div><h3 className="text-4xl font-black leading-tight sm:text-5xl">Ubytovací web, ktorý vytvorí chuť prísť.</h3><p className="mt-6 text-lg leading-8 text-slate-300">Veľký vizuálny úvod, typy izieb, vybavenie, okolie, recenzie a rýchly dopyt na termín pobytu.</p><div className="mt-8 flex flex-col gap-4 sm:flex-row"><a href="#kontakt" className="inline-flex items-center justify-center gap-2 rounded-full bg-sky-300 px-7 py-4 font-black text-black shadow-[0_0_45px_rgba(125,211,252,0.75)] transition hover:scale-105 hover:bg-white">Chcem web pre ubytovanie <ArrowRight className="h-5 w-5" /></a><a href="#sablony" className="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/5 px-7 py-4 font-black text-white hover:border-sky-300 hover:text-sky-200">Späť na šablóny</a></div></div>
-              <div className="grid gap-4"><div className="rounded-[2rem] border border-sky-300/20 bg-sky-300/10 p-6"><div className="text-sm font-black uppercase tracking-[0.24em] text-sky-300">Rezervačné bloky</div><div className="mt-5 grid gap-3 sm:grid-cols-2">{["Izby", "Galéria", "Vybavenie", "Dostupnosť"].map((item) => <div key={item} className="rounded-2xl border border-white/10 bg-black/35 p-4 text-sm font-bold">{item}</div>)}</div></div><div className="grid gap-4 sm:grid-cols-3">{[{number:"4.9",label:"hodnotenie"},{number:"24h",label:"odpoveď"},{number:"TOP",label:"lokalita"}].map((item) => <div key={item.label} className="rounded-[1.6rem] border border-white/10 bg-white/[0.06] p-5 text-center"><div className="text-3xl font-black text-sky-300">{item.number}</div><div className="mt-1 text-xs text-slate-400">{item.label}</div></div>)}</div><div className="rounded-[2rem] border border-emerald-300/20 bg-emerald-300/10 p-6"><div className="text-sm font-black uppercase tracking-[0.24em] text-emerald-300">Obsahuje</div><div className="mt-5 flex flex-wrap gap-2">{["Hero", "Izby", "Okolie", "Recenzie", "Mapa", "Dopyt"].map((item) => <span key={item} className="rounded-full border border-white/10 bg-black/35 px-3 py-1 text-xs font-bold text-slate-200">{item}</span>)}</div></div></div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-
-      {/* DEMO ŠABLÓNA: REALITY */}
-      <section id="demo-reality" className="relative z-10 mx-auto max-w-7xl px-5 py-20 scroll-mt-24">
-        <div className="mb-12 text-center">
-          <div className="mb-3 text-sm font-black uppercase tracking-[0.35em] text-violet-300">Demo šablóna</div>
-          <h2 className="text-4xl font-black sm:text-5xl">Ukážka: Reality, maklér a developer</h2>
-          <p className="mx-auto mt-4 max-w-2xl text-slate-300">Prémiová realitná šablóna pre ponuky, predaj, prenájom a zber dopytov od záujemcov.</p>
-        </div>
-        <div className="relative overflow-hidden rounded-[2.8rem] border border-violet-300/25 bg-black/50 p-5 shadow-[0_0_70px_rgba(167,139,250,0.16)]">
-          <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-violet-300/22 blur-3xl" />
-          <div className="absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-cyan-400/14 blur-3xl" />
-          <div className="relative rounded-[2.2rem] border border-white/10 bg-[#09051a] p-6 md:p-10">
-            <div className="mb-8 flex flex-col justify-between gap-5 md:flex-row md:items-center"><div><div className="text-2xl font-black">ESTATE<span className="text-violet-300">LUX</span></div><div className="text-xs uppercase tracking-[0.3em] text-slate-400">real estate / premium listings</div></div><a href="#kontakt" className="rounded-full bg-violet-300 px-6 py-3 text-sm font-black text-black shadow-[0_0_35px_rgba(167,139,250,0.75)] transition hover:scale-105 hover:bg-white">Mám záujem o predaj</a></div>
-            <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
-              <div><div className="mb-5 inline-flex rounded-full border border-violet-300/30 bg-violet-300/10 px-4 py-2 text-sm font-black text-violet-200">Nehnuteľnosť musí vyzerať hodnotne</div><h3 className="text-4xl font-black leading-tight sm:text-5xl">Realitný web, ktorý predáva dôveru, lokalitu a hodnotu.</h3><p className="mt-6 text-lg leading-8 text-slate-300">Ponuky nehnuteľností, detail bytu alebo domu, galéria, maklér, kontakt a formulár pre klienta, ktorý chce predať alebo kúpiť.</p><div className="mt-8 flex flex-col gap-4 sm:flex-row"><a href="#kontakt" className="inline-flex items-center justify-center gap-2 rounded-full bg-violet-300 px-7 py-4 font-black text-black shadow-[0_0_45px_rgba(167,139,250,0.75)] transition hover:scale-105 hover:bg-white">Chcem realitný web <ArrowRight className="h-5 w-5" /></a><a href="#sablony" className="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/5 px-7 py-4 font-black text-white hover:border-violet-300 hover:text-violet-200">Späť na šablóny</a></div></div>
-              <div className="grid gap-4"><div className="rounded-[2rem] border border-violet-300/20 bg-violet-300/10 p-6"><div className="text-sm font-black uppercase tracking-[0.24em] text-violet-300">Realitné bloky</div><div className="mt-5 grid gap-3 sm:grid-cols-2">{["Ponuky", "Detail nehnuteľnosti", "Galéria", "Kontakt makléra"].map((item) => <div key={item} className="rounded-2xl border border-white/10 bg-black/35 p-4 text-sm font-bold">{item}</div>)}</div></div><div className="grid gap-4 sm:grid-cols-3">{[{number:"360°",label:"dojem"},{number:"TOP",label:"ponuky"},{number:"LEAD",label:"dopyt"}].map((item) => <div key={item.label} className="rounded-[1.6rem] border border-white/10 bg-white/[0.06] p-5 text-center"><div className="text-3xl font-black text-violet-300">{item.number}</div><div className="mt-1 text-xs text-slate-400">{item.label}</div></div>)}</div><div className="rounded-[2rem] border border-cyan-300/20 bg-cyan-300/10 p-6"><div className="text-sm font-black uppercase tracking-[0.24em] text-cyan-300">Obsahuje</div><div className="mt-5 flex flex-wrap gap-2">{["Filter", "Detail", "Mapa", "Galéria", "Maklér", "Dopyt"].map((item) => <span key={item} className="rounded-full border border-white/10 bg-black/35 px-3 py-1 text-xs font-bold text-slate-200">{item}</span>)}</div></div></div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* DEMO ŠABLÓNA: FITNESS */}
-      <section id="demo-fitness" className="relative z-10 mx-auto max-w-7xl px-5 py-20 scroll-mt-24">
-        <div className="mb-12 text-center">
-          <div className="mb-3 text-sm font-black uppercase tracking-[0.35em] text-lime-300">Demo šablóna</div>
-          <h2 className="text-4xl font-black sm:text-5xl">Ukážka: Fitness, tréner a wellness program</h2>
-          <p className="mx-auto mt-4 max-w-2xl text-slate-300">Energetická šablóna pre trénerov, fyzio, výživové programy, wellness a športové služby.</p>
-        </div>
-        <div className="relative overflow-hidden rounded-[2.8rem] border border-lime-300/25 bg-black/50 p-5 shadow-[0_0_70px_rgba(190,242,100,0.14)]">
-          <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-lime-300/18 blur-3xl" />
-          <div className="absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-emerald-400/16 blur-3xl" />
-          <div className="relative rounded-[2.2rem] border border-white/10 bg-[#07120a] p-6 md:p-10">
-            <div className="mb-8 flex flex-col justify-between gap-5 md:flex-row md:items-center"><div><div className="text-2xl font-black">BODY<span className="text-lime-300">EDGE</span></div><div className="text-xs uppercase tracking-[0.3em] text-slate-400">fitness / coaching / results</div></div><a href="#kontakt" className="rounded-full bg-lime-300 px-6 py-3 text-sm font-black text-black shadow-[0_0_35px_rgba(190,242,100,0.75)] transition hover:scale-105 hover:bg-white">Rezervovať konzultáciu</a></div>
-            <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
-              <div><div className="mb-5 inline-flex rounded-full border border-lime-300/30 bg-lime-300/10 px-4 py-2 text-sm font-black text-lime-200">Energia, výsledok, akcia</div><h3 className="text-4xl font-black leading-tight sm:text-5xl">Web pre trénera, ktorý predáva zmenu postavy aj disciplínu.</h3><p className="mt-6 text-lg leading-8 text-slate-300">Programy, balíky, výsledky klientov, konzultácie a jasná cesta od záujmu k objednávke.</p><div className="mt-8 flex flex-col gap-4 sm:flex-row"><a href="#kontakt" className="inline-flex items-center justify-center gap-2 rounded-full bg-lime-300 px-7 py-4 font-black text-black shadow-[0_0_45px_rgba(190,242,100,0.75)] transition hover:scale-105 hover:bg-white">Chcem fitness web <ArrowRight className="h-5 w-5" /></a><a href="#sablony" className="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/5 px-7 py-4 font-black text-white hover:border-lime-300 hover:text-lime-200">Späť na šablóny</a></div></div>
-              <div className="grid gap-4"><div className="rounded-[2rem] border border-lime-300/20 bg-lime-300/10 p-6"><div className="text-sm font-black uppercase tracking-[0.24em] text-lime-300">Fitness sekcie</div><div className="mt-5 grid gap-3 sm:grid-cols-2">{["Programy", "Premeny", "Cenník", "Konzultácia"].map((item) => <div key={item} className="rounded-2xl border border-white/10 bg-black/35 p-4 text-sm font-bold">{item}</div>)}</div></div><div className="grid gap-4 sm:grid-cols-3">{[{number:"8t",label:"program"},{number:"1:1",label:"coach"},{number:"GO",label:"akcia"}].map((item) => <div key={item.label} className="rounded-[1.6rem] border border-white/10 bg-white/[0.06] p-5 text-center"><div className="text-3xl font-black text-lime-300">{item.number}</div><div className="mt-1 text-xs text-slate-400">{item.label}</div></div>)}</div><div className="rounded-[2rem] border border-emerald-300/20 bg-emerald-300/10 p-6"><div className="text-sm font-black uppercase tracking-[0.24em] text-emerald-300">Obsahuje</div><div className="mt-5 flex flex-wrap gap-2">{["Balíky", "Výsledky", "Recenzie", "Rezervácia", "Blog", "Dopyt"].map((item) => <span key={item} className="rounded-full border border-white/10 bg-black/35 px-3 py-1 text-xs font-bold text-slate-200">{item}</span>)}</div></div></div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* DEMO ŠABLÓNA: TECHNIKA */}
-      <section id="demo-technika" className="relative z-10 mx-auto max-w-7xl px-5 py-20 scroll-mt-24">
-        <div className="mb-12 text-center">
-          <div className="mb-3 text-sm font-black uppercase tracking-[0.35em] text-cyan-300">Demo šablóna</div>
-          <h2 className="text-4xl font-black sm:text-5xl">Ukážka: Technika, náradie a elektronika</h2>
-          <p className="mx-auto mt-4 max-w-2xl text-slate-300">Čistá technická šablóna pre produkty, parametre, kategórie a rýchly dopyt alebo objednávku.</p>
-        </div>
-        <div className="relative overflow-hidden rounded-[2.8rem] border border-cyan-300/25 bg-black/50 p-5 shadow-[0_0_70px_rgba(34,211,238,0.16)]">
-          <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-cyan-300/22 blur-3xl" />
-          <div className="absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-blue-500/16 blur-3xl" />
-          <div className="relative rounded-[2.2rem] border border-white/10 bg-[#06101f] p-6 md:p-10">
-            <div className="mb-8 flex flex-col justify-between gap-5 md:flex-row md:items-center"><div><div className="text-2xl font-black">TECH<span className="text-cyan-300">FORCE</span></div><div className="text-xs uppercase tracking-[0.3em] text-slate-400">tools / electronics / pro gear</div></div><a href="#kontakt" className="rounded-full bg-cyan-300 px-6 py-3 text-sm font-black text-black shadow-[0_0_35px_rgba(34,211,238,0.75)] transition hover:scale-105 hover:bg-white">Vyžiadať ponuku</a></div>
-            <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
-              <div><div className="mb-5 inline-flex rounded-full border border-cyan-300/30 bg-cyan-300/10 px-4 py-2 text-sm font-black text-cyan-200">Produkty musia byť jasné</div><h3 className="text-4xl font-black leading-tight sm:text-5xl">Technický web, kde zákazník rýchlo pochopí produkt aj výhodu.</h3><p className="mt-6 text-lg leading-8 text-slate-300">Kategórie, technické parametre, skladovosť, výhody, CTA a profesionálny dojem pre technické firmy.</p><div className="mt-8 flex flex-col gap-4 sm:flex-row"><a href="#kontakt" className="inline-flex items-center justify-center gap-2 rounded-full bg-cyan-300 px-7 py-4 font-black text-black shadow-[0_0_45px_rgba(34,211,238,0.75)] transition hover:scale-105 hover:bg-white">Chcem technický web <ArrowRight className="h-5 w-5" /></a><a href="#sablony" className="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/5 px-7 py-4 font-black text-white hover:border-cyan-300 hover:text-cyan-200">Späť na šablóny</a></div></div>
-              <div className="grid gap-4"><div className="rounded-[2rem] border border-cyan-300/20 bg-cyan-300/10 p-6"><div className="text-sm font-black uppercase tracking-[0.24em] text-cyan-300">Produktové bloky</div><div className="mt-5 grid gap-3 sm:grid-cols-2">{["Kategórie", "Parametre", "Výhody", "Dopyt"].map((item) => <div key={item} className="rounded-2xl border border-white/10 bg-black/35 p-4 text-sm font-bold">{item}</div>)}</div></div><div className="grid gap-4 sm:grid-cols-3">{[{number:"PRO",label:"vzhľad"},{number:"SKU",label:"produkty"},{number:"B2B",label:"dopyty"}].map((item) => <div key={item.label} className="rounded-[1.6rem] border border-white/10 bg-white/[0.06] p-5 text-center"><div className="text-3xl font-black text-cyan-300">{item.number}</div><div className="mt-1 text-xs text-slate-400">{item.label}</div></div>)}</div><div className="rounded-[2rem] border border-blue-300/20 bg-blue-300/10 p-6"><div className="text-sm font-black uppercase tracking-[0.24em] text-blue-300">Obsahuje</div><div className="mt-5 flex flex-wrap gap-2">{["Produkty", "Kategórie", "Parametre", "FAQ", "Dopyt", "Kontakt"].map((item) => <span key={item} className="rounded-full border border-white/10 bg-black/35 px-3 py-1 text-xs font-bold text-slate-200">{item}</span>)}</div></div></div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* DEMO ŠABLÓNA: LANDING PAGE */}
-      <section id="demo-landing" className="relative z-10 mx-auto max-w-7xl px-5 py-20 scroll-mt-24">
-        <div className="mb-12 text-center">
-          <div className="mb-3 text-sm font-black uppercase tracking-[0.35em] text-fuchsia-300">Demo šablóna</div>
-          <h2 className="text-4xl font-black sm:text-5xl">Ukážka: Predajná landing page pre reklamu</h2>
-          <p className="mx-auto mt-4 max-w-2xl text-slate-300">Jedna ostrá stránka pre kampaň, službu, akciu alebo produkt, ktorá tlačí zákazníka na vyplnenie formulára.</p>
-        </div>
-        <div className="relative overflow-hidden rounded-[2.8rem] border border-fuchsia-300/25 bg-black/50 p-5 shadow-[0_0_70px_rgba(217,70,239,0.18)]">
-          <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-fuchsia-300/22 blur-3xl" />
-          <div className="absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-cyan-400/18 blur-3xl" />
-          <div className="relative rounded-[2.2rem] border border-white/10 bg-[#13051a] p-6 md:p-10">
-            <div className="mb-8 flex flex-col justify-between gap-5 md:flex-row md:items-center"><div><div className="text-2xl font-black">CLICK<span className="text-fuchsia-300">BOOST</span></div><div className="text-xs uppercase tracking-[0.3em] text-slate-400">campaign / lead page / conversion</div></div><a href="#kontakt" className="rounded-full bg-fuchsia-300 px-6 py-3 text-sm font-black text-black shadow-[0_0_35px_rgba(217,70,239,0.75)] transition hover:scale-105 hover:bg-white">Spustiť kampaň</a></div>
-            <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
-              <div><div className="mb-5 inline-flex rounded-full border border-fuchsia-300/30 bg-fuchsia-300/10 px-4 py-2 text-sm font-black text-fuchsia-200">Jedna stránka, jeden cieľ</div><h3 className="text-4xl font-black leading-tight sm:text-5xl">Landing page, ktorá nenechá zákazníka blúdiť.</h3><p className="mt-6 text-lg leading-8 text-slate-300">Silný nadpis, dôkaz, výhody, cena, FAQ a formulár. Ideálne pre Google Ads, Facebook reklamu a rýchle testovanie ponuky.</p><div className="mt-8 flex flex-col gap-4 sm:flex-row"><a href="#kontakt" className="inline-flex items-center justify-center gap-2 rounded-full bg-fuchsia-300 px-7 py-4 font-black text-black shadow-[0_0_45px_rgba(217,70,239,0.75)] transition hover:scale-105 hover:bg-white">Chcem landing page <ArrowRight className="h-5 w-5" /></a><a href="#sablony" className="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/5 px-7 py-4 font-black text-white hover:border-fuchsia-300 hover:text-fuchsia-200">Späť na šablóny</a></div></div>
-              <div className="grid gap-4"><div className="rounded-[2rem] border border-fuchsia-300/20 bg-fuchsia-300/10 p-6"><div className="text-sm font-black uppercase tracking-[0.24em] text-fuchsia-300">Konverzné bloky</div><div className="mt-5 grid gap-3 sm:grid-cols-2">{["Hero", "Výhody", "Dôkaz", "Formulár"].map((item) => <div key={item} className="rounded-2xl border border-white/10 bg-black/35 p-4 text-sm font-bold">{item}</div>)}</div></div><div className="grid gap-4 sm:grid-cols-3">{[{number:"CTA",label:"akcia"},{number:"ADS",label:"reklama"},{number:"LEAD",label:"formulár"}].map((item) => <div key={item.label} className="rounded-[1.6rem] border border-white/10 bg-white/[0.06] p-5 text-center"><div className="text-3xl font-black text-fuchsia-300">{item.number}</div><div className="mt-1 text-xs text-slate-400">{item.label}</div></div>)}</div><div className="rounded-[2rem] border border-cyan-300/20 bg-cyan-300/10 p-6"><div className="text-sm font-black uppercase tracking-[0.24em] text-cyan-300">Obsahuje</div><div className="mt-5 flex flex-wrap gap-2">{["Nadpis", "CTA", "Recenzie", "Cena", "FAQ", "Formulár"].map((item) => <span key={item} className="rounded-full border border-white/10 bg-black/35 px-3 py-1 text-xs font-bold text-slate-200">{item}</span>)}</div></div></div>
-            </div>
-          </div>
-        </div>
-      </section>
       <section id="cennik" className="relative z-10 mx-auto max-w-7xl px-5 py-20">
         <div className="mb-12 text-center">
           <div className="mb-3 text-sm font-black uppercase tracking-[0.35em] text-lime-300">Cenník</div>
           <h2 className="text-4xl font-black sm:text-5xl">Moderný web bez vstupnej platby.</h2>
-          <p className="mx-auto mt-4 max-w-2xl text-slate-300">Web vytvoríme bez vstupnej platby a zákazník má 14 dní skúšobnú dobu
-zadarmo. Po skúšobnej dobe sa služba fakturuje vždy vopred minimálne
-na 1 mesiac. Pri ročnej platbe získate zľavu 10 %, pri dvojročnej
-platbe zľavu 20 %. Zdrojový kód, systém a šablóny ostávajú súčasťou
-služby Lech-Web.</p>
+          <p className="mx-auto mt-4 max-w-2xl text-slate-300">Web vytvoríme bez vstupnej platby a zákazník má 14 dní skúšobnú dobu zadarmo. Po skúšobnej dobe sa služba fakturuje vždy vopred minimálne na 1 mesiac. Pri ročnej platbe získate zľavu 10 %, pri dvojročnej platbe zľavu 20 %. Zdrojový kód, systém a šablóny ostávajú súčasťou služby Lech-Web.</p>
         </div>
         <div className="grid gap-5 lg:grid-cols-3">
           {plans.map((plan) => (
@@ -1043,46 +680,25 @@ služby Lech-Web.</p>
             </div>
           ))}
         </div>
+
         <div className="mt-8 grid gap-4 md:grid-cols-3">
-  <div className="rounded-3xl border border-lime-300/20 bg-lime-300/10 p-5">
-    <div className="text-lg font-black text-lime-300">
-      14 dní zadarmo
-    </div>
-    <p className="mt-3 text-sm leading-7 text-slate-300">
-      Zákazník si môže službu vyskúšať 14 dní bez poplatku. Ak službu
-      počas skúšobnej doby ukončí, nič neplatí.
-    </p>
-  </div>
+          <div className="rounded-3xl border border-lime-300/20 bg-lime-300/10 p-5">
+            <div className="text-lg font-black text-lime-300">14 dní zadarmo</div>
+            <p className="mt-3 text-sm leading-7 text-slate-300">Zákazník si môže službu vyskúšať 14 dní bez poplatku. Ak službu počas skúšobnej doby ukončí, nič neplatí.</p>
+          </div>
+          <div className="rounded-3xl border border-cyan-300/20 bg-cyan-300/10 p-5">
+            <div className="text-lg font-black text-cyan-300">Platba vopred</div>
+            <p className="mt-3 text-sm leading-7 text-slate-300">Po skúšobnej dobe sa predplatné fakturuje vždy vopred, minimálne na 1 mesiac. Ročná platba má zľavu 10 %, dvojročná platba 20 %.</p>
+          </div>
+          <div className="rounded-3xl border border-fuchsia-300/20 bg-fuchsia-300/10 p-5">
+            <div className="text-lg font-black text-fuchsia-300">Prenájom služby</div>
+            <p className="mt-3 text-sm leading-7 text-slate-300">Web je poskytovaný ako digitálna služba Lech-Web. Zdrojový kód, šablóny, systém a technické riešenie ostávajú vlastníctvom poskytovateľa.</p>
+          </div>
+        </div>
 
-  <div className="rounded-3xl border border-cyan-300/20 bg-cyan-300/10 p-5">
-    <div className="text-lg font-black text-cyan-300">
-      Platba vopred
-    </div>
-    <p className="mt-3 text-sm leading-7 text-slate-300">
-      Po skúšobnej dobe sa predplatné fakturuje vždy vopred, minimálne
-      na 1 mesiac. Ročná platba má zľavu 10 %, dvojročná platba 20 %.
-    </p>
-  </div>
-
-  <div className="rounded-3xl border border-fuchsia-300/20 bg-fuchsia-300/10 p-5">
-    <div className="text-lg font-black text-fuchsia-300">
-      Prenájom služby
-    </div>
-    <p className="mt-3 text-sm leading-7 text-slate-300">
-      Web je poskytovaný ako digitálna služba Lech-Web. Zdrojový kód,
-      šablóny, systém a technické riešenie ostávajú vlastníctvom
-      poskytovateľa.
-    </p>
-  </div>
-</div>
-
-<div className="mt-5 rounded-3xl border border-white/10 bg-black/40 p-5 text-sm leading-7 text-slate-400">
-  Klient vlastní svoj dodaný obsah: texty, fotografie, logo, produkty
-  a obchodné údaje. Reklamovať je možné technickú nefunkčnosť služby
-  alebo rozpor s objednaným rozsahom. Za reklamáciu sa nepovažuje
-  subjektívna zmena názoru po schválení webu, zmena obchodného zámeru
-  klienta alebo požiadavka na funkcie mimo dohodnutého balíka.
-</div>
+        <div className="mt-5 rounded-3xl border border-white/10 bg-black/40 p-5 text-sm leading-7 text-slate-400">
+          Klient vlastní svoj dodaný obsah: texty, fotografie, logo, produkty a obchodné údaje. Reklamovať je možné technickú nefunkčnosť služby alebo rozpor s objednaným rozsahom. Za reklamáciu sa nepovažuje subjektívna zmena názoru po schválení webu, zmena obchodného zámeru klienta alebo požiadavka na funkcie mimo dohodnutého balíka.
+        </div>
       </section>
 
       <section id="kontakt" className="relative z-10 mx-auto max-w-6xl px-5 py-24">
@@ -1119,10 +735,58 @@ služby Lech-Web.</p>
         </div>
       </section>
 
+
+      <section id="pravne" className="relative z-10 mx-auto max-w-7xl px-5 py-20">
+        <div className="mb-12 text-center">
+          <div className="mb-3 text-sm font-black uppercase tracking-[0.35em] text-cyan-300">Právne informácie</div>
+          <h2 className="text-4xl font-black sm:text-5xl">Jasné pravidlá prenájmu webu.</h2>
+          <p className="mx-auto mt-4 max-w-3xl text-slate-300">
+            Lech-Web je digitálna služba na mesačné predplatné. Web vytvoríme bez vstupnej platby,
+            zákazník má 14 dní skúšobnú dobu zdarma a po jej skončení sa služba fakturuje vopred.
+          </p>
+        </div>
+
+        <div className="grid gap-5 lg:grid-cols-3">
+          <div className="rounded-[2rem] border border-cyan-300/20 bg-cyan-300/10 p-6">
+            <div className="text-sm font-black uppercase tracking-[0.25em] text-cyan-300">Obchodné podmienky</div>
+            <h3 className="mt-4 text-2xl font-black">Prenájom digitálnej služby</h3>
+            <div className="mt-4 space-y-3 text-sm leading-7 text-slate-300">
+              <p>Prevádzkovateľom služby je Stavby1 s.r.o., Kúpeľná 4, 080 01 Prešov, IČO: 52533778, DIČ: 2121057224. Poskytovateľ nie je platiteľom DPH.</p>
+              <p>Zdrojový kód, dizajnové šablóny, administračný systém a technické riešenie ostávajú vlastníctvom poskytovateľa.</p>
+              <p>Klient počas aktívneho predplatného získava právo používať web vytvorený v systéme Lech-Web.</p>
+            </div>
+          </div>
+
+          <div className="rounded-[2rem] border border-fuchsia-300/20 bg-fuchsia-300/10 p-6">
+            <div className="text-sm font-black uppercase tracking-[0.25em] text-fuchsia-300">Platby a skúška</div>
+            <h3 className="mt-4 text-2xl font-black">14 dní zdarma</h3>
+            <div className="mt-4 space-y-3 text-sm leading-7 text-slate-300">
+              <p>Zákazník môže službu vyskúšať 14 dní bez poplatku. Ak počas skúšobnej doby službu ukončí, nič neplatí.</p>
+              <p>Po skúšobnej dobe sa služba fakturuje vždy vopred, minimálne na jeden mesiac.</p>
+              <p>Pri ročnej platbe môže byť poskytnutá zľava 10 %, pri dvojročnej platbe zľava 20 %, ak nie je dohodnuté inak.</p>
+            </div>
+          </div>
+
+          <div className="rounded-[2rem] border border-lime-300/20 bg-lime-300/10 p-6">
+            <div className="text-sm font-black uppercase tracking-[0.25em] text-lime-300">Obsah a reklamácie</div>
+            <h3 className="mt-4 text-2xl font-black">Klient vlastní svoj obsah</h3>
+            <div className="mt-4 space-y-3 text-sm leading-7 text-slate-300">
+              <p>Klient vlastní dodané texty, fotografie, logo, produkty, cenníky a obchodné údaje.</p>
+              <p>Reklamovať je možné technickú nefunkčnosť služby alebo rozpor s dohodnutým rozsahom.</p>
+              <p>Za reklamáciu sa nepovažuje subjektívna zmena názoru po schválení webu alebo požiadavka na funkcie mimo balíka.</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-6 rounded-[2rem] border border-white/10 bg-black/45 p-6 text-sm leading-7 text-slate-400">
+          <strong className="text-white">Ochrana osobných údajov:</strong> osobné údaje z kontaktného formulára sa používajú na vybavenie dopytu, komunikáciu, fakturáciu a plnenie zmluvy. Pri klientoch s e-shopom môže byť potrebné doplniť samostatné GDPR a cookies pravidlá podľa konkrétneho riešenia, analytiky, reklám a platobných/dopravných napojení.
+        </div>
+      </section>
+
       <footer className="relative z-10 border-t border-white/10 px-5 py-10">
         <div className="mx-auto flex max-w-7xl flex-col justify-between gap-6 text-sm text-slate-400 md:flex-row md:items-center">
           <div><div className="text-xl font-black text-white">Lech<span className="text-cyan-300">-</span><span className="text-fuchsia-300">Web</span></div><div className="mt-2">Luxusné neon AI weby a e-shopy na mesačné predplatné.</div></div>
-          <div className="flex flex-wrap gap-5"><a href="#sablony" className="hover:text-cyan-300">Šablóny</a><a href="#funkcie" className="hover:text-cyan-300">Funkcie</a><a href="#cennik" className="hover:text-cyan-300">Cenník</a><a href="#kontakt" className="hover:text-cyan-300">Kontakt</a></div>
+          <div className="flex flex-wrap gap-5"><a href="#sablony" className="hover:text-cyan-300">Šablóny</a><a href="#ukazky" className="hover:text-cyan-300">Ukážky</a><a href="#funkcie" className="hover:text-cyan-300">Funkcie</a><a href="#cennik" className="hover:text-cyan-300">Cenník</a><a href="#pravne" className="hover:text-cyan-300">Podmienky</a><a href="#kontakt" className="hover:text-cyan-300">Kontakt</a></div>
         </div>
       </footer>
     </main>
