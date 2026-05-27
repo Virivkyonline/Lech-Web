@@ -21,16 +21,76 @@ import {
 } from "lucide-react";
 
 const templates = [
-  { name: "Stavebná firma", text: "Pre stavebníkov, kontajnery, garáže, montáže a technické firmy." },
-  { name: "E-shop oblečenie", text: "Moderný predaj módy, kolekcií, doplnkov a prémiových produktov." },
-  { name: "Autoservis", text: "Servis, pneuservis, detailing, požičovňa alebo predaj áut." },
-  { name: "Beauty salón", text: "Kozmetika, nechty, kaderníctvo, masáže a estetické služby." },
-  { name: "Reštaurácia", text: "Menu, denné menu, rezervácie, donáška a gastro prezentácia." },
-  { name: "Ubytovanie", text: "Apartmány, penzióny, chaty, hotely a rezervácie pobytu." },
-  { name: "Reality", text: "Ponuky nehnuteľností, developeri, makléri a predaj domov." },
-  { name: "Fitness", text: "Tréneri, výživa, wellness, fyzio a predaj programov." },
-  { name: "Technika", text: "Elektronika, náradie, príslušenstvo a technické produkty." },
-  { name: "Landing page", text: "Jedna silná stránka pre reklamu, dopyty a rýchly predaj." },
+  {
+    name: "Stavebná firma",
+    tag: "Najlepšie pre remeslá",
+    text: "Pre stavebné firmy, kontajnery, garáže, montáže, strechy, ploty a technické služby.",
+    forWho: "Stavebníci, montážnici, predajcovia kontajnerov",
+    includes: ["Služby", "Realizácie", "Dopytový formulár"],
+  },
+  {
+    name: "E-shop oblečenie",
+    tag: "Móda a kolekcie",
+    text: "Luxusný predajný vzhľad pre oblečenie, doplnky, kolekcie, butik alebo prémiovú značku.",
+    forWho: "Butiky, módne značky, predajcovia oblečenia",
+    includes: ["Kolekcie", "Produkty", "Lookbook"],
+  },
+  {
+    name: "Autoservis",
+    tag: "Rýchle dopyty",
+    text: "Silný web pre autoservis, pneuservis, detailing, požičovňu alebo predaj áut.",
+    forWho: "Autoservisy, pneuservisy, detailing centrá",
+    includes: ["Služby", "Cenník", "Objednávka termínu"],
+  },
+  {
+    name: "Beauty salón",
+    tag: "Luxusný vzhľad",
+    text: "Moderný neónový web pre kozmetiku, nechty, kaderníctvo, masáže a estetické služby.",
+    forWho: "Salóny krásy, kozmetika, wellness",
+    includes: ["Služby", "Cenník", "Rezervácia"],
+  },
+  {
+    name: "Reštaurácia",
+    tag: "Chuť predáva",
+    text: "Predajný web pre reštaurácie, kaviarne, bistrá, donášku a denné menu.",
+    forWho: "Gastro prevádzky, kaviarne, donáška",
+    includes: ["Menu", "Rezervácia", "Otváracie hodiny"],
+  },
+  {
+    name: "Ubytovanie",
+    tag: "Rezervácie",
+    text: "Atmosférický web pre apartmány, penzióny, chaty, hotely a krátkodobé ubytovanie.",
+    forWho: "Apartmány, penzióny, chaty, hotely",
+    includes: ["Izby", "Galéria", "Rezervácia"],
+  },
+  {
+    name: "Reality",
+    tag: "Prémiový predaj",
+    text: "Web pre realitných maklérov, developerov, prenájmy a predaj nehnuteľností.",
+    forWho: "Makléri, developeri, realitné kancelárie",
+    includes: ["Ponuky", "Detail nehnuteľnosti", "Kontakt"],
+  },
+  {
+    name: "Fitness",
+    tag: "Energia a výkon",
+    text: "Web pre trénerov, výživových poradcov, wellness, fyzio a športové programy.",
+    forWho: "Tréneri, fyzio, wellness, fitness centrá",
+    includes: ["Programy", "Cenník", "Konzultácia"],
+  },
+  {
+    name: "Technika",
+    tag: "Čistý predaj",
+    text: "Moderný web alebo e-shop pre elektroniku, náradie, príslušenstvo a technické produkty.",
+    forWho: "Technické obchody, predajcovia náradia",
+    includes: ["Produkty", "Parametre", "Dopyt"],
+  },
+  {
+    name: "Landing page",
+    tag: "Na reklamu",
+    text: "Jedna silná predajná stránka pre Facebook, Google reklamu, kampaň alebo špeciálnu ponuku.",
+    forWho: "Reklamy, kampane, rýchly predaj",
+    includes: ["Hero", "Výhody", "Formulár"],
+  },
 ];
 
 const features = [
@@ -242,25 +302,85 @@ export default function App() {
         </div>
       </section>
 
-      <section id="sablony" className="relative z-10 mx-auto max-w-7xl px-5 py-20">
-        <div className="mb-12 flex flex-col justify-between gap-6 md:flex-row md:items-end">
-          <div>
-            <div className="mb-3 text-sm font-black uppercase tracking-[0.35em] text-fuchsia-300">Neon šablóny</div>
-            <h2 className="text-4xl font-black sm:text-5xl">10 šablón, ktoré nevyzerajú ako lacná kópia.</h2>
-          </div>
-          <p className="max-w-md text-slate-300">Každá šablóna bude mať homepage, služby alebo produkty, detail, kontakt a mobilnú verziu. Cieľ je jeden: zákazník musí cítiť profesionálnu značku.</p>
-        </div>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-          {templates.map((item, index) => (
-            <div key={item.name} className="group rounded-[1.6rem] border border-white/10 bg-black/40 p-5 transition hover:-translate-y-1 hover:border-fuchsia-300 hover:bg-fuchsia-400/10 hover:shadow-[0_0_35px_rgba(217,70,239,0.35)]">
-              <div className="mb-5 text-sm font-black text-cyan-300">{String(index + 1).padStart(2, "0")}</div>
-              <div className="text-lg font-black">{item.name}</div>
-              <p className="mt-3 text-sm leading-6 text-slate-400">{item.text}</p>
-              <div className="mt-5 h-1 rounded-full bg-gradient-to-r from-cyan-300 via-fuchsia-400 to-violet-400 opacity-60 transition group-hover:opacity-100" />
+      <section
+  id="sablony"
+  className="relative z-10 mx-auto max-w-7xl px-5 py-20"
+>
+  <div className="mb-12 flex flex-col justify-between gap-6 md:flex-row md:items-end">
+    <div>
+      <div className="mb-3 text-sm font-black uppercase tracking-[0.35em] text-fuchsia-300">
+        Neon šablóny
+      </div>
+
+      <h2 className="text-4xl font-black sm:text-5xl">
+        10 šablón, ktoré predávajú skôr, než zákazník začne čítať.
+      </h2>
+    </div>
+
+    <p className="max-w-md text-slate-300">
+      Každá šablóna je pripravená ako predajný systém: prvý dojem,
+      dôvera, jasná ponuka a tlačidlo na akciu. Žiadna lacná kópia.
+    </p>
+  </div>
+
+  <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+    {templates.map((item, index) => (
+      <div
+        key={item.name}
+        className="group relative overflow-hidden rounded-[2rem] border border-white/10 bg-black/45 p-6 transition hover:-translate-y-1 hover:border-cyan-300/70 hover:shadow-[0_0_45px_rgba(34,211,238,0.25)]"
+      >
+        <div className="absolute -right-12 -top-12 h-32 w-32 rounded-full bg-cyan-300/10 blur-3xl transition group-hover:bg-cyan-300/25" />
+        <div className="absolute -bottom-12 -left-12 h-32 w-32 rounded-full bg-fuchsia-400/10 blur-3xl transition group-hover:bg-fuchsia-400/25" />
+
+        <div className="relative">
+          <div className="mb-5 flex items-center justify-between gap-4">
+            <div className="rounded-full bg-cyan-300 px-3 py-1 text-xs font-black text-black shadow-[0_0_25px_rgba(34,211,238,0.65)]">
+              {item.tag}
             </div>
-          ))}
+
+            <div className="text-sm font-black text-fuchsia-300">
+              {String(index + 1).padStart(2, "0")}
+            </div>
+          </div>
+
+          <h3 className="text-2xl font-black">{item.name}</h3>
+
+          <p className="mt-4 min-h-20 text-sm leading-7 text-slate-300">
+            {item.text}
+          </p>
+
+          <div className="mt-5 rounded-2xl border border-white/10 bg-white/[0.05] p-4">
+            <div className="text-xs font-black uppercase tracking-[0.22em] text-cyan-300">
+              Pre koho
+            </div>
+            <div className="mt-2 text-sm text-slate-300">
+              {item.forWho}
+            </div>
+          </div>
+
+          <div className="mt-5 flex flex-wrap gap-2">
+            {item.includes.map((feature) => (
+              <span
+                key={feature}
+                className="rounded-full border border-fuchsia-300/25 bg-fuchsia-300/10 px-3 py-1 text-xs font-bold text-fuchsia-100"
+              >
+                {feature}
+              </span>
+            ))}
+          </div>
+
+          <a
+            href="#kontakt"
+            className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-white px-5 py-4 text-sm font-black text-black transition hover:bg-cyan-300 hover:shadow-[0_0_35px_rgba(34,211,238,0.75)]"
+          >
+            Chcem túto šablónu
+            <ArrowRight className="h-4 w-4" />
+          </a>
         </div>
-      </section>
+      </div>
+    ))}
+  </div>
+</section>
 
       <section id="cennik" className="relative z-10 mx-auto max-w-7xl px-5 py-20">
         <div className="mb-12 text-center">
