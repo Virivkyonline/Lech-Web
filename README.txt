@@ -1,25 +1,21 @@
-LECH-WEB SITE SAVE HARD FIX
+LECH-WEB PUBLIC TEMPLATE RENDERER
 
-Konzola ukazuje, ze frontend vola:
-POST /api/site/save
-
-Tento ZIP pridava presne tento endpoint:
-functions/api/site/save.js
-
-Endpoint nikdy nevracia tvrdu 500 chybu, ale JSON s detailom.
-
-Po nahrati a deployi otvor:
-https://lech-web.pages.dev/api/site/save
-
-Ak vidis JSON:
-endpoint: /api/site/save
-kvBindingFound: true
-kvWriteOk: true
-
-tak endpoint je nasadeny a ukladanie ma ist.
-
-Subory:
-functions/api/site/save.js
-functions/api/builder/save.js
-functions/api/builder.js
+Tento ZIP mení verejný web:
 functions/site/[slug].js
+
+Namiesto malej testovacej kartičky bude /site/skuska-s-r-o zobrazovať plnohodnotnú luxusnú neónovú šablónu:
+- hero sekcia
+- služby
+- výhody
+- kontakt
+- CTA tlačidlá
+- responzívny dizajn
+- automatický vzhľad podľa typu šablóny
+
+Nahraď:
+C:\Users\admin\Desktop\lech-web\functions\site\[slug].js
+
+Potom:
+git add .
+git commit -m "Improve public site template renderer"
+git push
