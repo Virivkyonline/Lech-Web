@@ -1,70 +1,239 @@
-import { json, getCorsResponse, isActiveLicense, randomId } from "../_utils.js";
+
+function h() {
+  return {
+    "content-type": "application/json; charset=utf-8",
+    "access-control-allow-origin": "*",
+    "access-control-allow-methods": "GET,POST,OPTIONS",
+    "access-control-allow-headers": "content-type,authorization,x-admin-pin",
+  };
+}
+
+function j(data, status = 200) {
+  return new Response(JSON.stringify(data, null, 2), {
+    status,
+    headers: h(),
+  });
+}
+
+function store(env) {
+  return env.LECHWEB_KV || env.LICENSE_KV || env.KV || env.USERS || null;
+}
+
+async function getJson(kv, key) {
+  const raw = await kv.get(key);
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
+async function putJson(kv, key, value) {
+  await kv.put(key, JSON.stringify(value));
+}
+
+function email(v) {
+  return String(v || "").trim().toLowerCase();
+}
+
+function slugify(v) {
+  return String(v || "")
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9-]+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+function active(acc) {
+  if (!acc) return false;
+  if (acc.status === "blocked" || acc.status === "suspended") return false;
+  if (acc.status === "active") return true;
+  const now = Date.now();
+  const trial = acc.trialUntil ? Date.parse(acc.trialUntil) : 0;
+  const paid = acc.paidUntil ? Date.parse(acc.paidUntil) : 0;
+  return trial > now || paid > now;
+}
+
+function pub(acc) {
+  const x = { ...acc };
+  delete x.password;
+  return x;
+}
+
+async function indexAccount(kv, acc) {
+  await putJson(kv, "user:" + acc.email, acc);
+  await putJson(kv, "account:" + acc.id, acc);
+
+  const list = (await getJson(kv, "accounts:index")) || [];
+  const row = {
+    id: acc.id,
+    email: acc.email,
+    companyName: acc.companyName,
+    plan: acc.plan,
+    template: acc.template,
+    status: acc.status,
+    trialUntil: acc.trialUntil,
+    paidUntil: acc.paidUntil || null,
+    source: acc.source || "lech-web",
+    createdAt: acc.createdAt,
+    updatedAt: new Date().toISOString(),
+    website: acc.website || null,
+  };
+
+  const next = list.some((a) => a.id === acc.id)
+    ? list.map((a) => (a.id === acc.id ? row : a))
+    : [row, ...list];
+
+  await putJson(kv, "accounts:index", next.slice(0, 500));
+}
 
 export async function onRequestOptions() {
-  return getCorsResponse();
+  return new Response(null, { status: 204, headers: h() });
+}
+
+export async function onRequestGet({ env }) {
+  const kv = store(env);
+  let ok = false;
+  let err = null;
+  if (kv) {
+    try {
+      await kv.put("site-save-health", new Date().toISOString());
+      ok = true;
+    } catch (e) {
+      err = String(e && e.message ? e.message : e);
+    }
+  }
+
+  return j({
+    success: true,
+    endpoint: "/api/site/save",
+    kvBindingFound: Boolean(kv),
+    kvWriteOk: ok,
+    kvError: err,
+    note: "Ak toto vidis, endpoint /api/site/save je nasadeny.",
+  });
 }
 
 export async function onRequestPost({ request, env }) {
   try {
-    const body = await request.json();
-    const accountId = String(body.accountId || "").trim();
-    const slug = normalizeSlug(body.slug || "");
-    const title = String(body.title || "").trim();
-    const headline = String(body.headline || "").trim();
-    const subheadline = String(body.subheadline || "").trim();
-    const phone = String(body.phone || "").trim();
-    const email = String(body.email || "").trim();
-    const primaryCta = String(body.primaryCta || "Nezáväzný dopyt").trim();
-    const template = String(body.template || "Stavebná firma").trim();
-    const services = String(body.servicesText || "")
-      .split("\n")
-      .map((item) => item.trim())
-      .filter(Boolean)
-      .slice(0, 8);
-
-    if (!accountId || !slug || !title || !headline) {
-      return json({ success: false, error: "Vyplňte accountId, URL názov, názov firmy a hlavný nadpis." }, 400);
+    const kv = store(env);
+    if (!kv) {
+      return j({
+        success: false,
+        error: "Chyba KV binding LECHWEB_KV.",
+      });
     }
 
-    const account = await env.DB.prepare("SELECT * FROM accounts WHERE id = ?").bind(accountId).first();
-    if (!account) return json({ success: false, error: "Účet neexistuje." }, 404);
-    if (!isActiveLicense(account)) {
-      return json({ success: false, error: "Licencia nie je aktívna. Web nie je možné uložiť ani publikovať." }, 403);
+    const body = await request.json().catch(() => null);
+    if (!body) {
+      return j({
+        success: false,
+        error: "Neplatny JSON.",
+      });
     }
 
-    const existingSlug = await env.DB.prepare("SELECT account_id FROM websites WHERE slug = ? AND account_id != ?")
-      .bind(slug, accountId)
-      .first();
-    if (existingSlug) return json({ success: false, error: "Tento URL názov už používa iný zákazník." }, 409);
+    const accountEmail = email(
+      body.accountEmail ||
+      body.userEmail ||
+      body.ownerEmail ||
+      body.customerEmail ||
+      body.loginEmail ||
+      body.email ||
+      body.siteEmail ||
+      body.publicEmail ||
+      body.contactEmail
+    );
 
-    const now = new Date().toISOString();
-    const existing = await env.DB.prepare("SELECT id FROM websites WHERE account_id = ?").bind(accountId).first();
-
-    if (existing) {
-      await env.DB.prepare(`
-        UPDATE websites
-        SET slug = ?, template = ?, title = ?, headline = ?, subheadline = ?, phone = ?, email = ?, primary_cta = ?, services_json = ?, published = 1, updated_at = ?
-        WHERE account_id = ?
-      `).bind(slug, template, title, headline, subheadline, phone, email, primaryCta, JSON.stringify(services), now, accountId).run();
-    } else {
-      await env.DB.prepare(`
-        INSERT INTO websites (id, account_id, slug, template, title, headline, subheadline, phone, email, primary_cta, services_json, published, created_at, updated_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?)
-      `).bind(randomId("web"), accountId, slug, template, title, headline, subheadline, phone, email, primaryCta, JSON.stringify(services), now, now).run();
+    if (!accountEmail) {
+      return j({
+        success: false,
+        error: "Chyba email uctu.",
+        receivedKeys: Object.keys(body),
+      });
     }
 
-    return json({ success: true, slug, publicUrl: `/site/${slug}` });
-  } catch (error) {
-    return json({ success: false, error: "Uloženie webu zlyhalo." }, 500);
+    const acc = await getJson(kv, "user:" + accountEmail);
+    if (!acc) {
+      return j({
+        success: false,
+        error: "Ucet neexistuje. Najprv sa zaregistruj rovnakym emailom.",
+        email: accountEmail,
+      });
+    }
+
+    if (!active(acc)) {
+      return j({
+        success: false,
+        error: "Licencia nie je aktivna alebo vyprsala.",
+        account: pub(acc),
+      });
+    }
+
+    const companyName = String(
+      body.companyName ||
+      body.company ||
+      body.businessName ||
+      body.name ||
+      acc.companyName ||
+      ""
+    ).trim();
+
+    let siteSlug = slugify(
+      body.slug ||
+      body.siteSlug ||
+      body.urlName ||
+      body.url ||
+      body.path ||
+      companyName ||
+      acc.companyName ||
+      "web"
+    );
+
+    if (!siteSlug) siteSlug = "web-" + Date.now();
+
+    const servicesRaw = body.services || body.serviceList || body.sluzby || "";
+
+    const site = {
+      slug: siteSlug,
+      ownerEmail: acc.email,
+      companyName: companyName || acc.companyName,
+      headline: String(body.headline || body.title || body.mainTitle || companyName || acc.companyName || "").trim(),
+      description: String(body.description || body.text || body.copy || "").trim(),
+      phone: String(body.phone || body.telefon || "").trim(),
+      email: String(body.siteEmail || body.publicEmail || body.contactEmail || acc.email).trim(),
+      services: Array.isArray(servicesRaw)
+        ? servicesRaw
+        : String(servicesRaw).split("\n").map((x) => x.trim()).filter(Boolean),
+      template: String(body.template || body.templateName || acc.template || "Stavebná firma"),
+      source: "lech-web",
+      status: "published",
+      createdAt: acc.website && acc.website.createdAt ? acc.website.createdAt : new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    acc.website = site;
+
+    await putJson(kv, "site:" + siteSlug, site);
+    await indexAccount(kv, acc);
+
+    return j({
+      success: true,
+      message: "Web bol ulozeny.",
+      url: "/site/" + siteSlug,
+      publicUrl: "https://lech-web.pages.dev/site/" + siteSlug,
+      website: site,
+      account: pub(acc),
+    });
+  } catch (e) {
+    return j({
+      success: false,
+      error: "Serverova chyba pri ukladani webu.",
+      detail: String(e && e.message ? e.message : e),
+      stack: String(e && e.stack ? e.stack : ""),
+    });
   }
-}
-
-function normalizeSlug(value) {
-  return String(value)
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 60);
 }

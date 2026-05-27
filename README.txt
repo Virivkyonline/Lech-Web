@@ -1,23 +1,25 @@
-LECH-WEB REGISTRATION DEBUG FINAL
+LECH-WEB SITE SAVE HARD FIX
 
-Tento balík robí 2 veci:
-1. endpointy už nevrátia tvrdú 500 chybu, ale čitateľnú JSON správu
-2. ak chýba KV binding, presne vypíšu, že chýba LECHWEB_KV
+Konzola ukazuje, ze frontend vola:
+POST /api/site/save
 
-Nahraď súbory:
-functions/api/auth/register.js
-functions/api/auth/login.js
-functions/api/health.js
-functions/api/admin/licenses.js
+Tento ZIP pridava presne tento endpoint:
+functions/api/site/save.js
 
-Po deployi otvor:
-https://lech-web.pages.dev/api/health
+Endpoint nikdy nevracia tvrdu 500 chybu, ale JSON s detailom.
 
-Ak uvidíš:
-kvBindingFound: false
+Po nahrati a deployi otvor:
+https://lech-web.pages.dev/api/site/save
 
-tak musíš v Cloudflare nastaviť:
-Settings -> Bindings -> Add -> KV namespace
-Variable name: LECHWEB_KV
+Ak vidis JSON:
+endpoint: /api/site/save
+kvBindingFound: true
+kvWriteOk: true
 
-Bez toho licencia a registrácia nemôže fungovať.
+tak endpoint je nasadeny a ukladanie ma ist.
+
+Subory:
+functions/api/site/save.js
+functions/api/builder/save.js
+functions/api/builder.js
+functions/site/[slug].js
