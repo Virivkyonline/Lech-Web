@@ -266,7 +266,11 @@ export default function App() {
         <div className="mb-12 text-center">
           <div className="mb-3 text-sm font-black uppercase tracking-[0.35em] text-lime-300">Cenník</div>
           <h2 className="text-4xl font-black sm:text-5xl">Moderný web bez vstupnej platby.</h2>
-          <p className="mx-auto mt-4 max-w-2xl text-slate-300">Web vytvoríme bez vstupnej platby. Platíte mesačnú prevádzku, servis, hosting a starostlivosť. Zdrojový kód, systém a šablóny ostávajú súčasťou služby Lech-Web.</p>
+          <p className="mx-auto mt-4 max-w-2xl text-slate-300">Web vytvoríme bez vstupnej platby a zákazník má 14 dní skúšobnú dobu
+zadarmo. Po skúšobnej dobe sa služba fakturuje vždy vopred minimálne
+na 1 mesiac. Pri ročnej platbe získate zľavu 10 %, pri dvojročnej
+platbe zľavu 20 %. Zdrojový kód, systém a šablóny ostávajú súčasťou
+služby Lech-Web.</p>
         </div>
         <div className="grid gap-5 lg:grid-cols-3">
           {plans.map((plan) => (
@@ -286,9 +290,46 @@ export default function App() {
             </div>
           ))}
         </div>
-        <div className="mt-8 rounded-3xl border border-white/10 bg-black/40 p-5 text-sm leading-7 text-slate-400">
-          Web je poskytovaný ako prenájom služby Lech-Web. Zdrojový kód, dizajnové šablóny, administračný systém a technické riešenie ostávajú vlastníctvom Lech-Web. Klient vlastní svoj dodaný obsah: texty, fotografie, logo, produkty a obchodné údaje.
-        </div>
+        <div className="mt-8 grid gap-4 md:grid-cols-3">
+  <div className="rounded-3xl border border-lime-300/20 bg-lime-300/10 p-5">
+    <div className="text-lg font-black text-lime-300">
+      14 dní zadarmo
+    </div>
+    <p className="mt-3 text-sm leading-7 text-slate-300">
+      Zákazník si môže službu vyskúšať 14 dní bez poplatku. Ak službu
+      počas skúšobnej doby ukončí, nič neplatí.
+    </p>
+  </div>
+
+  <div className="rounded-3xl border border-cyan-300/20 bg-cyan-300/10 p-5">
+    <div className="text-lg font-black text-cyan-300">
+      Platba vopred
+    </div>
+    <p className="mt-3 text-sm leading-7 text-slate-300">
+      Po skúšobnej dobe sa predplatné fakturuje vždy vopred, minimálne
+      na 1 mesiac. Ročná platba má zľavu 10 %, dvojročná platba 20 %.
+    </p>
+  </div>
+
+  <div className="rounded-3xl border border-fuchsia-300/20 bg-fuchsia-300/10 p-5">
+    <div className="text-lg font-black text-fuchsia-300">
+      Prenájom služby
+    </div>
+    <p className="mt-3 text-sm leading-7 text-slate-300">
+      Web je poskytovaný ako digitálna služba Lech-Web. Zdrojový kód,
+      šablóny, systém a technické riešenie ostávajú vlastníctvom
+      poskytovateľa.
+    </p>
+  </div>
+</div>
+
+<div className="mt-5 rounded-3xl border border-white/10 bg-black/40 p-5 text-sm leading-7 text-slate-400">
+  Klient vlastní svoj dodaný obsah: texty, fotografie, logo, produkty
+  a obchodné údaje. Reklamovať je možné technickú nefunkčnosť služby
+  alebo rozpor s objednaným rozsahom. Za reklamáciu sa nepovažuje
+  subjektívna zmena názoru po schválení webu, zmena obchodného zámeru
+  klienta alebo požiadavka na funkcie mimo dohodnutého balíka.
+</div>
       </section>
 
       <section id="kontakt" className="relative z-10 mx-auto max-w-6xl px-5 py-24">
