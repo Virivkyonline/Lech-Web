@@ -143,17 +143,46 @@ export async function onRequestOptions() {
   return new Response(null, { status: 204, headers: corsHeaders() });
 }
 
-export async function onRequestGet({ request, env }) {
+export async function onRequestPost({ request, env }) {
   try {
     const { store, response } = requireStore(env);
     if (response) return response;
-    const url = new URL(request.url);
-    const email = cleanEmail(url.searchParams.get("email"));
-    if (!email) return json({ success: false, error: "Chýba email." }, 400);
+
+    const body = await request.json().catch(() => null);
+    if (!body) return json({ success: false, error: "Neplatný JSON." }, 400);
+
+    const email = cleanEmail(body.email || body.accountEmail || body.userEmail);
+    let slug = safeSlug(body.slug || body.siteSlug || body.urlName || body.url || "");
+    if (!email) return json({ success: false, error: "Chýba e-mail účtu." }, 400);
+    if (!slug) slug = safeSlug(body.companyName || body.company || "web");
+
     const account = await getJson(store, "user:" + email);
     if (!account) return json({ success: false, error: "Účet neexistuje." }, 404);
-    return json({ success: true, active: isActive(account), account: publicAccount(account) });
+    if (!isActive(account)) return json({ success: false, error: "Licencia nie je aktívna alebo vypršala.", account: publicAccount(account) }, 403);
+
+    const website = {
+      slug,
+      ownerEmail: email,
+      companyName: String(body.companyName || body.company || account.companyName || "").trim(),
+      headline: String(body.headline || body.title || "").trim(),
+      description: String(body.description || body.text || "").trim(),
+      phone: String(body.phone || "").trim(),
+      email: String(body.siteEmail || body.publicEmail || email).trim(),
+      services: Array.isArray(body.services) ? body.services : String(body.services || "").split("\\n").map((x) => x.trim()).filter(Boolean),
+      template: String(body.template || account.template || "Stavebná firma"),
+      source: "lech-web",
+      createdAt: account.website && account.website.createdAt ? account.website.createdAt : new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      status: "published"
+    };
+
+    account.website = website;
+
+    await putJson(store, "site:" + slug, website);
+    await indexAccount(store, account);
+
+    return json({ success: true, message: "Web bol uložený.", url: "/site/" + slug, website, account: publicAccount(account) });
   } catch (error) {
-    return json({ success: false, error: "Serverová chyba.", detail: String(error && error.message ? error.message : error) }, 500);
+    return json({ success: false, error: "Serverová chyba pri ukladaní webu.", detail: String(error && error.message ? error.message : error) }, 500);
   }
 }
