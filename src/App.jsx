@@ -317,10 +317,19 @@ export default function App() {
       </h2>
     </div>
 
-    <p className="max-w-md text-slate-300">
-      Každá šablóna je pripravená ako predajný systém: prvý dojem,
-      dôvera, jasná ponuka a tlačidlo na akciu. Žiadna lacná kópia.
-    </p>
+    <div className="max-w-md">
+      <p className="text-slate-300">
+        Každá šablóna je pripravená ako predajný systém: prvý dojem,
+        dôvera, jasná ponuka a tlačidlo na akciu. Žiadna lacná kópia.
+      </p>
+      <a
+        href="#demo-stavebna"
+        className="mt-5 inline-flex items-center gap-2 rounded-full border border-cyan-300/50 bg-cyan-300/10 px-5 py-3 text-sm font-black text-cyan-100 transition hover:bg-cyan-300 hover:text-black hover:shadow-[0_0_35px_rgba(34,211,238,0.75)]"
+      >
+        Pozrieť prvú reálnu ukážku
+        <ArrowRight className="h-4 w-4" />
+      </a>
+    </div>
   </div>
 
   <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
@@ -370,10 +379,10 @@ export default function App() {
           </div>
 
           <a
-            href="#kontakt"
+            href={index === 0 ? "#demo-stavebna" : "#kontakt"}
             className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-white px-5 py-4 text-sm font-black text-black transition hover:bg-cyan-300 hover:shadow-[0_0_35px_rgba(34,211,238,0.75)]"
           >
-            Chcem túto šablónu
+            {index === 0 ? "Pozrieť ukážku" : "Chcem túto šablónu"}
             <ArrowRight className="h-4 w-4" />
           </a>
         </div>
@@ -382,7 +391,8 @@ export default function App() {
   </div>
 </section>
 
-      <section className="relative z-10 mx-auto max-w-7xl px-5 py-20">
+      {/* DEMO ŠABLÓNA: STAVEBNÁ FIRMA */}
+      <section id="demo-stavebna" className="relative z-10 mx-auto max-w-7xl px-5 py-20 scroll-mt-24">
         <div className="mb-12 text-center">
           <div className="mb-3 text-sm font-black uppercase tracking-[0.35em] text-cyan-300">
             Demo šablóna
@@ -519,151 +529,6 @@ export default function App() {
                       </span>
                     ))}
                   </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-
-      <section className="relative z-10 mx-auto max-w-7xl px-5 py-20">
-        <div className="mb-12 text-center">
-          <div className="mb-3 text-sm font-black uppercase tracking-[0.35em] text-fuchsia-300">
-            Demo šablóna
-          </div>
-
-          <h2 className="text-4xl font-black sm:text-5xl">
-            Ukážka: Beauty, wellness a vírivky
-          </h2>
-
-          <p className="mx-auto mt-4 max-w-2xl text-slate-300">
-            Prémiová šablóna pre služby, kde rozhoduje emócia, dôvera,
-            luxusný vzhľad a rýchla rezervácia alebo dopyt.
-          </p>
-        </div>
-
-        <div className="relative overflow-hidden rounded-[2.8rem] border border-fuchsia-300/25 bg-black/50 p-5 shadow-[0_0_70px_rgba(217,70,239,0.18)]">
-          <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-fuchsia-400/25 blur-3xl" />
-          <div className="absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-cyan-300/18 blur-3xl" />
-
-          <div className="relative rounded-[2.2rem] border border-white/10 bg-[#080512] p-6 md:p-10">
-            <div className="mb-8 flex flex-col justify-between gap-5 md:flex-row md:items-center">
-              <div>
-                <div className="text-2xl font-black">
-                  AURA<span className="text-fuchsia-300">SPA</span>
-                </div>
-                <div className="text-xs uppercase tracking-[0.3em] text-slate-400">
-                  wellness / vírivky / beauty / relax
-                </div>
-              </div>
-
-              <a
-                href="#kontakt"
-                className="rounded-full bg-fuchsia-400 px-6 py-3 text-sm font-black text-black shadow-[0_0_35px_rgba(217,70,239,0.75)] transition hover:scale-105 hover:bg-white"
-              >
-                Rezervovať konzultáciu
-              </a>
-            </div>
-
-            <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
-              <div className="order-2 grid gap-4 lg:order-1">
-                <div className="rounded-[2rem] border border-fuchsia-300/20 bg-fuchsia-300/10 p-6">
-                  <div className="text-sm font-black uppercase tracking-[0.24em] text-fuchsia-300">
-                    Predajné bloky
-                  </div>
-                  <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                    {[
-                      "Luxusné služby",
-                      "Cenník balíkov",
-                      "Fotogaléria",
-                      "Rýchla rezervácia",
-                    ].map((item) => (
-                      <div
-                        key={item}
-                        className="rounded-2xl border border-white/10 bg-black/35 p-4 text-sm font-bold"
-                      >
-                        {item}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="grid gap-4 sm:grid-cols-3">
-                  {[
-                    { number: "14 dní", label: "skúšobne" },
-                    { number: "24/7", label: "online dopyty" },
-                    { number: "WOW", label: "luxusný dojem" },
-                  ].map((item) => (
-                    <div
-                      key={item.label}
-                      className="rounded-[1.6rem] border border-white/10 bg-white/[0.06] p-5 text-center"
-                    >
-                      <div className="text-3xl font-black text-fuchsia-300">
-                        {item.number}
-                      </div>
-                      <div className="mt-1 text-xs text-slate-400">
-                        {item.label}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="rounded-[2rem] border border-cyan-300/20 bg-cyan-300/10 p-6">
-                  <div className="text-sm font-black uppercase tracking-[0.24em] text-cyan-300">
-                    Ideálne pre
-                  </div>
-
-                  <div className="mt-5 flex flex-wrap gap-2">
-                    {[
-                      "Vírivky",
-                      "Sauny",
-                      "Beauty salón",
-                      "Masáže",
-                      "Wellness",
-                      "Kozmetika",
-                    ].map((item) => (
-                      <span
-                        key={item}
-                        className="rounded-full border border-white/10 bg-black/35 px-3 py-1 text-xs font-bold text-slate-200"
-                      >
-                        {item}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div className="order-1 lg:order-2">
-                <div className="mb-5 inline-flex rounded-full border border-cyan-300/30 bg-cyan-300/10 px-4 py-2 text-sm font-black text-cyan-200">
-                  Keď služba vyzerá draho, ľahšie sa predáva
-                </div>
-
-                <h3 className="text-4xl font-black leading-tight sm:text-5xl">
-                  Luxusná atmosféra, neónové svetlo a jasná cesta k rezervácii.
-                </h3>
-
-                <p className="mt-6 text-lg leading-8 text-slate-300">
-                  Táto šablóna je navrhnutá pre služby, kde zákazník kupuje
-                  pocit. Web musí vyzerať prémiovo, pokojne a zároveň dostatočne
-                  výrazne, aby si ho človek zapamätal.
-                </p>
-
-                <div className="mt-8 flex flex-col gap-4 sm:flex-row">
-                  <a
-                    href="#kontakt"
-                    className="inline-flex items-center justify-center gap-2 rounded-full bg-cyan-300 px-7 py-4 font-black text-black shadow-[0_0_45px_rgba(34,211,238,0.75)] transition hover:scale-105 hover:bg-white"
-                  >
-                    Chcem beauty/wellness šablónu
-                    <ArrowRight className="h-5 w-5" />
-                  </a>
-
-                  <a
-                    href="#sablony"
-                    className="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/5 px-7 py-4 font-black text-white hover:border-fuchsia-300 hover:text-fuchsia-200"
-                  >
-                    Späť na šablóny
-                  </a>
                 </div>
               </div>
             </div>
