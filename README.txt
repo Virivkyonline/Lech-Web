@@ -1,21 +1,52 @@
-LECH-WEB PUBLIC TEMPLATE RENDERER
+LECH-WEB CUSTOMER SITE EDITOR BACKEND
 
-Tento ZIP mení verejný web:
+Toto je ďalší krok k systému ako Shoptet/Webnode:
+- zákazník si nevypĺňa len jednu stránku
+- vie mať viac stránok
+- vie mať sekcie
+- vie mať obrázky cez URL
+- vie mať logo
+- vie meniť farbu témy
+- verejný web renderer to reálne zobrazí
+
+Súbory:
+functions/api/site/save.js
+functions/api/builder/save.js
+functions/api/builder.js
 functions/site/[slug].js
+functions/site/[slug]/[page].js
 
-Namiesto malej testovacej kartičky bude /site/skuska-s-r-o zobrazovať plnohodnotnú luxusnú neónovú šablónu:
-- hero sekcia
-- služby
-- výhody
-- kontakt
-- CTA tlačidlá
-- responzívny dizajn
-- automatický vzhľad podľa typu šablóny
+Dôležité:
+Toto zatiaľ rieši texty, stránky, sekcie a obrázky cez URL.
+Reálne nahrávanie obrázkov z počítača bude ďalší krok a potrebuje Cloudflare R2 bucket.
 
-Nahraď:
-C:\Users\admin\Desktop\lech-web\functions\site\[slug].js
-
-Potom:
-git add .
-git commit -m "Improve public site template renderer"
-git push
+Test POST príklad:
+{
+  "email": "zakaznik@email.sk",
+  "slug": "moja-firma",
+  "companyName": "Moja firma",
+  "theme": { "accent": "cyan", "logo": "https://..." },
+  "pages": [
+    {
+      "id": "home",
+      "title": "Domov",
+      "slug": "",
+      "headline": "Moderná firma",
+      "description": "Predajný popis",
+      "heroImage": "https://...",
+      "sections": [
+        { "type": "services", "title": "Služby", "items": ["Služba 1", "Služba 2"] },
+        { "type": "gallery", "title": "Galéria", "images": [{"url":"https://...","title":"Realizácia"}] },
+        { "type": "contact", "title": "Kontakt" }
+      ]
+    },
+    {
+      "id": "onas",
+      "title": "O nás",
+      "slug": "o-nas",
+      "headline": "O nás",
+      "description": "Text o firme",
+      "sections": [{ "type": "text", "title": "História", "text": "..." }]
+    }
+  ]
+}

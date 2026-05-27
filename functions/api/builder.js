@@ -9,10 +9,7 @@ function h() {
 }
 
 function j(data, status = 200) {
-  return new Response(JSON.stringify(data, null, 2), {
-    status,
-    headers: h(),
-  });
+  return new Response(JSON.stringify(data, null, 2), { status, headers: h() });
 }
 
 function store(env) {
@@ -22,11 +19,7 @@ function store(env) {
 async function getJson(kv, key) {
   const raw = await kv.get(key);
   if (!raw) return null;
-  try {
-    return JSON.parse(raw);
-  } catch {
-    return null;
-  }
+  try { return JSON.parse(raw); } catch { return null; }
 }
 
 async function putJson(kv, key, value) {
@@ -64,6 +57,74 @@ function pub(acc) {
   return x;
 }
 
+function normalizePages(body, siteSlug, companyName) {
+  let pages = [];
+
+  if (Array.isArray(body.pages)) {
+    pages = body.pages;
+  } else {
+    pages = [
+      {
+        id: "home",
+        title: "Domov",
+        slug: "",
+        headline: body.headline || body.title || companyName,
+        description: body.description || body.text || "",
+        heroImage: body.heroImage || body.image || "",
+        sections: [
+          {
+            type: "services",
+            title: "Služby",
+            items: String(body.services || body.serviceList || body.sluzby || "")
+              .split("\n")
+              .map((x) => x.trim())
+              .filter(Boolean),
+          },
+          {
+            type: "gallery",
+            title: "Galéria",
+            images: Array.isArray(body.images) ? body.images : [],
+          },
+          {
+            type: "contact",
+            title: "Kontakt",
+          },
+        ],
+      },
+    ];
+  }
+
+  return pages.map((p, index) => {
+    const title = String(p.title || (index === 0 ? "Domov" : "Stránka")).trim();
+    let pageSlug = index === 0 ? "" : slugify(p.slug || title);
+    if (p.slug === "" || p.id === "home") pageSlug = "";
+
+    const sections = Array.isArray(p.sections) ? p.sections : [];
+
+    return {
+      id: String(p.id || pageSlug || "home"),
+      title,
+      slug: pageSlug,
+      headline: String(p.headline || title || companyName).trim(),
+      description: String(p.description || "").trim(),
+      heroImage: String(p.heroImage || p.image || "").trim(),
+      sections: sections.map((s) => ({
+        type: String(s.type || "text"),
+        title: String(s.title || "").trim(),
+        text: String(s.text || "").trim(),
+        items: Array.isArray(s.items) ? s.items.map(String) : [],
+        images: Array.isArray(s.images)
+          ? s.images.map((img) =>
+              typeof img === "string"
+                ? { url: img, title: "" }
+                : { url: String(img.url || ""), title: String(img.title || "") }
+            ).filter((img) => img.url)
+          : [],
+      })),
+    };
+  });
+}
+
 async function indexAccount(kv, acc) {
   await putJson(kv, "user:" + acc.email, acc);
   await putJson(kv, "account:" + acc.id, acc);
@@ -99,9 +160,10 @@ export async function onRequestGet({ env }) {
   const kv = store(env);
   let ok = false;
   let err = null;
+
   if (kv) {
     try {
-      await kv.put("site-save-health", new Date().toISOString());
+      await kv.put("site-editor-health", new Date().toISOString());
       ok = true;
     } catch (e) {
       err = String(e && e.message ? e.message : e);
@@ -111,30 +173,21 @@ export async function onRequestGet({ env }) {
   return j({
     success: true,
     endpoint: "/api/site/save",
+    mode: "customer-site-editor",
     kvBindingFound: Boolean(kv),
     kvWriteOk: ok,
     kvError: err,
-    note: "Ak toto vidis, endpoint /api/site/save je nasadeny.",
+    supports: ["pages", "sections", "image URLs", "theme", "logo", "navigation"],
   });
 }
 
 export async function onRequestPost({ request, env }) {
   try {
     const kv = store(env);
-    if (!kv) {
-      return j({
-        success: false,
-        error: "Chyba KV binding LECHWEB_KV.",
-      });
-    }
+    if (!kv) return j({ success: false, error: "Chýba KV binding LECHWEB_KV." });
 
     const body = await request.json().catch(() => null);
-    if (!body) {
-      return j({
-        success: false,
-        error: "Neplatny JSON.",
-      });
-    }
+    if (!body) return j({ success: false, error: "Neplatný JSON." });
 
     const accountEmail = email(
       body.accountEmail ||
@@ -151,27 +204,14 @@ export async function onRequestPost({ request, env }) {
     if (!accountEmail) {
       return j({
         success: false,
-        error: "Chyba email uctu.",
+        error: "Chýba e-mail účtu. Zákazník musí byť prihlásený.",
         receivedKeys: Object.keys(body),
       });
     }
 
     const acc = await getJson(kv, "user:" + accountEmail);
-    if (!acc) {
-      return j({
-        success: false,
-        error: "Ucet neexistuje. Najprv sa zaregistruj rovnakym emailom.",
-        email: accountEmail,
-      });
-    }
-
-    if (!active(acc)) {
-      return j({
-        success: false,
-        error: "Licencia nie je aktivna alebo vyprsala.",
-        account: pub(acc),
-      });
-    }
+    if (!acc) return j({ success: false, error: "Účet neexistuje.", email: accountEmail });
+    if (!active(acc)) return j({ success: false, error: "Licencia nie je aktívna.", account: pub(acc) });
 
     const companyName = String(
       body.companyName ||
@@ -195,43 +235,51 @@ export async function onRequestPost({ request, env }) {
 
     if (!siteSlug) siteSlug = "web-" + Date.now();
 
-    const servicesRaw = body.services || body.serviceList || body.sluzby || "";
+    const theme = {
+      accent: String(body.theme?.accent || body.accent || "cyan"),
+      dark: body.theme?.dark !== false,
+      luxury: body.theme?.luxury !== false,
+      logo: String(body.logo || body.theme?.logo || ""),
+      heroImage: String(body.heroImage || body.theme?.heroImage || body.image || ""),
+    };
 
-    const site = {
+    const pages = normalizePages(body, siteSlug, companyName);
+
+    const website = {
       slug: siteSlug,
       ownerEmail: acc.email,
       companyName: companyName || acc.companyName,
-      headline: String(body.headline || body.title || body.mainTitle || companyName || acc.companyName || "").trim(),
+      headline: String(body.headline || body.title || companyName || acc.companyName || "").trim(),
       description: String(body.description || body.text || body.copy || "").trim(),
       phone: String(body.phone || body.telefon || "").trim(),
       email: String(body.siteEmail || body.publicEmail || body.contactEmail || acc.email).trim(),
-      services: Array.isArray(servicesRaw)
-        ? servicesRaw
-        : String(servicesRaw).split("\n").map((x) => x.trim()).filter(Boolean),
       template: String(body.template || body.templateName || acc.template || "Stavebná firma"),
+      theme,
+      pages,
       source: "lech-web",
       status: "published",
       createdAt: acc.website && acc.website.createdAt ? acc.website.createdAt : new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
 
-    acc.website = site;
+    acc.website = website;
 
-    await putJson(kv, "site:" + siteSlug, site);
+    await putJson(kv, "site:" + siteSlug, website);
     await indexAccount(kv, acc);
 
     return j({
       success: true,
-      message: "Web bol ulozeny.",
+      message: "Web bol uložený.",
       url: "/site/" + siteSlug,
       publicUrl: "https://lech-web.pages.dev/site/" + siteSlug,
-      website: site,
+      editModel: "pages + sections + images",
+      website,
       account: pub(acc),
     });
   } catch (e) {
     return j({
       success: false,
-      error: "Serverova chyba pri ukladani webu.",
+      error: "Serverová chyba pri ukladaní webu.",
       detail: String(e && e.message ? e.message : e),
       stack: String(e && e.stack ? e.stack : ""),
     });
