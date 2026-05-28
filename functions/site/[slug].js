@@ -1,3 +1,26 @@
+﻿function getTheme(theme) {
+  const raw = typeof theme === "string" ? theme : (theme?.accent || "lechweb");
+  const id = String(raw || "lechweb").trim().toLowerCase();
+
+  const themes = {
+    lechweb: { accent: "#67e8f9", accent2: "#e879f9", dark: "#03040a", panel: "#0f172a", glow: "rgba(103,232,249,.65)", rgb: false },
+    cyan: { accent: "#67e8f9", accent2: "#22d3ee", dark: "#03040a", panel: "#0f172a", glow: "rgba(34,211,238,.65)", rgb: false },
+    fuchsia: { accent: "#e879f9", accent2: "#67e8f9", dark: "#05030a", panel: "#14091f", glow: "rgba(232,121,249,.65)", rgb: false },
+    violet: { accent: "#a78bfa", accent2: "#e879f9", dark: "#070512", panel: "#141026", glow: "rgba(167,139,250,.65)", rgb: false },
+    emerald: { accent: "#34d399", accent2: "#67e8f9", dark: "#03110c", panel: "#082018", glow: "rgba(52,211,153,.65)", rgb: false },
+    orange: { accent: "#fb923c", accent2: "#facc15", dark: "#130902", panel: "#211006", glow: "rgba(251,146,60,.65)", rgb: false },
+
+    kawasaki: { accent: "#39ff14", accent2: "#b6ff00", dark: "#020800", panel: "#061a03", glow: "rgba(57,255,20,.78)", rgb: false },
+    acidyellow: { accent: "#fff200", accent2: "#39ff14", dark: "#0b0b00", panel: "#1a1800", glow: "rgba(255,242,0,.76)", rgb: false },
+    "acid-yellow": { accent: "#fff200", accent2: "#39ff14", dark: "#0b0b00", panel: "#1a1800", glow: "rgba(255,242,0,.76)", rgb: false },
+    sharpered: { accent: "#ff073a", accent2: "#ff7a00", dark: "#110004", panel: "#210008", glow: "rgba(255,7,58,.72)", rgb: false },
+    "sharp-red": { accent: "#ff073a", accent2: "#ff7a00", dark: "#110004", panel: "#210008", glow: "rgba(255,7,58,.72)", rgb: false },
+    rgbglow: { accent: "#00f5ff", accent2: "#ff00f5", dark: "#02020a", panel: "#09091a", glow: "rgba(0,245,255,.74)", rgb: true },
+    "rgb-glow": { accent: "#00f5ff", accent2: "#ff00f5", dark: "#02020a", panel: "#09091a", glow: "rgba(0,245,255,.74)", rgb: true }
+  };
+
+  return themes[id] || themes.lechweb;
+}
 
 function kv(env) { return env.LECHWEB_KV || env.LICENSE_KV || env.KV || env.USERS || null; }
 async function getJson(store, key) { const raw = await store.get(key); if (!raw) return null; try { return JSON.parse(raw); } catch { return null; } }
@@ -37,24 +60,24 @@ function normalize(site) {
   return {
     modules: m,
     topMenu: menuItems.length ? menuItems : [
-      { title:"Produkty", url:"#produkty" }, { title:"Akcie", url:"#produkty" }, { title:"Ako nakupovať", url:"#info" }, { title:"Kontakt", url:"#kontakt" },
+      { title:"Produkty", url:"#produkty" }, { title:"Akcie", url:"#produkty" }, { title:"Ako nakupovaĹĄ", url:"#info" }, { title:"Kontakt", url:"#kontakt" },
     ],
     benefits: visible(m.banners?.advantages).length ? visible(m.banners.advantages) : (Array.isArray(e.benefits) && e.benefits.length ? e.benefits : [
-      { title:"Darček zdarma", text:"Ku každej objednávke.", icon:"✦" },
-      { title:"Rýchle dodanie", text:"Pre produkty skladom.", icon:"↻" },
-      { title:"Na splátky", text:"Rýchlo a bezpečne.", icon:"✓" },
-      { title:"Doprava zdarma", text:"Podľa podmienok predajcu.", icon:"⌂" },
+      { title:"DarÄŤek zdarma", text:"Ku kaĹľdej objednĂˇvke.", icon:"âś¦" },
+      { title:"RĂ˝chle dodanie", text:"Pre produkty skladom.", icon:"â†»" },
+      { title:"Na splĂˇtky", text:"RĂ˝chlo a bezpeÄŤne.", icon:"âś“" },
+      { title:"Doprava zdarma", text:"PodÄľa podmienok predajcu.", icon:"âŚ‚" },
     ]),
     sidebar: {
-      categories: categoryItems.length ? categoryItems : ["Hlavná kategória","Akčný tovar","Novinky","Najpredávanejšie","Doplnky","Výpredaj"],
+      categories: categoryItems.length ? categoryItems : ["HlavnĂˇ kategĂłria","AkÄŤnĂ˝ tovar","Novinky","NajpredĂˇvanejĹˇie","Doplnky","VĂ˝predaj"],
       contactName: s.contactName || site.companyName || "",
       contactEmail: s.contactEmail || site.email || site.siteEmail || site.ownerEmail || "",
       contactPhone: s.contactPhone || site.phone || "",
-      adviceLinks: Array.isArray(s.adviceLinks) && s.adviceLinks.length ? s.adviceLinks : [{ title:"Ako nakupovať", url:"#info" }],
-      youtube: Array.isArray(s.youtube) && s.youtube.length ? s.youtube : [{ title:"YouTube kanál", url:"#"}],
+      adviceLinks: Array.isArray(s.adviceLinks) && s.adviceLinks.length ? s.adviceLinks : [{ title:"Ako nakupovaĹĄ", url:"#info" }],
+      youtube: Array.isArray(s.youtube) && s.youtube.length ? s.youtube : [{ title:"YouTube kanĂˇl", url:"#"}],
     },
     products: Array.isArray(e.products) && e.products.length ? e.products : [
-      { id:"p1", title:"Ukážkový produkt", price:"€999", image:"", shortText:"Krátky popis produktu.", badge:"TIP", visible:true },
+      { id:"p1", title:"UkĂˇĹľkovĂ˝ produkt", price:"â‚¬999", image:"", shortText:"KrĂˇtky popis produktu.", badge:"TIP", visible:true },
     ],
     footerLinks: visible(m.links?.items).filter((x) => x.footer !== false).length
       ? visible(m.links.items).filter((x) => x.footer !== false)
@@ -74,7 +97,7 @@ function renderMenu(items) {
 function renderBenefits(items) {
   return items.map((b) => `
     <div class="benefit">
-      <div class="benefit-icon">${esc(b.icon || "✦")}</div>
+      <div class="benefit-icon">${esc(b.icon || "âś¦")}</div>
       <div><b>${esc(b.title)}</b><span>${esc(b.text)}</span></div>
     </div>
   `).join("");
@@ -83,11 +106,11 @@ function renderBenefits(items) {
 function renderSidebar(s) {
   return `
     <aside class="sidebar">
-      <section class="side-box"><h2>Kategórie</h2><ul>${s.categories.map((c)=>`<li><a href="#produkty">${esc(c)}</a></li>`).join("")}</ul></section>
-      <section class="side-box" id="kontakt"><h2>Kontakt</h2><b>${esc(s.contactName)}</b>${s.contactEmail ? `<a href="mailto:${esc(s.contactEmail)}">✉ ${esc(s.contactEmail)}</a>` : ""}${s.contactPhone ? `<a href="tel:${esc(s.contactPhone)}">☎ ${esc(s.contactPhone)}</a>` : ""}</section>
-      <section class="side-box"><h2>Vyhľadávanie</h2><div class="search"><input id="productSearch" placeholder="Názov tovaru..." oninput="filterProducts()"><button onclick="filterProducts()">→</button></div></section>
+      <section class="side-box"><h2>KategĂłrie</h2><ul>${s.categories.map((c)=>`<li><a href="#produkty">${esc(c)}</a></li>`).join("")}</ul></section>
+      <section class="side-box" id="kontakt"><h2>Kontakt</h2><b>${esc(s.contactName)}</b>${s.contactEmail ? `<a href="mailto:${esc(s.contactEmail)}">âś‰ ${esc(s.contactEmail)}</a>` : ""}${s.contactPhone ? `<a href="tel:${esc(s.contactPhone)}">âŽ ${esc(s.contactPhone)}</a>` : ""}</section>
+      <section class="side-box"><h2>VyhÄľadĂˇvanie</h2><div class="search"><input id="productSearch" placeholder="NĂˇzov tovaru..." oninput="filterProducts()"><button onclick="filterProducts()">â†’</button></div></section>
       <section class="side-box"><h2>Typy a rady</h2><ul>${s.adviceLinks.map((x)=>`<li><a href="${esc(x.url||"#")}">${esc(x.title||"")}</a></li>`).join("")}</ul></section>
-      <section class="side-box"><h2>Videá YouTube</h2><ul>${s.youtube.map((x)=>`<li><a href="${esc(x.url||"#")}">${esc(x.title||"")}</a></li>`).join("")}</ul></section>
+      <section class="side-box"><h2>VideĂˇ YouTube</h2><ul>${s.youtube.map((x)=>`<li><a href="${esc(x.url||"#")}">${esc(x.title||"")}</a></li>`).join("")}</ul></section>
     </aside>
   `;
 }
@@ -98,7 +121,7 @@ function productBadge(p) {
   if (p.flagAkcia || p.akcia || p.oldPrice) flags.push("AKCIA");
   if (p.flagNovinka || p.novinka) flags.push("NOVINKA");
   if (p.flagTip || p.tip) flags.push("TIP");
-  if (p.flagVypredaj || p.vypredaj) flags.push("VÝPREDAJ");
+  if (p.flagVypredaj || p.vypredaj) flags.push("VĂťPREDAJ");
   return [...new Set(flags)].map((x)=>`<span>${esc(x)}</span>`).join("");
 }
 
@@ -110,7 +133,7 @@ function renderProducts(products) {
       <h3>${esc(p.title)}</h3>
       <div class="price">${p.oldPrice ? `<del>${esc(p.oldPrice)}</del>` : ""}<strong>${esc(p.price)}</strong></div>
       ${p.availability ? `<div class="availability">${esc(p.availability)}</div>` : ""}
-      <div class="product-actions"><button class="detail" type="button" onclick="addToCart(${i})">DO KOŠÍKA</button>${p.detailUrl ? `<a class="ghost-link" href="${esc(p.detailUrl)}">Detail</a>` : ""}</div>
+      <div class="product-actions"><button class="detail" type="button" onclick="addToCart(${i})">DO KOĹ ĂŤKA</button>${p.detailUrl ? `<a class="ghost-link" href="${esc(p.detailUrl)}">Detail</a>` : ""}</div>
       <p>${esc(p.shortText || "")}</p>
     </article>
   `).join("");
@@ -121,10 +144,10 @@ function renderFooter(site, links) {
     <footer class="footer">
       <div class="footer-grid">
         <div><h3>${esc(site.companyName)}</h3><p>${esc(site.description || "")}</p></div>
-        <div><h3>Informácie</h3><ul>${links.map((l)=>`<li><a href="${esc(l.url||"#")}">${esc(l.title||"")}</a></li>`).join("")}</ul></div>
+        <div><h3>InformĂˇcie</h3><ul>${links.map((l)=>`<li><a href="${esc(l.url||"#")}">${esc(l.title||"")}</a></li>`).join("")}</ul></div>
         <div><h3>Kontakt</h3><p>${esc(site.phone || "")}<br>${esc(site.email || site.siteEmail || "")}</p></div>
       </div>
-      <div class="copy">© ${new Date().getFullYear()} ${esc(site.companyName)} • Vytvorené cez Lech-Web</div>
+      <div class="copy">Â© ${new Date().getFullYear()} ${esc(site.companyName)} â€˘ VytvorenĂ© cez Lech-Web</div>
     </footer>
   `;
 }
@@ -133,10 +156,10 @@ function renderCookie(mod) {
   if (!mod?.enabled) return "";
   return `
     <div class="cookie" id="cookieBox">
-      <div>${esc(mod.bannerText || "Používame cookies.")}</div>
+      <div>${esc(mod.bannerText || "PouĹľĂ­vame cookies.")}</div>
       <div class="cookie-actions">
-        <button onclick="rejectCookies()">Odmietnuť</button>
-        <button class="accept" onclick="acceptCookies()">${esc(mod.acceptText || "Súhlasím")}</button>
+        <button onclick="rejectCookies()">OdmietnuĹĄ</button>
+        <button class="accept" onclick="acceptCookies()">${esc(mod.acceptText || "SĂşhlasĂ­m")}</button>
       </div>
     </div>
   `;
@@ -144,14 +167,14 @@ function renderCookie(mod) {
 
 export async function onRequestGet({ params, env }) {
   const store = kv(env);
-  if (!store) return new Response("KV nie je nastavené.", { status: 500 });
+  if (!store) return new Response("KV nie je nastavenĂ©.", { status: 500 });
 
   const slug = String(params.slug || "").trim().toLowerCase();
   const site = await getJson(store, "site:" + slug);
   if (!site) return new Response("Web neexistuje.", { status: 404 });
 
   const acc = await getJson(store, "user:" + String(site.ownerEmail || "").toLowerCase());
-  if (!isActive(acc)) return new Response("Web je pozastavený. Licencia nie je aktívna.", { status: 402 });
+  if (!isActive(acc)) return new Response("Web je pozastavenĂ˝. Licencia nie je aktĂ­vna.", { status: 402 });
 
   const data = normalize(site);
   const modules = data.modules || {};
@@ -191,22 +214,22 @@ ${getTheme(site.theme).rgb ? `body{animation:rgbpulse 8s linear infinite}.logo-m
 </head>
 <body>
 <div class="page">
-  <header class="top"><a class="logo" href="/site/${esc(slug)}">${logo(site)}</a><nav class="menu">${renderMenu(data.topMenu)}</nav><div class="icons"><div>⌕</div><div>♙</div><button class="cart-btn" type="button" onclick="openCart()">🛒<span class="cart-count" id="cartCount">0</span></button></div></header>
+  <header class="top"><a class="logo" href="/site/${esc(slug)}">${logo(site)}</a><nav class="menu">${renderMenu(data.topMenu)}</nav><div class="icons"><div>âŚ•</div><div>â™™</div><button class="cart-btn" type="button" onclick="openCart()">đź›’<span class="cart-count" id="cartCount">0</span></button></div></header>
   <section class="benefits">${renderBenefits(data.benefits)}</section>
   <main class="main">
     ${renderSidebar(data.sidebar)}
     <section>
       <div class="hero"><div><h1>${esc(heroTitle)}</h1><p>${esc(heroSubtitle)}</p><div class="hero-buttons">${titlePage.button1Text ? `<a class="primary" href="${esc(titlePage.button1Url || "#produkty")}">${esc(titlePage.button1Text)}</a>` : ""}${titlePage.button2Text ? `<a href="${esc(titlePage.button2Url || "#kontakt")}">${esc(titlePage.button2Text)}</a>` : ""}</div></div></div>
-      <div class="tabs"><span>Akčný tovar</span><span>Novinky</span></div>
+      <div class="tabs"><span>AkÄŤnĂ˝ tovar</span><span>Novinky</span></div>
       <div id="produkty" class="grid">${renderProducts(data.products)}</div>
-      <article id="info" class="home"><h2>${esc(titlePage.seoTitle || site.headline || site.companyName)}</h2><p>${esc(titlePage.seoText || site.homepageText || site.description || "Sem zákazník doplní dlhý SEO text pod produktami.")}</p></article>
-      ${titlePage.actionBlock?.enabled ? `<section class="action-block"><h2>${esc(titlePage.actionBlock.title)}</h2><p>${esc(titlePage.actionBlock.text)}</p><a class="detail" href="${esc(titlePage.actionBlock.buttonUrl || "#produkty")}">${esc(titlePage.actionBlock.buttonText || "Zobraziť")}</a></section>` : ""}
+      <article id="info" class="home"><h2>${esc(titlePage.seoTitle || site.headline || site.companyName)}</h2><p>${esc(titlePage.seoText || site.homepageText || site.description || "Sem zĂˇkaznĂ­k doplnĂ­ dlhĂ˝ SEO text pod produktami.")}</p></article>
+      ${titlePage.actionBlock?.enabled ? `<section class="action-block"><h2>${esc(titlePage.actionBlock.title)}</h2><p>${esc(titlePage.actionBlock.text)}</p><a class="detail" href="${esc(titlePage.actionBlock.buttonUrl || "#produkty")}">${esc(titlePage.actionBlock.buttonText || "ZobraziĹĄ")}</a></section>` : ""}
     </section>
   </main>
   ${renderFooter(site, data.footerLinks)}
 </div>
 
-<div class="modal" id="cartModal"><div class="modal-card"><div class="modal-head"><h2>Objednávka</h2><button class="close" type="button" onclick="closeCart()">Zavrieť</button></div><div class="cart-lines" id="cartLines"></div><form class="form" onsubmit="sendOrder(event)"><input id="cName" placeholder="Meno a priezvisko" required><input id="cEmail" placeholder="E-mail"><input id="cPhone" placeholder="Telefón"><input id="cAddress" placeholder="Adresa / mesto"><textarea id="cNote" placeholder="Poznámka"></textarea><button class="submit" type="submit">Odoslať objednávku</button><div class="msg" id="cartMsg"></div></form></div></div>
+<div class="modal" id="cartModal"><div class="modal-card"><div class="modal-head"><h2>ObjednĂˇvka</h2><button class="close" type="button" onclick="closeCart()">ZavrieĹĄ</button></div><div class="cart-lines" id="cartLines"></div><form class="form" onsubmit="sendOrder(event)"><input id="cName" placeholder="Meno a priezvisko" required><input id="cEmail" placeholder="E-mail"><input id="cPhone" placeholder="TelefĂłn"><input id="cAddress" placeholder="Adresa / mesto"><textarea id="cNote" placeholder="PoznĂˇmka"></textarea><button class="submit" type="submit">OdoslaĹĄ objednĂˇvku</button><div class="msg" id="cartMsg"></div></form></div></div>
 ${renderCookie(modules.cookies)}
 <script>
 const SITE_SLUG=${slugJson};
@@ -218,9 +241,9 @@ function addToCart(index){const product=PRODUCTS[index];if(!product)return;const
 function changeQty(id,delta){const item=cart.find((x)=>x.id===id);if(!item)return;item.qty+=delta;if(item.qty<=0)cart=cart.filter((x)=>x.id!==id);updateCart();}
 function openCart(){document.getElementById("cartModal").classList.add("open");renderCart();}
 function closeCart(){document.getElementById("cartModal").classList.remove("open");}
-function renderCart(){const el=document.getElementById("cartLines");if(!el)return;if(!cart.length){el.innerHTML="<p>Košík je prázdny.</p>";return;}el.innerHTML=cart.map((item)=>'<div class="cart-line"><strong>'+safeText(item.title)+'</strong><span>'+safeText(item.price)+'</span><span class="qty"><button type="button" onclick="changeQty('+JSON.stringify(item.id)+',-1)">-</button>'+item.qty+'<button type="button" onclick="changeQty('+JSON.stringify(item.id)+',1)">+</button></span></div>').join("");}
+function renderCart(){const el=document.getElementById("cartLines");if(!el)return;if(!cart.length){el.innerHTML="<p>KoĹˇĂ­k je prĂˇzdny.</p>";return;}el.innerHTML=cart.map((item)=>'<div class="cart-line"><strong>'+safeText(item.title)+'</strong><span>'+safeText(item.price)+'</span><span class="qty"><button type="button" onclick="changeQty('+JSON.stringify(item.id)+',-1)">-</button>'+item.qty+'<button type="button" onclick="changeQty('+JSON.stringify(item.id)+',1)">+</button></span></div>').join("");}
 function filterProducts(){const q=(document.getElementById("productSearch")?.value||"").trim().toLowerCase();document.querySelectorAll(".product").forEach((card)=>{const title=card.dataset.title||"";const cat=card.dataset.category||"";card.style.display=(title.includes(q)||cat.includes(q))?"":"none";});}
-async function sendOrder(event){event.preventDefault();const msg=document.getElementById("cartMsg");if(!cart.length){msg.textContent="Košík je prázdny.";return;}msg.textContent="Odosielam...";const payload={siteSlug:SITE_SLUG,items:cart,customer:{name:document.getElementById("cName").value,email:document.getElementById("cEmail").value,phone:document.getElementById("cPhone").value,address:document.getElementById("cAddress").value,note:document.getElementById("cNote").value}};try{const res=await fetch("/api/orders/create",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(payload)});const data=await res.json();if(!data.success)throw new Error(data.error||"Objednávka zlyhala.");cart=[];updateCart();msg.textContent="Objednávka odoslaná. Číslo: "+data.order.number;}catch(err){msg.textContent=err.message;}}
+async function sendOrder(event){event.preventDefault();const msg=document.getElementById("cartMsg");if(!cart.length){msg.textContent="KoĹˇĂ­k je prĂˇzdny.";return;}msg.textContent="Odosielam...";const payload={siteSlug:SITE_SLUG,items:cart,customer:{name:document.getElementById("cName").value,email:document.getElementById("cEmail").value,phone:document.getElementById("cPhone").value,address:document.getElementById("cAddress").value,note:document.getElementById("cNote").value}};try{const res=await fetch("/api/orders/create",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(payload)});const data=await res.json();if(!data.success)throw new Error(data.error||"ObjednĂˇvka zlyhala.");cart=[];updateCart();msg.textContent="ObjednĂˇvka odoslanĂˇ. ÄŚĂ­slo: "+data.order.number;}catch(err){msg.textContent=err.message;}}
 function acceptCookies(){localStorage.setItem("lechweb_cookie","yes");document.getElementById("cookieBox").style.display="none";}
 function rejectCookies(){localStorage.setItem("lechweb_cookie","no");document.getElementById("cookieBox").style.display="none";}
 if(document.getElementById("cookieBox") && !localStorage.getItem("lechweb_cookie")) document.getElementById("cookieBox").style.display="flex";
@@ -229,3 +252,4 @@ updateCart();
 </body></html>`;
   return new Response(html, { headers: { "content-type": "text/html; charset=utf-8" } });
 }
+
