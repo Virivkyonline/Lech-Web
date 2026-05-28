@@ -1,679 +1,227 @@
 
-function kv(env) {
-  return env.LECHWEB_KV || env.LICENSE_KV || env.KV || env.USERS || null;
-}
+function kv(env) { return env.LECHWEB_KV || env.LICENSE_KV || env.KV || env.USERS || null; }
+async function getJson(store, key) { const raw = await store.get(key); if (!raw) return null; try { return JSON.parse(raw); } catch { return null; } }
 
-async function getJson(store, key) {
-  const raw = await store.get(key);
-  if (!raw) return null;
-  try {
-    return JSON.parse(raw);
-  } catch {
-    return null;
-  }
-}
-
-function active(acc) {
+function isActive(acc) {
   if (!acc) return false;
   if (acc.status === "blocked" || acc.status === "suspended") return false;
   if (acc.status === "active") return true;
-
   const now = Date.now();
   const trial = acc.trialUntil ? Date.parse(acc.trialUntil) : 0;
   const paid = acc.paidUntil ? Date.parse(acc.paidUntil) : 0;
   return trial > now || paid > now;
 }
 
-function esc(v) {
-  return String(v || "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;");
-}
-
-function palette(theme) {
+function esc(v) { return String(v || "").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;"); }
+function accent(theme) {
   const a = String(theme?.accent || "lechweb").toLowerCase();
-
-  if (a === "cyan") return ["#67e8f9", "#0f172a", "#03040a"];
-  if (a === "fuchsia") return ["#e879f9", "#17051d", "#03040a"];
-  if (a === "violet") return ["#a78bfa", "#111027", "#03040a"];
-  if (a === "emerald") return ["#34d399", "#06251d", "#03040a"];
-  if (a === "orange") return ["#fb923c", "#2a1003", "#03040a"];
-  return ["#67e8f9", "#1e1030", "#03040a"];
+  if (a === "cyan") return "#67e8f9";
+  if (a === "fuchsia") return "#e879f9";
+  if (a === "violet") return "#a78bfa";
+  if (a === "emerald") return "#34d399";
+  if (a === "orange") return "#fb923c";
+  return "#67e8f9";
 }
 
-function logo(site) {
-  if (site.theme?.logo) {
-    return `<img class="logo-img" src="${esc(site.theme.logo)}" alt="${esc(site.companyName)}"/>`;
-  }
+function visible(items) { return (Array.isArray(items) ? items : []).filter((x) => x.visible !== false); }
 
-  return `
-    <div class="logo-mark"></div>
-    <div class="logo-text">${esc(site.companyName || "Lech-Web")}</div>
-  `;
-}
-
-function normalizeEshop(site) {
-  const oldPages = Array.isArray(site.pages) ? site.pages : [];
-  const homePage = oldPages.find((p) => !p.slug || p.id === "home") || oldPages[0] || {};
-  const oldServices = homePage.sections?.find((s) => s.type === "services")?.items || [];
-
-  const existing = site.eshop || {};
-  const sidebar = existing.sidebar || {};
-
-  const products =
-    Array.isArray(existing.products) && existing.products.length
-      ? existing.products
-      : oldServices.length
-      ? oldServices.map((name, i) => ({
-          id: "service-product-" + i,
-          title: String(name),
-          price: "",
-          oldPrice: "",
-          image: "",
-          shortText: "Popis produktu alebo služby doplníte v editore.",
-          badge: i === 0 ? "TIP" : "",
-          detailUrl: "#",
-        }))
-      : [
-          {
-            id: "product-1",
-            title: "Ukážkový produkt",
-            price: "€999",
-            oldPrice: "",
-            image: "",
-            shortText: "Krátky popis produktu. V admine doplň názov, cenu a obrázok.",
-            badge: "TIP",
-            detailUrl: "#",
-          },
-          {
-            id: "product-2",
-            title: "Druhý produkt",
-            price: "€1 499",
-            oldPrice: "",
-            image: "",
-            shortText: "Toto je ukážkový produkt v e-shop šablóne.",
-            badge: "",
-            detailUrl: "#",
-          },
-          {
-            id: "product-3",
-            title: "Akciový produkt",
-            price: "€799",
-            oldPrice: "€999",
-            image: "",
-            shortText: "Produkt v akcii so štítkom AKCIA.",
-            badge: "AKCIA",
-            detailUrl: "#",
-          },
-        ];
+function normalize(site) {
+  const e = site.eshop || {};
+  const m = site.modules || {};
+  const s = e.sidebar || {};
+  const menuItems = visible(m.menuSettings?.items).length ? visible(m.menuSettings.items) : (Array.isArray(e.topMenu) ? e.topMenu : []);
+  const categoryItems = visible(m.categoriesAdvanced?.items).length
+    ? visible(m.categoriesAdvanced.items).map((x) => x.title)
+    : (Array.isArray(s.categories) ? s.categories : []);
 
   return {
-    enabled: true,
-    topMenu:
-      Array.isArray(existing.topMenu) && existing.topMenu.length
-        ? existing.topMenu
-        : [
-            { title: "Produkty", url: "#produkty" },
-            { title: "Akcie", url: "#produkty" },
-            { title: "Ako nakupovať", url: "#info" },
-            { title: "Kontakt", url: "#kontakt" },
-          ],
-    benefits:
-      Array.isArray(existing.benefits) && existing.benefits.length
-        ? existing.benefits
-        : [
-            { title: "Darček zdarma", text: "Ku každej objednávke." },
-            { title: "Rýchle dodanie", text: "Pre produkty skladom." },
-            { title: "Na splátky", text: "Rýchlo a bezpečne." },
-            { title: "Doprava zdarma", text: "Podľa podmienok predajcu." },
-          ],
+    modules: m,
+    topMenu: menuItems.length ? menuItems : [
+      { title:"Produkty", url:"#produkty" }, { title:"Akcie", url:"#produkty" }, { title:"Ako nakupovať", url:"#info" }, { title:"Kontakt", url:"#kontakt" },
+    ],
+    benefits: visible(m.banners?.advantages).length ? visible(m.banners.advantages) : (Array.isArray(e.benefits) && e.benefits.length ? e.benefits : [
+      { title:"Darček zdarma", text:"Ku každej objednávke.", icon:"✦" },
+      { title:"Rýchle dodanie", text:"Pre produkty skladom.", icon:"↻" },
+      { title:"Na splátky", text:"Rýchlo a bezpečne.", icon:"✓" },
+      { title:"Doprava zdarma", text:"Podľa podmienok predajcu.", icon:"⌂" },
+    ]),
     sidebar: {
-      categories:
-        Array.isArray(sidebar.categories) && sidebar.categories.length
-          ? sidebar.categories
-          : ["Hlavná kategória", "Akčný tovar", "Novinky", "Najpredávanejšie", "Doplnky", "Výpredaj"],
-      contactTitle: sidebar.contactTitle || "Kontakt",
-      contactName: sidebar.contactName || site.companyName || "",
-      contactEmail: sidebar.contactEmail || site.email || site.ownerEmail || "",
-      contactPhone: sidebar.contactPhone || site.phone || "",
-      searchEnabled: sidebar.searchEnabled !== false,
-      adviceLinks:
-        Array.isArray(sidebar.adviceLinks) && sidebar.adviceLinks.length
-          ? sidebar.adviceLinks
-          : [
-              { title: "Ako nakupovať", url: "#" },
-              { title: "Obchodné podmienky", url: "#" },
-              { title: "Ochrana osobných údajov", url: "#" },
-            ],
-      youtube:
-        Array.isArray(sidebar.youtube) && sidebar.youtube.length
-          ? sidebar.youtube
-          : [{ title: "YouTube kanál", url: "#" }],
-      customBlocks: Array.isArray(sidebar.customBlocks) ? sidebar.customBlocks : [],
+      categories: categoryItems.length ? categoryItems : ["Hlavná kategória","Akčný tovar","Novinky","Najpredávanejšie","Doplnky","Výpredaj"],
+      contactName: s.contactName || site.companyName || "",
+      contactEmail: s.contactEmail || site.email || site.siteEmail || site.ownerEmail || "",
+      contactPhone: s.contactPhone || site.phone || "",
+      adviceLinks: Array.isArray(s.adviceLinks) && s.adviceLinks.length ? s.adviceLinks : [{ title:"Ako nakupovať", url:"#info" }],
+      youtube: Array.isArray(s.youtube) && s.youtube.length ? s.youtube : [{ title:"YouTube kanál", url:"#"}],
     },
-    products,
-    footerLinks:
-      Array.isArray(existing.footerLinks) && existing.footerLinks.length
-        ? existing.footerLinks
-        : [
-            { title: "Ako nakupovať", url: "#" },
-            { title: "Obchodné podmienky", url: "#" },
-            { title: "Ochrana osobných údajov", url: "#" },
-          ],
+    products: Array.isArray(e.products) && e.products.length ? e.products : [
+      { id:"p1", title:"Ukážkový produkt", price:"€999", image:"", shortText:"Krátky popis produktu.", badge:"TIP", visible:true },
+    ],
+    footerLinks: visible(m.links?.items).filter((x) => x.footer !== false).length
+      ? visible(m.links.items).filter((x) => x.footer !== false)
+      : (Array.isArray(e.footerLinks) ? e.footerLinks : []),
   };
 }
 
+function logo(site) {
+  if (site.theme?.logo) return `<img class="logo-img" src="${esc(site.theme.logo)}" alt="${esc(site.companyName)}">`;
+  return `<div class="logo-mark"></div><div class="logo-text">${esc(site.companyName || "Lech-Web")}</div>`;
+}
+
 function renderMenu(items) {
-  return (items || []).map((m) => `<a href="${esc(m.url || "#")}">${esc(m.title || "")}</a>`).join("");
+  return items.map((m) => `<a href="${esc(m.url || "#")}" ${m.newWindow ? 'target="_blank" rel="noopener"' : ""}>${esc(m.title || "")}</a>`).join("");
 }
 
 function renderBenefits(items) {
-  return (items || [])
-    .map(
-      (b) => `
-      <div class="benefit">
-        <div class="benefit-icon">✦</div>
-        <div>
-          <strong>${esc(b.title)}</strong>
-          <span>${esc(b.text)}</span>
-        </div>
-      </div>
-    `
-    )
-    .join("");
+  return items.map((b) => `
+    <div class="benefit">
+      <div class="benefit-icon">${esc(b.icon || "✦")}</div>
+      <div><b>${esc(b.title)}</b><span>${esc(b.text)}</span></div>
+    </div>
+  `).join("");
 }
 
-function renderSidebar(sidebar) {
-  const cats = (sidebar.categories || []).map((c) => `<li><a href="#">${esc(c)}</a></li>`).join("");
-  const advice = (sidebar.adviceLinks || []).map((x) => `<li><a href="${esc(x.url || "#")}">${esc(x.title || "")}</a></li>`).join("");
-  const youtube = (sidebar.youtube || []).map((x) => `<li><a href="${esc(x.url || "#")}">${esc(x.title || "")}</a></li>`).join("");
-  const blocks = (sidebar.customBlocks || [])
-    .map((b) => `<div class="side-box"><h3>${esc(b.title || "")}</h3><p>${esc(b.text || "")}</p></div>`)
-    .join("");
-
+function renderSidebar(s) {
   return `
     <aside class="sidebar">
-      <div class="side-box">
-        <h3>Kategórie</h3>
-        <ul>${cats}</ul>
-      </div>
-
-      <div class="side-box" id="kontakt">
-        <h3>${esc(sidebar.contactTitle || "Kontakt")}</h3>
-        <b>${esc(sidebar.contactName || "")}</b>
-        ${sidebar.contactEmail ? `<a href="mailto:${esc(sidebar.contactEmail)}">✉ ${esc(sidebar.contactEmail)}</a>` : ""}
-        ${sidebar.contactPhone ? `<a href="tel:${esc(sidebar.contactPhone)}">☎ ${esc(sidebar.contactPhone)}</a>` : ""}
-      </div>
-
-      ${
-        sidebar.searchEnabled !== false
-          ? `<div class="side-box"><h3>Vyhľadávanie</h3><div class="search"><input placeholder="Názov tovaru..." /><button>→</button></div></div>`
-          : ""
-      }
-
-      <div class="side-box">
-        <h3>Typy a rady</h3>
-        <ul>${advice}</ul>
-      </div>
-
-      <div class="side-box">
-        <h3>Videá YouTube</h3>
-        <ul>${youtube}</ul>
-      </div>
-
-      ${blocks}
+      <section class="side-box"><h2>Kategórie</h2><ul>${s.categories.map((c)=>`<li><a href="#produkty">${esc(c)}</a></li>`).join("")}</ul></section>
+      <section class="side-box" id="kontakt"><h2>Kontakt</h2><b>${esc(s.contactName)}</b>${s.contactEmail ? `<a href="mailto:${esc(s.contactEmail)}">✉ ${esc(s.contactEmail)}</a>` : ""}${s.contactPhone ? `<a href="tel:${esc(s.contactPhone)}">☎ ${esc(s.contactPhone)}</a>` : ""}</section>
+      <section class="side-box"><h2>Vyhľadávanie</h2><div class="search"><input id="productSearch" placeholder="Názov tovaru..." oninput="filterProducts()"><button onclick="filterProducts()">→</button></div></section>
+      <section class="side-box"><h2>Typy a rady</h2><ul>${s.adviceLinks.map((x)=>`<li><a href="${esc(x.url||"#")}">${esc(x.title||"")}</a></li>`).join("")}</ul></section>
+      <section class="side-box"><h2>Videá YouTube</h2><ul>${s.youtube.map((x)=>`<li><a href="${esc(x.url||"#")}">${esc(x.title||"")}</a></li>`).join("")}</ul></section>
     </aside>
   `;
 }
 
-function renderProducts(products) {
-  return (products || [])
-    .map(
-      (p) => `
-      <article class="product">
-        <div class="badges">
-          ${p.badge ? `<span>${esc(p.badge)}</span>` : ""}
-          ${p.oldPrice ? `<span class="sale">AKCIA</span>` : ""}
-        </div>
-
-        <div class="pimg">
-          ${p.image ? `<img src="${esc(p.image)}" alt="${esc(p.title)}" loading="lazy"/>` : `<div>Produkt</div>`}
-        </div>
-
-        <h3>${esc(p.title)}</h3>
-
-        <div class="price">
-          ${p.oldPrice ? `<del>${esc(p.oldPrice)}</del>` : ""}
-          <strong>${esc(p.price)}</strong>
-        </div>
-
-        <a class="detail" href="${esc(p.detailUrl || "#")}">DETAIL</a>
-        <p>${esc(p.shortText || "")}</p>
-      </article>
-    `
-    )
-    .join("");
+function productBadge(p) {
+  const flags = [];
+  if (p.badge) flags.push(p.badge);
+  if (p.flagAkcia || p.akcia || p.oldPrice) flags.push("AKCIA");
+  if (p.flagNovinka || p.novinka) flags.push("NOVINKA");
+  if (p.flagTip || p.tip) flags.push("TIP");
+  if (p.flagVypredaj || p.vypredaj) flags.push("VÝPREDAJ");
+  return [...new Set(flags)].map((x)=>`<span>${esc(x)}</span>`).join("");
 }
 
-function renderFooter(site, e) {
-  const links = e.footerLinks || [];
+function renderProducts(products) {
+  return products.filter((p)=>p.visible !== false && p.visibility !== "hidden").map((p, i)=>`
+    <article class="product" data-title="${esc((p.title || "").toLowerCase())}" data-category="${esc((p.category || "").toLowerCase())}">
+      <div class="badges">${productBadge(p)}</div>
+      <div class="pimg">${p.image ? `<img src="${esc(p.image)}" alt="${esc(p.title)}" loading="lazy">` : `<div>Produkt</div>`}</div>
+      <h3>${esc(p.title)}</h3>
+      <div class="price">${p.oldPrice ? `<del>${esc(p.oldPrice)}</del>` : ""}<strong>${esc(p.price)}</strong></div>
+      ${p.availability ? `<div class="availability">${esc(p.availability)}</div>` : ""}
+      <div class="product-actions"><button class="detail" type="button" onclick="addToCart(${i})">DO KOŠÍKA</button>${p.detailUrl ? `<a class="ghost-link" href="${esc(p.detailUrl)}">Detail</a>` : ""}</div>
+      <p>${esc(p.shortText || "")}</p>
+    </article>
+  `).join("");
+}
 
+function renderFooter(site, links) {
   return `
     <footer class="footer">
       <div class="footer-grid">
-        <div>
-          <h3>${esc(site.companyName)}</h3>
-          <p>${esc(site.description || "")}</p>
-        </div>
-
-        <div>
-          <h3>Informácie pre vás</h3>
-          <ul>${links.map((l) => `<li><a href="${esc(l.url || "#")}">${esc(l.title || "")}</a></li>`).join("")}</ul>
-        </div>
-
-        <div>
-          <h3>Nákupný košík</h3>
-          <div class="cart-box">0 ks / €0</div>
-        </div>
+        <div><h3>${esc(site.companyName)}</h3><p>${esc(site.description || "")}</p></div>
+        <div><h3>Informácie</h3><ul>${links.map((l)=>`<li><a href="${esc(l.url||"#")}">${esc(l.title||"")}</a></li>`).join("")}</ul></div>
+        <div><h3>Kontakt</h3><p>${esc(site.phone || "")}<br>${esc(site.email || site.siteEmail || "")}</p></div>
       </div>
-
       <div class="copy">© ${new Date().getFullYear()} ${esc(site.companyName)} • Vytvorené cez Lech-Web</div>
     </footer>
   `;
 }
 
+function renderCookie(mod) {
+  if (!mod?.enabled) return "";
+  return `
+    <div class="cookie" id="cookieBox">
+      <div>${esc(mod.bannerText || "Používame cookies.")}</div>
+      <div class="cookie-actions">
+        <button onclick="rejectCookies()">Odmietnuť</button>
+        <button class="accept" onclick="acceptCookies()">${esc(mod.acceptText || "Súhlasím")}</button>
+      </div>
+    </div>
+  `;
+}
+
 export async function onRequestGet({ params, env }) {
   const store = kv(env);
-
   if (!store) return new Response("KV nie je nastavené.", { status: 500 });
 
   const slug = String(params.slug || "").trim().toLowerCase();
   const site = await getJson(store, "site:" + slug);
-
   if (!site) return new Response("Web neexistuje.", { status: 404 });
 
   const acc = await getJson(store, "user:" + String(site.ownerEmail || "").toLowerCase());
+  if (!isActive(acc)) return new Response("Web je pozastavený. Licencia nie je aktívna.", { status: 402 });
 
-  if (!active(acc)) return new Response("Web je pozastavený. Licencia nie je aktívna.", { status: 402 });
-
-  const e = normalizeEshop(site);
-  const [accent] = palette(site.theme);
-  const hero = site.theme?.heroImage;
+  const data = normalize(site);
+  const modules = data.modules || {};
+  const titlePage = modules.titlePage || {};
+  const heroTitle = titlePage.heroTitle || site.headline || site.companyName;
+  const heroSubtitle = titlePage.heroSubtitle || site.description || "";
+  const heroImage = titlePage.heroImage || site.theme?.heroImage || "";
+  const a = accent(site.theme);
+  const productsJson = JSON.stringify(data.products || []);
+  const slugJson = JSON.stringify(slug);
 
   const html = `<!doctype html>
 <html lang="sk">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>${esc(site.companyName)}</title>
-<meta name="description" content="${esc(site.description || "")}"/>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${esc(titlePage.seoTitle || site.companyName)}</title>
+<meta name="description" content="${esc(site.description || "")}">
 <style>
-:root{
-  --a:${accent};
-  --line:rgba(255,255,255,.12);
-  --muted:#cbd5e1;
-}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{
-  margin:0;
-  background:
-    radial-gradient(circle at 12% 8%,color-mix(in srgb,var(--a) 26%,transparent),transparent 32%),
-    radial-gradient(circle at 88% 8%,rgba(232,121,249,.18),transparent 32%),
-    #03040a;
-  color:white;
-  font-family:Arial,Helvetica,sans-serif;
-}
-body:before{
-  content:"";
-  position:fixed;
-  inset:0;
-  pointer-events:none;
-  background-image:
-    linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px);
-  background-size:54px 54px;
-  mask-image:linear-gradient(to bottom,rgba(0,0,0,.85),rgba(0,0,0,.2));
-}
-a{text-decoration:none;color:inherit}
-.page{
-  position:relative;
-  width:min(1440px,calc(100% - 40px));
-  margin:0 auto;
-  min-height:100vh;
-  background:rgba(3,4,10,.82);
-  border-left:1px solid var(--line);
-  border-right:1px solid var(--line);
-}
-.top{
-  height:88px;
-  background:rgba(15,23,42,.88);
-  display:grid;
-  grid-template-columns:280px 1fr auto;
-  align-items:center;
-  border-bottom:1px solid var(--line);
-  backdrop-filter:blur(18px);
-}
-.logo{
-  height:100%;
-  display:flex;
-  align-items:center;
-  gap:14px;
-  padding:0 26px;
-  background:linear-gradient(135deg,color-mix(in srgb,var(--a) 20%,transparent),rgba(255,255,255,.03));
-}
-.logo-img{max-width:210px;max-height:70px;object-fit:contain}
-.logo-mark{
-  width:44px;
-  height:44px;
-  border-radius:16px;
-  background:linear-gradient(135deg,var(--a),#e879f9);
-  box-shadow:0 0 35px color-mix(in srgb,var(--a) 80%,transparent);
-}
-.logo-text{font-size:26px;font-weight:950;color:white}
-.menu{display:flex;gap:34px;font-weight:900}
-.menu a{color:white}
-.icons{display:flex;height:100%}
-.icons div{
-  width:72px;
-  display:grid;
-  place-items:center;
-  border-left:1px solid var(--line);
-  color:var(--a);
-  font-size:24px;
-}
-.benefits{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:22px;
-  padding:30px 36px;
-}
-.benefit{
-  display:flex;
-  gap:14px;
-  align-items:center;
-  border:1px solid var(--line);
-  border-radius:22px;
-  background:rgba(255,255,255,.045);
-  padding:18px;
-}
-.benefit-icon{
-  width:48px;
-  height:48px;
-  border-radius:15px;
-  background:var(--a);
-  color:#020617;
-  display:grid;
-  place-items:center;
-  font-weight:950;
-}
-.benefit strong{display:block}
-.benefit span{display:block;color:#cbd5e1;margin-top:3px}
-.main{
-  display:grid;
-  grid-template-columns:320px 1fr;
-  gap:32px;
-  padding:0 36px 42px;
-}
-.sidebar{
-  border-right:1px solid var(--line);
-  padding-right:28px;
-}
-.side-box{
-  border-bottom:1px solid var(--line);
-  padding:24px 0;
-}
-.side-box h3{
-  font-size:24px;
-  margin:0 0 16px;
-}
-.side-box ul{
-  list-style:none;
-  padding:0;
-  margin:0;
-  display:grid;
-  gap:10px;
-}
-.side-box a{
-  color:var(--a);
-  display:block;
-  margin-top:9px;
-}
-.side-box p{color:#cbd5e1;line-height:1.55}
-.search{
-  display:grid;
-  grid-template-columns:1fr 50px;
-  border:1px solid var(--line);
-  border-radius:12px;
-  overflow:hidden;
-}
-.search input{
-  background:white;
-  color:#111;
-  border:0;
-  padding:14px;
-}
-.search button{
-  border:0;
-  background:var(--a);
-  font-size:24px;
-  color:#020617;
-}
-.hero{
-  min-height:270px;
-  border:1px solid var(--line);
-  border-radius:26px;
-  background:${hero ? `url("${esc(hero)}") center/cover` : "linear-gradient(135deg,rgba(103,232,249,.12),rgba(232,121,249,.10))"};
-  display:flex;
-  align-items:end;
-  padding:34px;
-  margin-bottom:30px;
-}
-.hero h1{
-  font-size:46px;
-  line-height:1.05;
-  margin:0 0 12px;
-}
-.hero p{
-  font-size:18px;
-  color:#cbd5e1;
-  max-width:760px;
-}
-.tabs{
-  display:flex;
-  justify-content:center;
-  border-bottom:1px solid var(--line);
-  margin-bottom:28px;
-}
-.tabs span{
-  border:1px solid var(--line);
-  border-bottom:0;
-  padding:14px 28px;
-  font-weight:900;
-}
-.grid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:24px;
-}
-.product{
-  position:relative;
-  text-align:center;
-  border:1px solid var(--line);
-  border-radius:24px;
-  background:rgba(255,255,255,.045);
-  padding:0 18px 24px;
-  min-height:520px;
-}
-.badges{
-  position:absolute;
-  left:0;
-  top:0;
-  z-index:2;
-  display:grid;
-  gap:4px;
-}
-.badges span{
-  background:#009aa2;
-  padding:7px 13px;
-  font-size:12px;
-  font-weight:950;
-}
-.badges .sale{background:#e11d48}
-.pimg{
-  height:240px;
-  display:grid;
-  place-items:center;
-  margin-top:16px;
-}
-.pimg img{
-  max-width:100%;
-  max-height:225px;
-  object-fit:contain;
-}
-.pimg div{
-  width:100%;
-  height:210px;
-  border-radius:20px;
-  background:rgba(103,232,249,.12);
-  display:grid;
-  place-items:center;
-  color:var(--a);
-  font-size:25px;
-  font-weight:950;
-}
-.product h3{
-  font-size:17px;
-  line-height:1.35;
-  min-height:50px;
-}
-.price{
-  display:grid;
-  gap:4px;
-  margin:14px 0;
-}
-.price strong{font-size:19px}
-.price del{color:#94a3b8}
-.detail{
-  display:inline-block;
-  border:2px solid var(--a);
-  color:var(--a);
-  padding:12px 48px;
-  border-radius:10px;
-  font-weight:950;
-}
-.product p{
-  color:#cbd5e1;
-  line-height:1.5;
-}
-.home{
-  max-width:790px;
-  margin:55px auto 20px;
-  font-size:18px;
-  line-height:1.65;
-  color:#dbeafe;
-}
-.home h2{
-  font-size:38px;
-  line-height:1.1;
-  color:white;
-}
-.footer{
-  border-top:1px solid var(--line);
-  background:rgba(15,23,42,.76);
-  padding:34px;
-}
-.footer-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr 1fr;
-  gap:35px;
-}
-.footer h3{margin-top:0}
-.footer p,.footer li{color:#cbd5e1}
-.footer ul{
-  list-style:none;
-  margin:0;
-  padding:0;
-  display:grid;
-  gap:8px;
-}
-.footer a{color:var(--a)}
-.cart-box{
-  border:1px solid var(--a);
-  height:58px;
-  display:grid;
-  place-items:center;
-  color:var(--a);
-  border-radius:12px;
-}
-.copy{
-  margin-top:28px;
-  border-top:1px solid var(--line);
-  padding-top:20px;
-  color:#94a3b8;
-}
-@media(max-width:1050px){
-  .page{width:100%}
-  .top{grid-template-columns:1fr}
-  .menu{overflow:auto;padding:15px 24px}
-  .icons{display:none}
-  .benefits{grid-template-columns:1fr 1fr}
-  .main{grid-template-columns:1fr}
-  .sidebar{border-right:0;padding-right:0;order:2}
-  .grid{grid-template-columns:1fr 1fr}
-}
-@media(max-width:650px){
-  .benefits,.grid,.footer-grid{grid-template-columns:1fr}
-  .main{padding:0 18px 35px}
-  .hero h1{font-size:34px}
-}
+:root{--a:${a};--line:rgba(255,255,255,.12);--text:#f8fafc;--muted:#cbd5e1;--dark:#03040a;--panel:#0f172a}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;color:var(--text);font-family:Arial,Helvetica,sans-serif;background:radial-gradient(circle at 14% 8%,color-mix(in srgb,var(--a) 24%,transparent),transparent 30%),radial-gradient(circle at 86% 6%,rgba(232,121,249,.18),transparent 31%),linear-gradient(180deg,#05060d,#02040a)}body:before{content:"";position:fixed;inset:0;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:54px 54px;mask-image:linear-gradient(to bottom,rgba(0,0,0,.9),rgba(0,0,0,.2))}a{text-decoration:none;color:inherit}button,input,textarea{font:inherit}
+.page{position:relative;width:min(1440px,calc(100% - 40px));margin:0 auto;min-height:100vh;background:rgba(3,4,10,.82);border-left:1px solid var(--line);border-right:1px solid var(--line)}
+.top{height:88px;background:rgba(15,23,42,.88);display:grid;grid-template-columns:280px 1fr auto;align-items:center;border-bottom:1px solid var(--line);backdrop-filter:blur(18px)}.logo{height:100%;display:flex;align-items:center;gap:14px;padding:0 26px;background:linear-gradient(135deg,color-mix(in srgb,var(--a) 20%,transparent),rgba(255,255,255,.03))}.logo-img{max-width:210px;max-height:70px;object-fit:contain}.logo-mark{width:44px;height:44px;border-radius:16px;background:linear-gradient(135deg,var(--a),#e879f9);box-shadow:0 0 35px color-mix(in srgb,var(--a) 80%,transparent)}.logo-text{font-size:25px;font-weight:950}.menu{display:flex;gap:34px;font-weight:900}.icons{display:flex;height:100%}.icons div,.cart-btn{position:relative;width:72px;display:grid;place-items:center;border:0;border-left:1px solid var(--line);background:transparent;color:var(--a);font-size:22px;cursor:pointer}.cart-count{position:absolute;right:11px;top:17px;min-width:22px;height:22px;border-radius:999px;display:grid;place-items:center;background:#e879f9;color:#020617;font-size:12px;font-weight:950}
+.benefits{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;padding:30px 36px}.benefit{display:flex;gap:14px;align-items:center;border:1px solid var(--line);border-radius:22px;background:rgba(255,255,255,.045);padding:18px}.benefit-icon{width:48px;height:48px;border-radius:15px;background:var(--a);color:#020617;display:grid;place-items:center;font-weight:950}.benefit span{display:block;color:var(--muted);margin-top:3px}
+.main{display:grid;grid-template-columns:320px 1fr;gap:32px;padding:0 36px 42px}.sidebar{border-right:1px solid var(--line);padding-right:28px}.side-box{border-bottom:1px solid var(--line);padding:24px 0}.side-box h2{font-size:24px;margin:0 0 16px}.side-box ul{list-style:none;padding:0;margin:0;display:grid;gap:10px}.side-box a{display:block;color:var(--a);margin-top:9px}.search{display:grid;grid-template-columns:1fr 50px;border:1px solid var(--line);border-radius:12px;overflow:hidden}.search input{border:0;background:white;color:#111;padding:14px}.search button{border:0;background:var(--a);color:#020617;font-size:24px;cursor:pointer}
+.hero{min-height:330px;border:1px solid var(--line);border-radius:26px;background:${heroImage ? `linear-gradient(90deg,rgba(0,0,0,.75),rgba(0,0,0,.25)),url("${esc(heroImage)}") center/cover` : "linear-gradient(135deg,rgba(103,232,249,.12),rgba(232,121,249,.10))"};display:flex;align-items:end;padding:36px;margin-bottom:30px}.hero h1{font-size:54px;line-height:1.02;margin:0 0 12px;letter-spacing:-.04em}.hero p{font-size:18px;color:var(--muted);max-width:760px;line-height:1.6}.hero-buttons{display:flex;gap:12px;margin-top:18px}.hero-buttons a{display:inline-flex;border:1px solid var(--line);border-radius:14px;padding:13px 18px;font-weight:950}.hero-buttons .primary{background:var(--a);color:#020617}
+.tabs{display:flex;justify-content:center;border-bottom:1px solid var(--line);margin-bottom:28px}.tabs span{border:1px solid var(--line);border-bottom:0;padding:14px 28px;font-weight:900}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}.product{position:relative;text-align:center;border:1px solid var(--line);border-radius:24px;background:rgba(255,255,255,.045);padding:0 18px 24px;min-height:540px}.badges{position:absolute;left:0;top:0;z-index:2;display:grid;gap:4px}.badges span{background:#009aa2;padding:7px 13px;font-size:12px;font-weight:950}.pimg{height:240px;display:grid;place-items:center;margin-top:16px}.pimg img{max-width:100%;max-height:225px;object-fit:contain}.pimg div{width:100%;height:210px;border-radius:20px;background:rgba(103,232,249,.12);display:grid;place-items:center;color:var(--a);font-size:25px;font-weight:950}.product h3{font-size:17px;line-height:1.35;min-height:50px}.price{display:grid;gap:4px;margin:14px 0}.price strong{font-size:19px}.price del{color:#94a3b8}.availability{font-size:13px;color:#86efac;margin-bottom:10px}.product-actions{display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap}.detail{border:2px solid var(--a);background:var(--a);color:#020617;padding:12px 28px;border-radius:12px;font-weight:950;cursor:pointer}.ghost-link{border:1px solid var(--line);padding:12px 20px;border-radius:12px;color:var(--muted);font-weight:900}.product p{color:var(--muted);line-height:1.5}
+.home,.action-block{max-width:850px;margin:55px auto 20px;font-size:18px;line-height:1.65;color:#dbeafe}.home h2,.action-block h2{font-size:38px;line-height:1.1;color:white}.action-block{border:1px solid var(--line);border-radius:24px;background:rgba(255,255,255,.045);padding:28px}.footer{border-top:1px solid var(--line);background:rgba(15,23,42,.76);padding:34px}.footer-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:25px}.footer ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}.footer a{color:var(--a)}.copy{margin-top:22px;color:#94a3b8}
+.modal{display:none;position:fixed;inset:0;z-index:99;background:rgba(0,0,0,.72);align-items:center;justify-content:center;padding:20px}.modal.open{display:flex}.modal-card{width:min(760px,100%);max-height:92vh;overflow:auto;border:1px solid var(--line);border-radius:26px;background:#0f172a;padding:24px}.modal-head{display:flex;justify-content:space-between;gap:15px;align-items:center;border-bottom:1px solid var(--line);padding-bottom:15px}.close{background:transparent;color:white;border:1px solid var(--line);border-radius:12px;padding:10px 14px;cursor:pointer}.cart-lines{display:grid;gap:10px;margin:18px 0}.cart-line{display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center;border:1px solid var(--line);border-radius:16px;padding:12px}.qty{display:flex;gap:6px;align-items:center}.qty button{border:0;background:var(--a);color:#020617;border-radius:8px;padding:6px 10px;font-weight:950;cursor:pointer}.form{display:grid;gap:12px;margin-top:18px}.form input,.form textarea{width:100%;border:1px solid var(--line);background:#020617;color:white;border-radius:12px;padding:13px}.submit{background:var(--a);color:#020617;border:0;border-radius:14px;padding:15px;font-weight:950;cursor:pointer}.msg{margin-top:12px;color:var(--a);font-weight:900}
+.cookie{position:fixed;left:20px;right:20px;bottom:20px;z-index:110;background:#020617;color:white;border:1px solid var(--line);border-radius:18px;padding:16px;display:none;gap:14px;align-items:center;justify-content:space-between;box-shadow:0 20px 80px rgba(0,0,0,.45)}.cookie-actions{display:flex;gap:10px}.cookie button{border:1px solid var(--line);background:transparent;color:white;border-radius:12px;padding:10px 14px;cursor:pointer}.cookie .accept{background:var(--a);color:#020617}
+@media(max-width:1050px){.page{width:100%}.top{grid-template-columns:1fr}.menu{overflow:auto;padding:15px 24px}.icons{display:none}.benefits{grid-template-columns:1fr 1fr}.main{grid-template-columns:1fr}.sidebar{border-right:0;padding-right:0;order:2}.grid{grid-template-columns:1fr 1fr}.footer-grid{grid-template-columns:1fr}}@media(max-width:650px){.benefits,.grid{grid-template-columns:1fr}.main{padding:0 18px 35px}.hero h1{font-size:34px}.cookie{display:block}}
 </style>
 </head>
 <body>
 <div class="page">
-  <header class="top">
-    <a class="logo" href="/site/${esc(site.slug)}">${logo(site)}</a>
-    <nav class="menu">${renderMenu(e.topMenu)}</nav>
-    <div class="icons">
-      <div>⌕</div>
-      <div>♙</div>
-      <div>🛒</div>
-    </div>
-  </header>
-
-  <section class="benefits">${renderBenefits(e.benefits)}</section>
-
+  <header class="top"><a class="logo" href="/site/${esc(slug)}">${logo(site)}</a><nav class="menu">${renderMenu(data.topMenu)}</nav><div class="icons"><div>⌕</div><div>♙</div><button class="cart-btn" type="button" onclick="openCart()">🛒<span class="cart-count" id="cartCount">0</span></button></div></header>
+  <section class="benefits">${renderBenefits(data.benefits)}</section>
   <main class="main">
-    ${renderSidebar(e.sidebar)}
-
+    ${renderSidebar(data.sidebar)}
     <section>
-      <div class="hero">
-        <div>
-          <h1>${esc(site.headline || site.companyName)}</h1>
-          <p>${esc(site.description || "")}</p>
-        </div>
-      </div>
-
-      <div class="tabs">
-        <span>Akčný tovar</span>
-        <span>Novinky</span>
-      </div>
-
-      <div id="produkty" class="grid">${renderProducts(e.products)}</div>
-
-      <article id="info" class="home">
-        <h2>${esc(site.headline || site.companyName)}</h2>
-        <p>${esc(site.homepageText || site.description || "Sem zákazník doplní dlhý SEO text pod produktami.")}</p>
-      </article>
+      <div class="hero"><div><h1>${esc(heroTitle)}</h1><p>${esc(heroSubtitle)}</p><div class="hero-buttons">${titlePage.button1Text ? `<a class="primary" href="${esc(titlePage.button1Url || "#produkty")}">${esc(titlePage.button1Text)}</a>` : ""}${titlePage.button2Text ? `<a href="${esc(titlePage.button2Url || "#kontakt")}">${esc(titlePage.button2Text)}</a>` : ""}</div></div></div>
+      <div class="tabs"><span>Akčný tovar</span><span>Novinky</span></div>
+      <div id="produkty" class="grid">${renderProducts(data.products)}</div>
+      <article id="info" class="home"><h2>${esc(titlePage.seoTitle || site.headline || site.companyName)}</h2><p>${esc(titlePage.seoText || site.homepageText || site.description || "Sem zákazník doplní dlhý SEO text pod produktami.")}</p></article>
+      ${titlePage.actionBlock?.enabled ? `<section class="action-block"><h2>${esc(titlePage.actionBlock.title)}</h2><p>${esc(titlePage.actionBlock.text)}</p><a class="detail" href="${esc(titlePage.actionBlock.buttonUrl || "#produkty")}">${esc(titlePage.actionBlock.buttonText || "Zobraziť")}</a></section>` : ""}
     </section>
   </main>
-
-  ${renderFooter(site, e)}
+  ${renderFooter(site, data.footerLinks)}
 </div>
-</body>
-</html>`;
 
+<div class="modal" id="cartModal"><div class="modal-card"><div class="modal-head"><h2>Objednávka</h2><button class="close" type="button" onclick="closeCart()">Zavrieť</button></div><div class="cart-lines" id="cartLines"></div><form class="form" onsubmit="sendOrder(event)"><input id="cName" placeholder="Meno a priezvisko" required><input id="cEmail" placeholder="E-mail"><input id="cPhone" placeholder="Telefón"><input id="cAddress" placeholder="Adresa / mesto"><textarea id="cNote" placeholder="Poznámka"></textarea><button class="submit" type="submit">Odoslať objednávku</button><div class="msg" id="cartMsg"></div></form></div></div>
+${renderCookie(modules.cookies)}
+<script>
+const SITE_SLUG=${slugJson};
+const PRODUCTS=${productsJson};
+let cart=[];
+function safeText(value){return String(value||"").replace(/[&<>"']/g,function(ch){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch];});}
+function updateCart(){const count=cart.reduce((sum,item)=>sum+item.qty,0);const countEl=document.getElementById("cartCount");if(countEl)countEl.textContent=count;renderCart();}
+function addToCart(index){const product=PRODUCTS[index];if(!product)return;const id=String(product.id||index);const found=cart.find((item)=>item.id===id);if(found){found.qty+=1;}else{cart.push({id,title:product.title||"Produkt",price:product.price||"",image:product.image||"",qty:1});}updateCart();openCart();}
+function changeQty(id,delta){const item=cart.find((x)=>x.id===id);if(!item)return;item.qty+=delta;if(item.qty<=0)cart=cart.filter((x)=>x.id!==id);updateCart();}
+function openCart(){document.getElementById("cartModal").classList.add("open");renderCart();}
+function closeCart(){document.getElementById("cartModal").classList.remove("open");}
+function renderCart(){const el=document.getElementById("cartLines");if(!el)return;if(!cart.length){el.innerHTML="<p>Košík je prázdny.</p>";return;}el.innerHTML=cart.map((item)=>'<div class="cart-line"><strong>'+safeText(item.title)+'</strong><span>'+safeText(item.price)+'</span><span class="qty"><button type="button" onclick="changeQty('+JSON.stringify(item.id)+',-1)">-</button>'+item.qty+'<button type="button" onclick="changeQty('+JSON.stringify(item.id)+',1)">+</button></span></div>').join("");}
+function filterProducts(){const q=(document.getElementById("productSearch")?.value||"").trim().toLowerCase();document.querySelectorAll(".product").forEach((card)=>{const title=card.dataset.title||"";const cat=card.dataset.category||"";card.style.display=(title.includes(q)||cat.includes(q))?"":"none";});}
+async function sendOrder(event){event.preventDefault();const msg=document.getElementById("cartMsg");if(!cart.length){msg.textContent="Košík je prázdny.";return;}msg.textContent="Odosielam...";const payload={siteSlug:SITE_SLUG,items:cart,customer:{name:document.getElementById("cName").value,email:document.getElementById("cEmail").value,phone:document.getElementById("cPhone").value,address:document.getElementById("cAddress").value,note:document.getElementById("cNote").value}};try{const res=await fetch("/api/orders/create",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(payload)});const data=await res.json();if(!data.success)throw new Error(data.error||"Objednávka zlyhala.");cart=[];updateCart();msg.textContent="Objednávka odoslaná. Číslo: "+data.order.number;}catch(err){msg.textContent=err.message;}}
+function acceptCookies(){localStorage.setItem("lechweb_cookie","yes");document.getElementById("cookieBox").style.display="none";}
+function rejectCookies(){localStorage.setItem("lechweb_cookie","no");document.getElementById("cookieBox").style.display="none";}
+if(document.getElementById("cookieBox") && !localStorage.getItem("lechweb_cookie")) document.getElementById("cookieBox").style.display="flex";
+updateCart();
+</script>
+</body></html>`;
   return new Response(html, { headers: { "content-type": "text/html; charset=utf-8" } });
 }
