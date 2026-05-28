@@ -32,18 +32,18 @@ function getTheme(theme) {
   const id = String(raw || "lechweb").trim().toLowerCase();
 
   const themes = {
-    lechweb: { accent: "#67e8f9", accent2: "#e879f9", dark: "#03040a", panel: "#0f172a", glow: "rgba(103,232,249,.82)", rgb: false },
-    cyan: { accent: "#67e8f9", accent2: "#22d3ee", dark: "#03040a", panel: "#0f172a", glow: "rgba(34,211,238,.82)", rgb: false },
-    fuchsia: { accent: "#e879f9", accent2: "#67e8f9", dark: "#05030a", panel: "#14091f", glow: "rgba(232,121,249,.82)", rgb: false },
-    violet: { accent: "#a78bfa", accent2: "#e879f9", dark: "#070512", panel: "#141026", glow: "rgba(167,139,250,.82)", rgb: false },
-    emerald: { accent: "#34d399", accent2: "#67e8f9", dark: "#03110c", panel: "#082018", glow: "rgba(52,211,153,.82)", rgb: false },
-    orange: { accent: "#fb923c", accent2: "#facc15", dark: "#130902", panel: "#211006", glow: "rgba(251,146,60,.82)", rgb: false },
-    kawasaki: { accent: "#39ff14", accent2: "#b6ff00", dark: "#020800", panel: "#061a03", glow: "rgba(57,255,20,.96)", rgb: false },
-    acidyellow: { accent: "#fff200", accent2: "#39ff14", dark: "#0b0b00", panel: "#1a1800", glow: "rgba(255,242,0,.96)", rgb: false },
+    lechweb: { accent: "#67e8f9", accent2: "#e879f9", dark: "#03040a", panel: "#0f172a", glow: "rgba(103,232,249,.42)", rgb: false },
+    cyan: { accent: "#67e8f9", accent2: "#22d3ee", dark: "#03040a", panel: "#0f172a", glow: "rgba(34,211,238,.42)", rgb: false },
+    fuchsia: { accent: "#e879f9", accent2: "#67e8f9", dark: "#05030a", panel: "#14091f", glow: "rgba(232,121,249,.42)", rgb: false },
+    violet: { accent: "#a78bfa", accent2: "#e879f9", dark: "#070512", panel: "#141026", glow: "rgba(167,139,250,.42)", rgb: false },
+    emerald: { accent: "#34d399", accent2: "#67e8f9", dark: "#03110c", panel: "#082018", glow: "rgba(52,211,153,.42)", rgb: false },
+    orange: { accent: "#fb923c", accent2: "#facc15", dark: "#130902", panel: "#211006", glow: "rgba(251,146,60,.42)", rgb: false },
+    kawasaki: { accent: "#39ff14", accent2: "#b6ff00", dark: "#020800", panel: "#061a03", glow: "rgba(57,255,20,.50)", rgb: false },
+    acidyellow: { accent: "#fff200", accent2: "#39ff14", dark: "#0b0b00", panel: "#1a1800", glow: "rgba(255,242,0,.48)", rgb: false },
     "acid-yellow": { accent: "#fff200", accent2: "#39ff14", dark: "#0b0b00", panel: "#1a1800", glow: "rgba(255,242,0,.96)", rgb: false },
-    sharpered: { accent: "#ff073a", accent2: "#ff7a00", dark: "#110004", panel: "#210008", glow: "rgba(255,7,58,.96)", rgb: false },
+    sharpered: { accent: "#ff073a", accent2: "#ff7a00", dark: "#110004", panel: "#210008", glow: "rgba(255,7,58,.50)", rgb: false },
     "sharp-red": { accent: "#ff073a", accent2: "#ff7a00", dark: "#110004", panel: "#210008", glow: "rgba(255,7,58,.96)", rgb: false },
-    rgbglow: { accent: "#00f5ff", accent2: "#ff00f5", dark: "#02020a", panel: "#09091a", glow: "rgba(0,245,255,.92)", rgb: true },
+    rgbglow: { accent: "#00f5ff", accent2: "#ff00f5", dark: "#02020a", panel: "#09091a", glow: "rgba(0,245,255,.45)", rgb: true },
     "rgb-glow": { accent: "#00f5ff", accent2: "#ff00f5", dark: "#02020a", panel: "#09091a", glow: "rgba(0,245,255,.92)", rgb: true },
   };
 
@@ -229,6 +229,80 @@ a{text-decoration:none;color:inherit}button,input,textarea{font:inherit}.page{po
 .top,.sidebar,.hero,.product,.side-box,.benefit,.modal-card,.footer,.search,input,textarea,select,.tabs span{border-color:color-mix(in srgb,var(--a) 66%,rgba(255,255,255,.12))!important;box-shadow:0 0 0 1px color-mix(in srgb,var(--a) 42%,transparent),0 0 26px color-mix(in srgb,var(--a) 30%,transparent),inset 0 0 22px rgba(255,255,255,.03)!important}.product:hover,.benefit:hover,.hero:hover,.side-box:hover,.tabs span:hover{border-color:var(--a)!important;box-shadow:0 0 0 1px var(--a),0 0 34px var(--glow),0 0 95px color-mix(in srgb,var(--a2) 34%,transparent),inset 0 0 32px color-mix(in srgb,var(--a) 12%,transparent)!important}.logo-mark,.benefit-icon,.detail,.submit,.search button,.cart-btn,.icons div{box-shadow:0 0 18px var(--glow),0 0 54px color-mix(in srgb,var(--a) 62%,transparent)!important}.menu a:hover,.sidebar a:hover,.footer a:hover,.price strong,.availability,.logo-text,.side-box h2,.hero h1{color:var(--a)!important;text-shadow:0 0 12px color-mix(in srgb,var(--a) 70%,transparent),0 0 26px var(--glow)!important}.pimg div{border:1px solid color-mix(in srgb,var(--a) 60%,transparent)!important;box-shadow:inset 0 0 55px color-mix(in srgb,var(--a) 18%,transparent),0 0 24px color-mix(in srgb,var(--a) 20%,transparent)!important}
 ${rgbCss}
 @media(max-width:1050px){.page{width:100%}.top{grid-template-columns:1fr}.menu{overflow:auto;padding:15px 24px}.icons{display:none}.benefits{grid-template-columns:1fr 1fr}.main{grid-template-columns:1fr}.sidebar{border-right:0;padding-right:0;order:2}.grid{grid-template-columns:1fr 1fr}.footer-grid{grid-template-columns:1fr}}@media(max-width:650px){.benefits,.grid{grid-template-columns:1fr}.main{padding:0 18px 35px}.hero h1{font-size:34px}.cookie{display:block}}
+/* LECH-WEB STRONG NEON EFFECTS */
+.top,
+.sidebar,
+.hero,
+.product,
+.side-box,
+.benefit,
+.modal-card,
+.footer,
+.search,
+input,
+textarea,
+select,
+.tabs span {
+  border-color: color-mix(in srgb, var(--a) 42%, rgba(255,255,255,.16)) !important;
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--a) 18%, transparent),
+    0 0 10px color-mix(in srgb, var(--a) 12%, transparent),
+    inset 0 0 10px rgba(255,255,255,.018) !important;
+}
+
+.product:hover,
+.benefit:hover,
+.hero:hover,
+.side-box:hover,
+.tabs span:hover {
+  border-color: color-mix(in srgb, var(--a) 70%, white) !important;
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--a) 36%, transparent),
+    0 0 18px color-mix(in srgb, var(--a) 28%, transparent),
+    0 0 36px color-mix(in srgb, var(--a2) 16%, transparent),
+    inset 0 0 14px color-mix(in srgb, var(--a) 5%, transparent) !important;
+}
+
+.logo-mark,
+.benefit-icon,
+.detail,
+.submit,
+.search button,
+.cart-btn,
+.icons div {
+  background: linear-gradient(135deg, var(--a), var(--a2)) !important;
+  color: #020617 !important;
+  box-shadow:
+    0 0 9px color-mix(in srgb, var(--a) 38%, transparent),
+    0 0 20px color-mix(in srgb, var(--a) 22%, transparent) !important;
+}
+
+.menu a:hover,
+.sidebar a:hover,
+.footer a:hover,
+.price strong,
+.availability,
+.logo-text,
+.side-box h2,
+.hero h1 {
+  color: var(--a) !important;
+  text-shadow:
+    0 0 5px color-mix(in srgb, var(--a) 32%, transparent),
+    0 0 12px color-mix(in srgb, var(--a) 18%, transparent) !important;
+}
+
+.badges span {
+  background: var(--a) !important;
+  color: #020617 !important;
+  box-shadow: 0 0 10px color-mix(in srgb, var(--a) 26%, transparent) !important;
+}
+
+.pimg div {
+  border: 1px solid color-mix(in srgb, var(--a) 38%, transparent) !important;
+  box-shadow:
+    inset 0 0 22px color-mix(in srgb, var(--a) 8%, transparent),
+    0 0 8px color-mix(in srgb, var(--a) 10%, transparent) !important;
+}
 </style>
 </head>
 <body>
