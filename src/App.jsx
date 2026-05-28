@@ -1,182 +1,353 @@
-import React, { useMemo, useState } from "react";
-import { ArrowRight, CheckCircle2, Eye, Image, KeyRound, LayoutDashboard, Lock, Palette, Plus, Save, Trash2, UserPlus, Zap } from "lucide-react";
+import React, { useEffect, useMemo, useState } from "react";
+import "./App.css";
 
-const templates = [
-  "Stavebná firma", "Beauty salón / Wellness", "Autoservis", "E-shop oblečenie", "Reštaurácia", "Ubytovanie", "Reality", "Fitness", "Technika", "Landing page"
+const presets = [
+  ["original", "Original tyrkysová ako virivkyonline"],
+  ["turquoise", "Čistá tyrkysová"],
+  ["neon", "Neón cyan/fuchsia"],
+  ["pink", "Pink luxury"],
+  ["violet", "Violet premium"],
+  ["orange", "Orange energy"],
+  ["lime", "Lime fresh"],
 ];
 
-const plans = [
-  { name: "Start Web", price: "39 €", items: ["14 dní zdarma", "Vlastný editor", "Viac stránok", "Základné SEO"] },
-  { name: "Business Web", price: "69 €", items: ["Všetko zo Start", "Galéria", "Viac sekcií", "Prioritná úprava"], popular: true },
-  { name: "Mini E-shop", price: "119 €", items: ["Produkty", "Kategórie", "Dopyty", "Mesačná starostlivosť"] },
+const defaultProducts = [
+  { title: "Ukážkový produkt", price: "€999", oldPrice: "", image: "", shortText: "Krátky popis produktu.", badge: "TIP" },
 ];
 
-const defaultPages = [
-  {
-    id: "home",
-    title: "Domov",
-    slug: "",
-    headline: "Moderný web, ktorý predáva od prvého pohľadu",
-    description: "Luxusný neónový web pre firmy, ktoré chcú vyzerať profesionálne a získať viac dopytov.",
-    heroImage: "",
-    sections: [
-      { type: "services", title: "Služby", text: "Upravte si služby podľa svojej firmy.", items: ["Služba 1", "Služba 2", "Služba 3"], images: [] },
-      { type: "gallery", title: "Galéria", text: "Pridajte obrázky cez URL. Upload z počítača doplníme cez R2.", items: [], images: [] },
-      { type: "contact", title: "Kontakt", text: "Napíšte nám a ozveme sa späť.", items: [], images: [] },
-    ],
-  },
-  {
-    id: "onas",
-    title: "O nás",
-    slug: "o-nas",
-    headline: "O našej firme",
-    description: "Tu si zákazník doplní príbeh, skúsenosti a výhody firmy.",
-    heroImage: "",
-    sections: [{ type: "text", title: "Kto sme", text: "Sme firma, ktorá stavia na kvalite, dôvere a jasnej komunikácii.", items: [], images: [] }],
-  },
-];
-
-function slugify(value) {
-  return String(value || "").trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9-]+/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
+function slugify(v) {
+  return String(v || "").trim().toLowerCase().normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9-]+/g, "-")
+    .replace(/-+/g, "-").replace(/^-|-$/g, "");
 }
-
-function emptySection(type = "text") {
-  if (type === "services") return { type, title: "Služby", text: "Popis služieb", items: ["Nová služba"], images: [] };
-  if (type === "gallery") return { type, title: "Galéria", text: "Ukážky realizácií", items: [], images: [{ url: "", title: "" }] };
-  if (type === "contact") return { type, title: "Kontakt", text: "Napíšte nám a ozveme sa späť.", items: [], images: [] };
-  return { type: "text", title: "Nová sekcia", text: "Text sekcie", items: [], images: [] };
+function lines(v) {
+  return String(v || "").split("\n").map(x => x.trim()).filter(Boolean);
 }
-
-function Field({ label, children }) {
-  return <label className="grid gap-2"><span className="text-xs font-black uppercase tracking-[0.22em] text-cyan-300">{label}</span>{children}</label>;
+function joinLines(arr) {
+  return Array.isArray(arr) ? arr.join("\n") : "";
 }
-function Input(props) { return <input {...props} className={`rounded-2xl border border-white/10 bg-black/50 px-4 py-3 text-white outline-none placeholder:text-slate-500 focus:border-cyan-300 ${props.className || ""}`} />; }
-function Area(props) { return <textarea {...props} className={`min-h-28 rounded-2xl border border-white/10 bg-black/50 px-4 py-3 text-white outline-none placeholder:text-slate-500 focus:border-cyan-300 ${props.className || ""}`} />; }
-function Select(props) { return <select {...props} className={`rounded-2xl border border-white/10 bg-black/50 px-4 py-3 text-white outline-none focus:border-cyan-300 ${props.className || ""}`} />; }
-function Status({ status }) {
-  if (!status?.success && !status?.error) return null;
-  return <div className={`rounded-2xl border px-4 py-3 text-sm font-bold ${status.success ? "border-lime-300/40 bg-lime-300/10 text-lime-200" : "border-red-400/40 bg-red-400/10 text-red-200"}`}>{status.success || status.error}</div>;
+function inputClass() {
+  return "w-full rounded-2xl border border-white/10 bg-black/45 px-4 py-3 text-white outline-none focus:border-cyan-300";
+}
+function boxClass() {
+  return "rounded-[28px] border border-white/10 bg-white/[0.06] p-5";
 }
 
 export default function App() {
+  const [mode, setMode] = useState("customer");
   const [authMode, setAuthMode] = useState("register");
   const [account, setAccount] = useState(null);
-  const [authStatus, setAuthStatus] = useState({ loading: false, success: "", error: "" });
-  const [saveStatus, setSaveStatus] = useState({ loading: false, success: "", error: "" });
-  const [activePageIndex, setActivePageIndex] = useState(0);
-  const [authForm, setAuthForm] = useState({ companyName: "", email: "", password: "", plan: "Start Web", template: "Stavebná firma" });
-  const [site, setSite] = useState({
-    slug: "", companyName: "", headline: "", description: "", phone: "", siteEmail: "", template: "Stavebná firma",
-    theme: { accent: "cyan", logo: "", heroImage: "", dark: true, luxury: true },
-    pages: defaultPages,
+  const [status, setStatus] = useState("");
+  const [adminPin, setAdminPin] = useState("");
+  const [adminAccounts, setAdminAccounts] = useState([]);
+  const [selectedEmail, setSelectedEmail] = useState("");
+
+  const [auth, setAuth] = useState({
+    companyName: "",
+    email: "",
+    password: "",
+    plan: "Mini E-shop",
+    template: "E-shop oblečenie",
   });
 
-  const publicUrl = useMemo(() => site.slug ? `https://lech-web.pages.dev/site/${slugify(site.slug)}` : "", [site.slug]);
-  const page = site.pages[activePageIndex] || site.pages[0];
+  const [site, setSite] = useState({
+    slug: "",
+    companyName: "",
+    headline: "",
+    description: "",
+    homepageText: "",
+    phone: "",
+    siteEmail: "",
+    template: "E-shop oblečenie",
+    theme: { accent: "original", logo: "", heroImage: "" },
+    categoriesText: "Vírivky\nDoplnky\nAkčný tovar\nNovinky\nNajpredávanejšie",
+    adviceText: "Ako nakupovať|#\nObchodné podmienky|#\nOchrana osobných údajov|#",
+    youtubeText: "YouTube kanál|#",
+    benefitsText: "Darček zdarma|Ku každej objednávke.\nRýchle dodanie|Pre produkty skladom.\nNa splátky|Rýchlo a bezpečne.\nDoprava zdarma|Podľa podmienok predajcu.",
+    products: defaultProducts,
+  });
 
-  function updateAuth(name, value) { setAuthForm((p) => ({ ...p, [name]: value })); }
-  function updateSite(name, value) { setSite((p) => ({ ...p, [name]: value })); }
-  function updateTheme(name, value) { setSite((p) => ({ ...p, theme: { ...p.theme, [name]: value } })); }
-  function updatePage(i, name, value) {
-    setSite((p) => { const pages = [...p.pages]; pages[i] = { ...pages[i], [name]: value }; if (name === "title" && i !== 0) pages[i].slug = slugify(value); return { ...p, pages }; });
-  }
-  function updateSection(pi, si, patch) {
-    setSite((p) => { const pages = [...p.pages]; const sections = [...pages[pi].sections]; sections[si] = { ...sections[si], ...patch }; pages[pi] = { ...pages[pi], sections }; return { ...p, pages }; });
-  }
-  function addPage() {
-    setSite((p) => ({ ...p, pages: [...p.pages, { id: `page-${Date.now()}`, title: "Nová stránka", slug: "nova-stranka", headline: "Nová stránka", description: "Popis novej stránky", heroImage: "", sections: [emptySection("text")] }] }));
-    setActivePageIndex(site.pages.length);
-  }
-  function removePage(i) { if (i === 0) return; setSite((p) => ({ ...p, pages: p.pages.filter((_, x) => x !== i) })); setActivePageIndex(0); }
-  function addSection(pi, type) { setSite((p) => { const pages = [...p.pages]; pages[pi] = { ...pages[pi], sections: [...pages[pi].sections, emptySection(type)] }; return { ...p, pages }; }); }
-  function removeSection(pi, si) { setSite((p) => { const pages = [...p.pages]; pages[pi] = { ...pages[pi], sections: pages[pi].sections.filter((_, x) => x !== si) }; return { ...p, pages }; }); }
+  const publicUrl = site.slug ? `https://lech-web.pages.dev/site/${slugify(site.slug)}` : "";
 
-  async function handleAuth(e) {
-    e.preventDefault(); setAuthStatus({ loading: true, success: "", error: "" });
+  function patchSite(patch) {
+    setSite(prev => ({ ...prev, ...patch }));
+  }
+  function patchTheme(patch) {
+    setSite(prev => ({ ...prev, theme: { ...prev.theme, ...patch } }));
+  }
+  function parsePairs(text) {
+    return lines(text).map(row => {
+      const [title, ...rest] = row.split("|");
+      return { title: title || "", url: rest.join("|") || "#" };
+    });
+  }
+  function parseBenefits(text) {
+    return lines(text).map(row => {
+      const [title, ...rest] = row.split("|");
+      return { title: title || "", text: rest.join("|") || "" };
+    });
+  }
+
+  function buildPayload() {
+    return {
+      email: account?.email || auth.email,
+      accountEmail: account?.email || auth.email,
+      slug: slugify(site.slug || site.companyName),
+      companyName: site.companyName,
+      headline: site.headline,
+      description: site.description,
+      homepageText: site.homepageText,
+      phone: site.phone,
+      siteEmail: site.siteEmail,
+      template: site.template,
+      theme: site.theme,
+      categories: site.categoriesText,
+      adviceLinks: parsePairs(site.adviceText),
+      youtube: parsePairs(site.youtubeText),
+      benefits: parseBenefits(site.benefitsText),
+      products: site.products,
+      topMenu: [
+        { title: "Produkty", url: "#produkty" },
+        { title: "Akcie", url: "#produkty" },
+        { title: "Ako nakupovať", url: "#info" },
+        { title: "Kontakt", url: "#kontakt" },
+      ],
+      footerLinks: parsePairs(site.adviceText),
+    };
+  }
+
+  function loadWebsite(w) {
+    if (!w) return;
+    setSite(prev => ({
+      ...prev,
+      slug: w.slug || prev.slug,
+      companyName: w.companyName || prev.companyName,
+      headline: w.headline || prev.headline,
+      description: w.description || prev.description,
+      homepageText: w.homepageText || prev.homepageText,
+      phone: w.phone || prev.phone,
+      siteEmail: w.email || prev.siteEmail,
+      template: w.template || prev.template,
+      theme: w.theme || prev.theme,
+      categoriesText: joinLines(w.eshop?.sidebar?.categories) || prev.categoriesText,
+      adviceText: (w.eshop?.sidebar?.adviceLinks || []).map(x => `${x.title}|${x.url || "#"}`).join("\n") || prev.adviceText,
+      youtubeText: (w.eshop?.sidebar?.youtube || []).map(x => `${x.title}|${x.url || "#"}`).join("\n") || prev.youtubeText,
+      benefitsText: (w.eshop?.benefits || []).map(x => `${x.title}|${x.text}`).join("\n") || prev.benefitsText,
+      products: w.eshop?.products?.length ? w.eshop.products : prev.products,
+    }));
+  }
+
+  async function loginOrRegister(e) {
+    e.preventDefault();
+    setStatus("Pracujem...");
     try {
       const url = authMode === "register" ? "/api/auth/register" : "/api/auth/login";
-      const payload = authMode === "register" ? authForm : { email: authForm.email, password: authForm.password };
-      const res = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+      const body = authMode === "register" ? auth : { email: auth.email, password: auth.password };
+      const res = await fetch(url, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
       const data = await res.json();
-      if (!data.success) throw new Error(data.error || "Akcia zlyhala.");
-      const acc = data.account; setAccount(acc);
-      setSite((p) => ({
-        ...p,
-        slug: acc.website?.slug || slugify(acc.companyName || authForm.companyName),
-        companyName: acc.website?.companyName || acc.companyName || authForm.companyName,
-        headline: acc.website?.headline || acc.companyName || authForm.companyName,
-        description: acc.website?.description || "Moderný web vytvorený cez Lech-Web. Text si upravíte vo vlastnom editore.",
+      if (!data.success) throw new Error(data.error || "Chyba účtu.");
+      setAccount(data.account);
+      setStatus(authMode === "register" ? "Účet vytvorený." : "Prihlásenie OK.");
+      const acc = data.account;
+      patchSite({
+        slug: acc.website?.slug || slugify(acc.companyName || auth.companyName),
+        companyName: acc.website?.companyName || acc.companyName || auth.companyName,
+        headline: acc.website?.headline || acc.companyName || auth.companyName,
         siteEmail: acc.website?.email || acc.email,
-        template: acc.website?.template || acc.template || authForm.template,
-        theme: acc.website?.theme || p.theme,
-        pages: acc.website?.pages?.length ? acc.website.pages : p.pages,
-      }));
-      setAuthStatus({ loading: false, success: authMode === "register" ? "Účet vytvorený. Trial je aktívny 14 dní." : "Prihlásenie prebehlo úspešne.", error: "" });
-    } catch (err) { setAuthStatus({ loading: false, success: "", error: err.message || "Chyba pri účte." }); }
+        template: acc.website?.template || auth.template,
+      });
+      loadWebsite(acc.website);
+    } catch (err) {
+      setStatus(err.message);
+    }
   }
 
-  async function saveWebsite() {
-    setSaveStatus({ loading: true, success: "", error: "" });
+  async function saveSite() {
+    setStatus("Ukladám web...");
     try {
-      const payload = { ...site, slug: slugify(site.slug || site.companyName), email: account?.email || authForm.email, accountEmail: account?.email || authForm.email };
-      const res = await fetch("/api/site/save", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+      const res = await fetch("/api/site/save", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(buildPayload()) });
       const data = await res.json();
-      if (!data.success) throw new Error(data.error || "Web sa nepodarilo uložiť.");
-      setSite((p) => ({ ...p, slug: data.website.slug })); setAccount(data.account || account);
-      setSaveStatus({ loading: false, success: `Web uložený: ${data.publicUrl || `/site/${data.website.slug}`}`, error: "" });
-    } catch (err) { setSaveStatus({ loading: false, success: "", error: err.message || "Chyba pri ukladaní webu." }); }
+      if (!data.success) throw new Error(data.error || "Uloženie zlyhalo.");
+      setAccount(data.account);
+      loadWebsite(data.website);
+      setStatus("Web uložený: " + (data.publicUrl || ""));
+    } catch (err) {
+      setStatus(err.message);
+    }
+  }
+
+  async function loadAdmin() {
+    setStatus("Načítavam admin...");
+    try {
+      const res = await fetch("/api/admin/sites", { headers: { "x-admin-pin": adminPin } });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error || "Admin chyba.");
+      setAdminAccounts(data.accounts || []);
+      setStatus("Admin načítaný.");
+    } catch (err) {
+      setStatus(err.message);
+    }
+  }
+
+  async function saveAdmin(licenseAction = "") {
+    const selected = adminAccounts.find(a => a.email === selectedEmail);
+    if (!selected) return setStatus("Vyber zákazníka.");
+    setStatus("Admin ukladá...");
+    try {
+      const res = await fetch("/api/admin/site-save", {
+        method: "POST",
+        headers: { "content-type": "application/json", "x-admin-pin": adminPin },
+        body: JSON.stringify({ email: selected.email, website: buildPayload(), licenseAction }),
+      });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error || "Admin uloženie zlyhalo.");
+      setStatus("Admin uložené: " + (data.publicUrl || ""));
+      await loadAdmin();
+    } catch (err) {
+      setStatus(err.message);
+    }
+  }
+
+  function selectAdminEmail(email) {
+    setSelectedEmail(email);
+    const acc = adminAccounts.find(a => a.email === email);
+    if (acc) {
+      setAccount(acc);
+      setAuth(prev => ({ ...prev, email: acc.email }));
+      loadWebsite(acc.website);
+      patchSite({
+        slug: acc.website?.slug || slugify(acc.companyName),
+        companyName: acc.website?.companyName || acc.companyName,
+        headline: acc.website?.headline || acc.companyName,
+        siteEmail: acc.website?.email || acc.email,
+        template: acc.website?.template || acc.template || "E-shop oblečenie",
+      });
+    }
+  }
+
+  function updateProduct(index, patch) {
+    setSite(prev => {
+      const products = [...prev.products];
+      products[index] = { ...products[index], ...patch };
+      return { ...prev, products };
+    });
   }
 
   return (
-    <main className="min-h-screen overflow-hidden bg-[#03040a] text-white">
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute -top-40 -left-40 h-[520px] w-[520px] rounded-full bg-cyan-500/25 blur-3xl" />
-        <div className="absolute top-16 right-0 h-[560px] w-[560px] rounded-full bg-fuchsia-500/25 blur-3xl" />
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(34,211,238,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(217,70,239,0.04)_1px,transparent_1px)] [background-size:46px_46px]" />
+    <main className="min-h-screen bg-[#03040a] text-white">
+      <div className="fixed inset-0 pointer-events-none bg-[radial-gradient(circle_at_15%_10%,rgba(34,211,238,.25),transparent_30%),radial-gradient(circle_at_90%_10%,rgba(217,70,239,.20),transparent_32%)]" />
+      <div className="relative z-10 mx-auto max-w-7xl px-5 py-6">
+        <header className="mb-8 flex flex-col gap-4 rounded-[32px] border border-white/10 bg-white/[0.06] p-5 md:flex-row md:items-center md:justify-between">
+          <div>
+            <h1 className="text-4xl font-black tracking-tight">Lech-Web Admin + E-shop Builder</h1>
+            <p className="text-slate-300">Zákazník si upravuje web, ty vieš všetko nastaviť v admine.</p>
+          </div>
+          <div className="flex gap-2">
+            <button onClick={() => setMode("customer")} className={`rounded-2xl px-5 py-3 font-black ${mode === "customer" ? "bg-cyan-300 text-black" : "bg-white/10"}`}>Zákazník</button>
+            <button onClick={() => setMode("admin")} className={`rounded-2xl px-5 py-3 font-black ${mode === "admin" ? "bg-fuchsia-400 text-black" : "bg-white/10"}`}>Admin</button>
+          </div>
+        </header>
+
+        {status && <div className="mb-5 rounded-2xl border border-cyan-300/30 bg-cyan-300/10 p-4 font-bold text-cyan-100">{status}</div>}
+
+        {mode === "customer" ? (
+          <section className="grid gap-6 lg:grid-cols-[420px_1fr]">
+            <div className={boxClass()}>
+              <div className="mb-4 flex rounded-2xl bg-black/40 p-1">
+                <button onClick={() => setAuthMode("register")} className={`flex-1 rounded-xl py-3 font-black ${authMode === "register" ? "bg-cyan-300 text-black" : ""}`}>Registrácia</button>
+                <button onClick={() => setAuthMode("login")} className={`flex-1 rounded-xl py-3 font-black ${authMode === "login" ? "bg-cyan-300 text-black" : ""}`}>Prihlásenie</button>
+              </div>
+              <form onSubmit={loginOrRegister} className="grid gap-3">
+                {authMode === "register" && <>
+                  <input className={inputClass()} placeholder="Názov firmy" value={auth.companyName} onChange={e => setAuth({...auth, companyName:e.target.value})}/>
+                  <select className={inputClass()} value={auth.plan} onChange={e => setAuth({...auth, plan:e.target.value})}><option>Start Web</option><option>Business Web</option><option>Mini E-shop</option></select>
+                  <select className={inputClass()} value={auth.template} onChange={e => setAuth({...auth, template:e.target.value})}><option>E-shop oblečenie</option><option>Stavebná firma</option><option>Autoservis</option><option>Beauty salón</option></select>
+                </>}
+                <input className={inputClass()} placeholder="E-mail" value={auth.email} onChange={e => setAuth({...auth, email:e.target.value})}/>
+                <input className={inputClass()} type="password" placeholder="Heslo" value={auth.password} onChange={e => setAuth({...auth, password:e.target.value})}/>
+                <button className="rounded-2xl bg-cyan-300 px-5 py-4 font-black text-black">{authMode === "register" ? "Vytvoriť účet" : "Prihlásiť sa"}</button>
+              </form>
+              {account && <div className="mt-5 rounded-2xl bg-lime-300/10 p-4 text-lime-100">Licencia: <b>{account.status}</b><br/>Trial do: {account.trialUntil?.slice(0,10)}<br/>Paid do: {account.paidUntil?.slice(0,10) || "—"}</div>}
+            </div>
+            <Editor site={site} setSite={setSite} patchSite={patchSite} patchTheme={patchTheme} updateProduct={updateProduct} saveSite={saveSite} publicUrl={publicUrl}/>
+          </section>
+        ) : (
+          <section className="grid gap-6 lg:grid-cols-[380px_1fr]">
+            <div className={boxClass()}>
+              <h2 className="mb-3 text-2xl font-black">Admin panel</h2>
+              <input className={inputClass()} placeholder="ADMIN_PIN" value={adminPin} onChange={e => setAdminPin(e.target.value)}/>
+              <button onClick={loadAdmin} className="mt-3 w-full rounded-2xl bg-fuchsia-400 px-5 py-4 font-black text-black">Načítať zákazníkov</button>
+              <select className={`${inputClass()} mt-3`} value={selectedEmail} onChange={e => selectAdminEmail(e.target.value)}>
+                <option value="">Vyber zákazníka</option>
+                {adminAccounts.map(a => <option key={a.email} value={a.email}>{a.companyName} - {a.email} - {a.status}</option>)}
+              </select>
+              {selectedEmail && <div className="mt-4 grid gap-2">
+                <button onClick={() => saveAdmin("activate_month")} className="rounded-xl bg-lime-300 px-4 py-3 font-black text-black">Aktivovať 1 mesiac</button>
+                <button onClick={() => saveAdmin("activate_year")} className="rounded-xl bg-lime-300 px-4 py-3 font-black text-black">Aktivovať 1 rok</button>
+                <button onClick={() => saveAdmin("activate_2years")} className="rounded-xl bg-lime-300 px-4 py-3 font-black text-black">Aktivovať 2 roky</button>
+                <button onClick={() => saveAdmin("suspend")} className="rounded-xl bg-red-400 px-4 py-3 font-black text-black">Pozastaviť web</button>
+                <button onClick={() => saveAdmin("")} className="rounded-xl bg-cyan-300 px-4 py-3 font-black text-black">Uložiť nastavenia webu</button>
+              </div>}
+            </div>
+            <Editor site={site} setSite={setSite} patchSite={patchSite} patchTheme={patchTheme} updateProduct={updateProduct} saveSite={() => saveAdmin("")} publicUrl={publicUrl}/>
+          </section>
+        )}
       </div>
-
-      <header className="relative z-10 mx-auto flex max-w-7xl items-center justify-between px-5 py-6">
-        <a href="#top" className="flex items-center gap-3 text-white no-underline">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-300 text-black shadow-[0_0_45px_rgba(34,211,238,0.95)]"><Zap className="h-7 w-7" /></div>
-          <div><div className="text-2xl font-black tracking-tight">Lech<span className="text-cyan-300">-</span><span className="text-fuchsia-300">Web</span></div><div className="text-xs uppercase tracking-[0.34em] text-cyan-300">SaaS web builder</div></div>
-        </a>
-        <nav className="hidden items-center gap-7 text-sm font-bold text-slate-300 md:flex"><a href="#editor" className="hover:text-cyan-300">Editor</a><a href="#sablony" className="hover:text-cyan-300">Šablóny</a><a href="#cennik" className="hover:text-cyan-300">Cenník</a></nav>
-        <a href="#editor" className="rounded-full bg-cyan-300 px-5 py-3 text-sm font-black text-black shadow-[0_0_30px_rgba(34,211,238,0.65)]">Vytvoriť web</a>
-      </header>
-
-      <section id="top" className="relative z-10 mx-auto grid max-w-7xl items-center gap-14 px-5 pb-24 pt-12 lg:grid-cols-2 lg:pt-20">
-        <div><div className="mb-6 inline-flex rounded-full border border-fuchsia-400/50 bg-fuchsia-400/10 px-4 py-2 text-sm font-black text-fuchsia-200">Web builder s licenciou</div><h1 className="text-5xl font-black leading-[0.9] tracking-tight sm:text-6xl lg:text-7xl">Zákazník si vytvorí <span className="text-cyan-300 drop-shadow-[0_0_30px_rgba(34,211,238,1)]">vlastný web</span>, ty riadiš licenciu.</h1><p className="mt-8 max-w-xl text-lg leading-8 text-slate-300">Účet zákazníka, 14 dní trial, editor stránok, sekcie, obrázky cez URL, verejný web a časové obmedzenie licencie.</p><div className="mt-10 flex gap-4"><a href="#editor" className="inline-flex items-center gap-3 rounded-full bg-cyan-300 px-8 py-4 font-black text-black shadow-[0_0_55px_rgba(34,211,238,0.95)]">Otvoriť editor <ArrowRight className="h-5 w-5" /></a></div></div>
-        <div className="relative rounded-[2.8rem] border border-white/15 bg-slate-950/90 p-5 shadow-2xl"><div className="rounded-[2.2rem] border border-cyan-300/20 bg-gradient-to-br from-cyan-400/20 via-fuchsia-500/25 to-violet-600/20 p-8"><div className="mb-4 inline-block rounded-full bg-lime-300 px-3 py-1 text-xs font-black text-black">LIVE EDITOR</div><h2 className="text-4xl font-black leading-tight">Stránky, sekcie, obrázky, logo a farby.</h2><p className="mt-4 text-slate-300">Zákazník si upraví obsah. Ty vlastníš systém a vieš web vypnúť cez licenciu.</p></div></div>
-      </section>
-
-      <section id="editor" className="relative z-10 mx-auto max-w-7xl px-5 py-20">
-        <div className="mb-10"><div className="mb-3 text-sm font-black uppercase tracking-[0.35em] text-cyan-300">Zákaznícky dashboard</div><h2 className="text-4xl font-black sm:text-5xl">Prihlásenie, licencia a editor webu.</h2></div>
-        <div className="grid gap-6 xl:grid-cols-[0.8fr_1.2fr]">
-          <div className="rounded-[2rem] border border-white/10 bg-white/[0.055] p-6">
-            <div className="mb-5 flex rounded-2xl bg-black/40 p-1"><button type="button" onClick={() => setAuthMode("register")} className={`flex-1 rounded-xl px-4 py-3 text-sm font-black ${authMode === "register" ? "bg-cyan-300 text-black" : "text-slate-300"}`}>Registrácia</button><button type="button" onClick={() => setAuthMode("login")} className={`flex-1 rounded-xl px-4 py-3 text-sm font-black ${authMode === "login" ? "bg-cyan-300 text-black" : "text-slate-300"}`}>Prihlásenie</button></div>
-            <form onSubmit={handleAuth} className="grid gap-4">
-              {authMode === "register" && <><Field label="Názov firmy"><Input value={authForm.companyName} onChange={(e) => updateAuth("companyName", e.target.value)} required /></Field><Field label="Balík"><Select value={authForm.plan} onChange={(e) => updateAuth("plan", e.target.value)}>{plans.map((p) => <option key={p.name}>{p.name}</option>)}</Select></Field><Field label="Šablóna"><Select value={authForm.template} onChange={(e) => updateAuth("template", e.target.value)}>{templates.map((t) => <option key={t}>{t}</option>)}</Select></Field></>}
-              <Field label="E-mail"><Input type="email" value={authForm.email} onChange={(e) => updateAuth("email", e.target.value)} required /></Field>
-              <Field label="Heslo"><Input type="password" value={authForm.password} onChange={(e) => updateAuth("password", e.target.value)} required /></Field>
-              <button type="submit" disabled={authStatus.loading} className="inline-flex items-center justify-center gap-2 rounded-2xl bg-cyan-300 px-6 py-4 font-black text-black disabled:opacity-60">{authMode === "register" ? <UserPlus className="h-5 w-5" /> : <KeyRound className="h-5 w-5" />}{authStatus.loading ? "Pracujem..." : authMode === "register" ? "Vytvoriť účet" : "Prihlásiť sa"}</button><Status status={authStatus} />
-            </form>
-            {account && <div className="mt-6 rounded-3xl border border-lime-300/25 bg-lime-300/10 p-5"><strong className="text-lime-300">Licencia aktívna</strong><div className="mt-2 text-sm leading-7 text-slate-300">Firma: {account.companyName}<br />Stav: {account.status}<br />Trial do: {account.trialUntil?.slice(0, 10)}<br />VS: {account.variableSymbol || "—"}</div></div>}
-          </div>
-
-          <div className="rounded-[2rem] border border-white/10 bg-black/35 p-6">
-            {!account ? <div className="grid min-h-[500px] place-items-center text-center"><div><Lock className="mx-auto mb-5 h-14 w-14 text-cyan-300" /><h3 className="text-3xl font-black">Najprv sa zaregistruj alebo prihlás.</h3><p className="mx-auto mt-4 max-w-md text-slate-300">Editor sa otvorí až po vytvorení účtu.</p></div></div> : <div className="grid gap-6">
-              <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-center"><div><div className="mb-2 text-sm font-black uppercase tracking-[0.3em] text-fuchsia-300">Editor webu</div><h3 className="text-3xl font-black">Môj web</h3></div><div className="flex flex-wrap gap-3">{publicUrl && <a href={publicUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-sm font-black"><Eye className="h-4 w-4" />Otvoriť web</a>}<button type="button" onClick={saveWebsite} disabled={saveStatus.loading} className="inline-flex items-center gap-2 rounded-2xl bg-fuchsia-400 px-5 py-3 text-sm font-black text-black disabled:opacity-60"><Save className="h-4 w-4" />{saveStatus.loading ? "Ukladám..." : "Uložiť web"}</button></div></div><Status status={saveStatus} />
-              <div className="grid gap-4 md:grid-cols-2"><Field label="URL názov webu"><Input value={site.slug} onChange={(e) => updateSite("slug", slugify(e.target.value))} /></Field><Field label="Názov firmy"><Input value={site.companyName} onChange={(e) => updateSite("companyName", e.target.value)} /></Field><Field label="Telefón"><Input value={site.phone} onChange={(e) => updateSite("phone", e.target.value)} /></Field><Field label="Kontaktný e-mail"><Input value={site.siteEmail} onChange={(e) => updateSite("siteEmail", e.target.value)} /></Field><Field label="Typ šablóny"><Select value={site.template} onChange={(e) => updateSite("template", e.target.value)}>{templates.map((t) => <option key={t}>{t}</option>)}</Select></Field><Field label="Farba témy"><Select value={site.theme.accent} onChange={(e) => updateTheme("accent", e.target.value)}><option value="cyan">Cyan neon</option><option value="pink">Pink luxury</option><option value="violet">Violet premium</option><option value="orange">Orange energy</option><option value="lime">Lime fresh</option></Select></Field><Field label="Logo URL"><Input value={site.theme.logo} onChange={(e) => updateTheme("logo", e.target.value)} placeholder="https://..." /></Field><Field label="Hlavný obrázok URL"><Input value={site.theme.heroImage} onChange={(e) => updateTheme("heroImage", e.target.value)} placeholder="https://..." /></Field></div>
-              <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-5"><div className="mb-4 flex flex-col justify-between gap-3 sm:flex-row sm:items-center"><div><div className="text-sm font-black uppercase tracking-[0.3em] text-cyan-300">Stránky</div><div className="mt-1 text-sm text-slate-400">Domov, O nás, Služby, Kontakt alebo vlastné podstránky.</div></div><button type="button" onClick={addPage} className="inline-flex items-center gap-2 rounded-2xl bg-cyan-300 px-4 py-3 text-sm font-black text-black"><Plus className="h-4 w-4" />Pridať stránku</button></div><div className="mb-5 flex flex-wrap gap-2">{site.pages.map((p, i) => <button key={p.id || i} type="button" onClick={() => setActivePageIndex(i)} className={`rounded-full px-4 py-2 text-sm font-black ${activePageIndex === i ? "bg-fuchsia-400 text-black" : "bg-white/10 text-slate-200"}`}>{p.title}</button>)}</div><div className="grid gap-4"><div className="grid gap-4 md:grid-cols-2"><Field label="Názov stránky"><Input value={page.title} onChange={(e) => updatePage(activePageIndex, "title", e.target.value)} /></Field><Field label="Slug podstránky"><Input value={page.slug} onChange={(e) => updatePage(activePageIndex, "slug", slugify(e.target.value))} disabled={activePageIndex === 0} /></Field></div><Field label="Nadpis stránky"><Input value={page.headline} onChange={(e) => updatePage(activePageIndex, "headline", e.target.value)} /></Field><Field label="Popis stránky"><Area value={page.description} onChange={(e) => updatePage(activePageIndex, "description", e.target.value)} /></Field><Field label="Hero obrázok URL"><Input value={page.heroImage} onChange={(e) => updatePage(activePageIndex, "heroImage", e.target.value)} placeholder="https://..." /></Field>{activePageIndex !== 0 && <button type="button" onClick={() => removePage(activePageIndex)} className="inline-flex w-fit items-center gap-2 rounded-2xl border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm font-black text-red-200"><Trash2 className="h-4 w-4" />Zmazať stránku</button>}</div></div>
-              <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-5"><div className="mb-4 flex flex-col justify-between gap-3 sm:flex-row sm:items-center"><div><div className="text-sm font-black uppercase tracking-[0.3em] text-cyan-300">Sekcie stránky</div><div className="mt-1 text-sm text-slate-400">Texty, služby, galéria a kontakt.</div></div><div className="flex flex-wrap gap-2">{["text", "services", "gallery", "contact"].map((type) => <button key={type} type="button" onClick={() => addSection(activePageIndex, type)} className="rounded-2xl bg-white/10 px-3 py-2 text-xs font-black text-slate-200">+ {type}</button>)}</div></div><div className="grid gap-4">{page.sections.map((section, si) => <div key={`${section.type}-${si}`} className="rounded-3xl border border-white/10 bg-black/35 p-5"><div className="mb-4 flex items-center justify-between gap-3"><div className="inline-flex items-center gap-2 rounded-full bg-cyan-300/10 px-3 py-1 text-xs font-black uppercase tracking-[0.2em] text-cyan-300"><LayoutDashboard className="h-4 w-4" />{section.type}</div><button type="button" onClick={() => removeSection(activePageIndex, si)} className="rounded-full bg-red-400/10 p-2 text-red-200"><Trash2 className="h-4 w-4" /></button></div><div className="grid gap-4"><Field label="Názov sekcie"><Input value={section.title} onChange={(e) => updateSection(activePageIndex, si, { title: e.target.value })} /></Field><Field label="Text sekcie"><Area value={section.text || ""} onChange={(e) => updateSection(activePageIndex, si, { text: e.target.value })} /></Field>{section.type === "services" && <Field label="Služby, každá na nový riadok"><Area value={(section.items || []).join("\n")} onChange={(e) => updateSection(activePageIndex, si, { items: e.target.value.split("\n").map((x) => x.trim()).filter(Boolean) })} /></Field>}{section.type === "gallery" && <div className="grid gap-3"><div className="text-xs font-black uppercase tracking-[0.22em] text-fuchsia-300">Galéria obrázkov cez URL</div>{(section.images || []).map((img, ii) => <div key={ii} className="grid gap-2 rounded-2xl border border-white/10 bg-white/[0.04] p-3 md:grid-cols-[1fr_1fr_auto]"><Input placeholder="URL obrázka" value={img.url || ""} onChange={(e) => { const images = [...(section.images || [])]; images[ii] = { ...images[ii], url: e.target.value }; updateSection(activePageIndex, si, { images }); }} /><Input placeholder="Popis obrázka" value={img.title || ""} onChange={(e) => { const images = [...(section.images || [])]; images[ii] = { ...images[ii], title: e.target.value }; updateSection(activePageIndex, si, { images }); }} /><button type="button" onClick={() => { const images = [...(section.images || [])].filter((_, x) => x !== ii); updateSection(activePageIndex, si, { images }); }} className="rounded-2xl bg-red-400/10 px-3 py-2 text-red-200"><Trash2 className="h-4 w-4" /></button></div>)}<button type="button" onClick={() => updateSection(activePageIndex, si, { images: [...(section.images || []), { url: "", title: "" }] })} className="inline-flex w-fit items-center gap-2 rounded-2xl bg-fuchsia-400 px-4 py-3 text-sm font-black text-black"><Image className="h-4 w-4" />Pridať obrázok</button></div>}</div></div>)}</div></div>
-            </div>}
-          </div>
-        </div>
-      </section>
-
-      <section id="sablony" className="relative z-10 mx-auto max-w-7xl px-5 py-20"><div className="mb-12"><div className="mb-3 text-sm font-black uppercase tracking-[0.35em] text-fuchsia-300">Šablóny</div><h2 className="text-4xl font-black sm:text-5xl">Reálne šablóny pre rôzne odbory.</h2></div><div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">{templates.slice(0,6).map((t,i) => <div key={t} className="rounded-[2rem] border border-white/10 bg-black/45 p-6"><div className="mb-5 flex items-center justify-between"><div className="rounded-full bg-cyan-300 px-3 py-1 text-xs font-black text-black">Šablóna</div><div className="text-sm font-black text-fuchsia-300">{String(i+1).padStart(2,"0")}</div></div><h3 className="text-2xl font-black">{t}</h3><p className="mt-4 text-sm leading-7 text-slate-300">Zákazník si vyberie šablónu, upraví obsah a systém vygeneruje verejný web.</p><a href="#editor" className="mt-6 inline-flex w-full items-center justify-center rounded-2xl bg-white px-5 py-4 text-sm font-black text-black">Vytvoriť</a></div>)}</div></section>
-      <section id="cennik" className="relative z-10 mx-auto max-w-7xl px-5 py-20"><div className="mb-12 text-center"><div className="mb-3 text-sm font-black uppercase tracking-[0.35em] text-lime-300">Cenník</div><h2 className="text-4xl font-black sm:text-5xl">Web bez vstupnej platby.</h2><p className="mx-auto mt-4 max-w-2xl text-slate-300">14 dní skúšobná doba zdarma. Potom mesačné predplatné vopred.</p></div><div className="grid gap-5 lg:grid-cols-3">{plans.map((plan) => <div key={plan.name} className={`relative rounded-[2rem] border p-6 ${plan.popular ? "border-fuchsia-300 bg-fuchsia-400/10" : "border-white/10 bg-white/[0.05]"}`}><h3 className="text-2xl font-black">{plan.name}</h3><div className="mt-4 flex items-end gap-2"><span className="text-5xl font-black text-cyan-300">{plan.price}</span><span className="pb-2 text-slate-400">/ mesiac</span></div><ul className="mt-6 space-y-3 text-sm text-slate-300">{plan.items.map((item) => <li key={item} className="flex items-center gap-3"><CheckCircle2 className="h-4 w-4 text-lime-300" />{item}</li>)}</ul><a href="#editor" className="mt-8 inline-flex w-full items-center justify-center rounded-2xl bg-cyan-300 px-5 py-4 font-black text-black">Vybrať</a></div>)}</div></section>
-      <footer className="relative z-10 border-t border-white/10 px-5 py-10"><div className="mx-auto max-w-7xl text-sm text-slate-400">Lech-Web • SaaS web builder s licenciou a zákazníckym editorom.</div></footer>
     </main>
   );
+}
+
+function Editor({ site, setSite, patchSite, patchTheme, updateProduct, saveSite, publicUrl }) {
+  function addProduct() {
+    setSite(prev => ({ ...prev, products: [...prev.products, { title:"Nový produkt", price:"€0", oldPrice:"", image:"", shortText:"", badge:"" }] }));
+  }
+  function removeProduct(i) {
+    setSite(prev => ({ ...prev, products: prev.products.filter((_, idx) => idx !== i) }));
+  }
+  return <div className={boxClass()}>
+    <div className="mb-5 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+      <div><h2 className="text-3xl font-black">Editor e-shop šablóny</h2><p className="text-slate-300">Horné menu, ľavý sidebar, produkty, popis, footer.</p></div>
+      <div className="flex gap-2">{publicUrl && <a className="rounded-2xl bg-white/10 px-4 py-3 font-black" href={publicUrl} target="_blank">Otvoriť web</a>}<button onClick={saveSite} className="rounded-2xl bg-cyan-300 px-5 py-3 font-black text-black">Uložiť</button></div>
+    </div>
+
+    <div className="grid gap-4 md:grid-cols-2">
+      <input className={inputClass()} placeholder="URL slug" value={site.slug} onChange={e => patchSite({slug: slugify(e.target.value)})}/>
+      <input className={inputClass()} placeholder="Názov firmy" value={site.companyName} onChange={e => patchSite({companyName:e.target.value})}/>
+      <input className={inputClass()} placeholder="Hlavný nadpis" value={site.headline} onChange={e => patchSite({headline:e.target.value})}/>
+      <input className={inputClass()} placeholder="E-mail" value={site.siteEmail} onChange={e => patchSite({siteEmail:e.target.value})}/>
+      <input className={inputClass()} placeholder="Telefón" value={site.phone} onChange={e => patchSite({phone:e.target.value})}/>
+      <select className={inputClass()} value={site.theme.accent} onChange={e => patchTheme({accent:e.target.value})}>{presets.map(p => <option key={p[0]} value={p[0]}>{p[1]}</option>)}</select>
+      <input className={inputClass()} placeholder="Logo URL" value={site.theme.logo} onChange={e => patchTheme({logo:e.target.value})}/>
+      <input className={inputClass()} placeholder="Hero obrázok URL" value={site.theme.heroImage} onChange={e => patchTheme({heroImage:e.target.value})}/>
+    </div>
+
+    <textarea className={`${inputClass()} mt-4 min-h-24`} placeholder="Krátky popis" value={site.description} onChange={e => patchSite({description:e.target.value})}/>
+    <textarea className={`${inputClass()} mt-4 min-h-32`} placeholder="Dlhý popis pod produktami / SEO text" value={site.homepageText} onChange={e => patchSite({homepageText:e.target.value})}/>
+
+    <div className="mt-6 grid gap-4 md:grid-cols-2">
+      <label><b>Kategórie vľavo</b><textarea className={`${inputClass()} mt-2 min-h-40`} value={site.categoriesText} onChange={e => patchSite({categoriesText:e.target.value})}/></label>
+      <label><b>Výhody hore: Nadpis|Text</b><textarea className={`${inputClass()} mt-2 min-h-40`} value={site.benefitsText} onChange={e => patchSite({benefitsText:e.target.value})}/></label>
+      <label><b>Typy a rady: Názov|URL</b><textarea className={`${inputClass()} mt-2 min-h-40`} value={site.adviceText} onChange={e => patchSite({adviceText:e.target.value})}/></label>
+      <label><b>YouTube: Názov|URL</b><textarea className={`${inputClass()} mt-2 min-h-40`} value={site.youtubeText} onChange={e => patchSite({youtubeText:e.target.value})}/></label>
+    </div>
+
+    <div className="mt-8 flex items-center justify-between">
+      <h3 className="text-2xl font-black">Produkty</h3>
+      <button onClick={addProduct} className="rounded-2xl bg-fuchsia-400 px-4 py-3 font-black text-black">Pridať produkt</button>
+    </div>
+    <div className="mt-4 grid gap-4">
+      {site.products.map((p, i) => <div key={i} className="rounded-3xl border border-white/10 bg-black/30 p-4">
+        <div className="mb-3 flex justify-between"><b>Produkt {i+1}</b><button onClick={() => removeProduct(i)} className="rounded-xl bg-red-400/20 px-3 py-1 text-red-200">Zmazať</button></div>
+        <div className="grid gap-3 md:grid-cols-2">
+          <input className={inputClass()} placeholder="Názov" value={p.title} onChange={e => updateProduct(i,{title:e.target.value})}/>
+          <input className={inputClass()} placeholder="Cena" value={p.price} onChange={e => updateProduct(i,{price:e.target.value})}/>
+          <input className={inputClass()} placeholder="Stará cena" value={p.oldPrice} onChange={e => updateProduct(i,{oldPrice:e.target.value})}/>
+          <input className={inputClass()} placeholder="Badge TIP/AKCIA" value={p.badge} onChange={e => updateProduct(i,{badge:e.target.value})}/>
+          <input className={`${inputClass()} md:col-span-2`} placeholder="Obrázok URL" value={p.image} onChange={e => updateProduct(i,{image:e.target.value})}/>
+          <textarea className={`${inputClass()} md:col-span-2 min-h-20`} placeholder="Krátky popis" value={p.shortText} onChange={e => updateProduct(i,{shortText:e.target.value})}/>
+        </div>
+      </div>)}
+    </div>
+  </div>
 }
