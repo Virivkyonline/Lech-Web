@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import "./App.css";
 
 const ownerNav = [
@@ -35,7 +35,7 @@ const colorPresets = [
   ["acidYellow", "Ostrá neon žltá"],
   ["sharpRed", "Ostrá neon červená"],
   ["rgbGlow", "RGB svietiaca"],
-]; // THEME_PATCH_V1
+];
 
 const defaultProducts = [
   {
@@ -230,6 +230,22 @@ export default function App() {
   const [site, setSite] = useState(defaultSite);
   const [customerLogin, setCustomerLogin] = useState({ email: "", password: "" });
   const [customerLogged, setCustomerLogged] = useState(false);
+  const [rememberCustomerLogin, setRememberCustomerLogin] = useState(false);
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("lechweb_customer_login");
+      if (!saved) return;
+      const parsed = JSON.parse(saved);
+      setCustomerLogin({
+        email: parsed.email || "",
+        password: parsed.password || "",
+      });
+      setRememberCustomerLogin(true);
+    } catch {
+      localStorage.removeItem("lechweb_customer_login");
+    }
+  }, []);
 
   const publicUrl = useMemo(() => site.slug ? `https://lech-web.pages.dev/site/${slugify(site.slug)}` : "", [site.slug]);
 
@@ -340,6 +356,13 @@ export default function App() {
 
       setAccount(data.account);
       setCustomerLogged(true);
+      try {
+        if (rememberCustomerLogin) {
+          localStorage.setItem("lechweb_customer_login", JSON.stringify(customerLogin));
+        } else {
+          localStorage.removeItem("lechweb_customer_login");
+        }
+      } catch {}
       setSelectedEmail(data.account.email);
       loadWebsite(data.account.website);
       setArea("customer");
@@ -462,6 +485,17 @@ export default function App() {
                 <div className="grid gap-2">
                   <Input placeholder="E-mail" value={customerLogin.email} onChange={(e) => setCustomerLogin({ ...customerLogin, email: e.target.value })} />
                   <Input placeholder="Heslo" type="password" value={customerLogin.password} onChange={(e) => setCustomerLogin({ ...customerLogin, password: e.target.value })} />
+                  <label className="flex cursor-pointer items-center gap-2 rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm font-bold text-slate-300">
+                    <input
+                      type="checkbox"
+                      checked={rememberCustomerLogin}
+                      onChange={(e) => {
+                        setRememberCustomerLogin(e.target.checked);
+                        if (!e.target.checked) localStorage.removeItem("lechweb_customer_login");
+                      }}
+                    />
+                    Zapamätať email a heslo
+                  </label>
                   <Button className="w-full">Prihlásiť do adminu</Button>
                 </div>
                 {customerLogged && <div className="mt-3 rounded-xl border border-lime-300/30 bg-lime-300/10 p-3 text-xs font-bold text-lime-100">Prihlásený: {account?.email}</div>}
