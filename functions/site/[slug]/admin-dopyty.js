@@ -99,7 +99,6 @@ button{width:100%;border:0;background:#67e8f9;color:#020617;border-radius:14px;p
   }
 
   const a = accent(site);
-
   const rows = inquiries.map((x) => `
     <tr onclick="openDetail('${esc(x.id)}')" data-id="${esc(x.id)}">
       <td><b>${esc(x.number)}</b></td>
@@ -111,56 +110,36 @@ button{width:100%;border:0;background:#67e8f9;color:#020617;border-radius:14px;p
     </tr>
   `).join("");
 
-  const details = inquiries.map((x) => {
-    const replyHistory = (x.replies || []).map((r) => `
-      <div class="reply">
-        <b>${esc((r.at || "").replace("T"," ").slice(0,16))}</b>
-        <span>${r.sent ? "odoslané" : "chyba"}</span>
-        <p>${esc(r.text)}</p>
+  const details = inquiries.map((x) => `
+    <section class="detail" id="detail-${esc(x.id)}">
+      <h2>${esc(x.number)}</h2>
+      <div class="box">
+        <b>${esc(x.customer?.name)}</b><br>
+        ${esc(x.customer?.email)}<br>
+        ${esc(x.customer?.phone)}
       </div>
-    `).join("");
 
-    return `
-      <section class="detail" id="detail-${esc(x.id)}">
-        <h2>${esc(x.number)}</h2>
-        <div class="box">
-          <b>${esc(x.customer?.name)}</b><br>
-          ${esc(x.customer?.email)}<br>
-          ${esc(x.customer?.phone)}
-        </div>
+      <div class="box">
+        <b>Predmet:</b> ${esc(x.subject)}<br>
+        <b>Produkt / téma:</b> ${esc(x.product)}<br><br>
+        <div class="message">${esc(x.message)}</div>
+      </div>
 
-        <div class="box">
-          <b>Predmet:</b> ${esc(x.subject)}<br>
-          <b>Produkt / téma:</b> ${esc(x.product)}<br><br>
-          <div class="message">${esc(x.message)}</div>
-        </div>
+      <label>Stav</label>
+      <select id="status-${esc(x.id)}">
+        <option value="new" ${x.status === "new" ? "selected" : ""}>Nový</option>
+        <option value="contacted" ${x.status === "contacted" ? "selected" : ""}>Kontaktovaný</option>
+        <option value="closed" ${x.status === "closed" ? "selected" : ""}>Vyriešený</option>
+        <option value="spam" ${x.status === "spam" ? "selected" : ""}>Spam</option>
+      </select>
 
-        <label>Stav</label>
-        <select id="status-${esc(x.id)}">
-          <option value="new" ${x.status === "new" ? "selected" : ""}>Nový</option>
-          <option value="contacted" ${x.status === "contacted" ? "selected" : ""}>Kontaktovaný</option>
-          <option value="closed" ${x.status === "closed" ? "selected" : ""}>Vyriešený</option>
-          <option value="spam" ${x.status === "spam" ? "selected" : ""}>Spam</option>
-        </select>
+      <label>Interná poznámka</label>
+      <textarea id="note-${esc(x.id)}">${esc(x.adminNote || "")}</textarea>
 
-        <label>Interná poznámka</label>
-        <textarea id="note-${esc(x.id)}">${esc(x.adminNote || "")}</textarea>
-
-        <button onclick="saveInquiry('${esc(x.id)}')">Uložiť dopyt</button>
-
-        <hr>
-
-        <h3>Odpovedať zákazníkovi</h3>
-        <textarea id="reply-${esc(x.id)}" placeholder="Napíš odpoveď zákazníkovi..."></textarea>
-        <button onclick="replyInquiry('${esc(x.id)}')">Poslať odpoveď emailom</button>
-
-        <div class="msg" id="msg-${esc(x.id)}"></div>
-
-        <h3>História odpovedí</h3>
-        ${replyHistory || `<p class="empty-small">Zatiaľ nebola odoslaná odpoveď.</p>`}
-      </section>
-    `;
-  }).join("");
+      <button onclick="saveInquiry('${esc(x.id)}')">Uložiť dopyt</button>
+      <div class="msg" id="msg-${esc(x.id)}"></div>
+    </section>
+  `).join("");
 
   const html = `<!doctype html>
 <html lang="sk">
@@ -177,9 +156,9 @@ a{text-decoration:none;color:inherit}
 .logo{font-size:22px;font-weight:950}
 .nav{display:flex;gap:12px}
 .nav a{border:1px solid var(--line);border-radius:12px;padding:10px 13px;color:var(--muted)}
-.page{width:min(1400px,calc(100% - 32px));margin:24px auto;display:grid;grid-template-columns:1fr 450px;gap:20px}
+.page{width:min(1400px,calc(100% - 32px));margin:24px auto;display:grid;grid-template-columns:1fr 420px;gap:20px}
 .card{border:1px solid var(--line);border-radius:24px;background:rgba(255,255,255,.045);padding:22px}
-h1,h2,h3{margin-top:0}
+h1,h2{margin-top:0}
 table{width:100%;border-collapse:collapse}
 th,td{padding:13px;border-bottom:1px solid var(--line);text-align:left}
 th{color:var(--muted);font-size:13px}
@@ -196,11 +175,6 @@ textarea{min-height:130px}
 button{margin-top:14px;border:0;background:var(--a);color:#020617;border-radius:14px;padding:14px 18px;font-weight:950;cursor:pointer}
 .msg{margin-top:12px;color:var(--a);font-weight:900}
 .empty{color:var(--muted);padding:30px;text-align:center}
-.empty-small{color:var(--muted)}
-hr{border:0;border-top:1px solid var(--line);margin:22px 0}
-.reply{border:1px solid var(--line);border-radius:14px;background:#020617;padding:12px;margin:10px 0;color:var(--muted)}
-.reply span{float:right;color:var(--a);font-size:12px;font-weight:900}
-.reply p{white-space:pre-line;color:white}
 @media(max-width:900px){.page{grid-template-columns:1fr}.nav{display:none}}
 </style>
 </head>
@@ -266,37 +240,6 @@ async function saveInquiry(id) {
     if (!data.success) throw new Error(data.error || "Uloženie zlyhalo.");
 
     msg.textContent = "Uložené.";
-  } catch (err) {
-    msg.textContent = err.message;
-  }
-}
-
-async function replyInquiry(id) {
-  const msg = document.getElementById("msg-" + id);
-  const text = document.getElementById("reply-" + id).value;
-
-  if (!text.trim()) {
-    msg.textContent = "Napíš odpoveď.";
-    return;
-  }
-
-  msg.textContent = "Odosielam odpoveď...";
-
-  try {
-    const res = await fetch("/api/admin/inquiries/reply?pin=" + encodeURIComponent(PIN), {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({
-        id,
-        replyText: text
-      })
-    });
-
-    const data = await res.json();
-    if (!data.success) throw new Error(data.error || "Odoslanie zlyhalo.");
-
-    msg.textContent = "Odpoveď odoslaná.";
-    setTimeout(() => location.reload(), 900);
   } catch (err) {
     msg.textContent = err.message;
   }
