@@ -57,72 +57,72 @@ function pub(acc) {
   return x;
 }
 
-function normalizePages(body, siteSlug, companyName) {
-  let pages = [];
+function lines(value) {
+  if (Array.isArray(value)) return value.map(String).filter(Boolean);
+  return String(value || "").split("\n").map((x) => x.trim()).filter(Boolean);
+}
 
-  if (Array.isArray(body.pages)) {
-    pages = body.pages;
-  } else {
-    pages = [
-      {
-        id: "home",
-        title: "Domov",
-        slug: "",
-        headline: body.headline || body.title || companyName,
-        description: body.description || body.text || "",
-        heroImage: body.heroImage || body.image || "",
-        sections: [
-          {
-            type: "services",
-            title: "Služby",
-            items: String(body.services || body.serviceList || body.sluzby || "")
-              .split("\n")
-              .map((x) => x.trim())
-              .filter(Boolean),
-          },
-          {
-            type: "gallery",
-            title: "Galéria",
-            images: Array.isArray(body.images) ? body.images : [],
-          },
-          {
-            type: "contact",
-            title: "Kontakt",
-          },
-        ],
-      },
-    ];
+function normalizeProducts(value) {
+  if (Array.isArray(value) && value.length) {
+    return value.map((p, i) => ({
+      id: String(p.id || `product-${i + 1}`),
+      title: String(p.title || p.name || `Produkt ${i + 1}`),
+      price: String(p.price || ""),
+      oldPrice: String(p.oldPrice || ""),
+      image: String(p.image || p.imageUrl || ""),
+      shortText: String(p.shortText || p.description || ""),
+      category: String(p.category || ""),
+      badge: String(p.badge || ""),
+      detailUrl: String(p.detailUrl || ""),
+    }));
   }
 
-  return pages.map((p, index) => {
-    const title = String(p.title || (index === 0 ? "Domov" : "Stránka")).trim();
-    let pageSlug = index === 0 ? "" : slugify(p.slug || title);
-    if (p.slug === "" || p.id === "home") pageSlug = "";
+  return [
+    {
+      id: "product-1",
+      title: "Ukážkový produkt",
+      price: "€999",
+      oldPrice: "",
+      image: "",
+      shortText: "Krátky popis produktu.",
+      category: "Novinky",
+      badge: "TIP",
+      detailUrl: "",
+    },
+  ];
+}
 
-    const sections = Array.isArray(p.sections) ? p.sections : [];
-
-    return {
-      id: String(p.id || pageSlug || "home"),
-      title,
-      slug: pageSlug,
-      headline: String(p.headline || title || companyName).trim(),
-      description: String(p.description || "").trim(),
-      heroImage: String(p.heroImage || p.image || "").trim(),
-      sections: sections.map((s) => ({
-        type: String(s.type || "text"),
-        title: String(s.title || "").trim(),
-        text: String(s.text || "").trim(),
-        items: Array.isArray(s.items) ? s.items.map(String) : [],
-        images: Array.isArray(s.images)
-          ? s.images.map((img) =>
-              typeof img === "string"
-                ? { url: img, title: "" }
-                : { url: String(img.url || ""), title: String(img.title || "") }
-            ).filter((img) => img.url)
-          : [],
-      })),
-    };
-  });
+function defaultSidebar(body, site) {
+  return {
+    categories: lines(body.categories).length
+      ? lines(body.categories)
+      : [
+          "Hlavná kategória",
+          "Akčný tovar",
+          "Novinky",
+          "Najpredávanejšie",
+          "Doplnky",
+          "Výpredaj",
+        ],
+    contactTitle: String(body.sidebarContactTitle || "Kontakt"),
+    contactName: String(body.sidebarContactName || site.companyName || ""),
+    contactEmail: String(body.sidebarContactEmail || site.email || site.ownerEmail || ""),
+    contactPhone: String(body.sidebarContactPhone || site.phone || ""),
+    searchEnabled: body.searchEnabled !== false,
+    adviceLinks: Array.isArray(body.adviceLinks)
+      ? body.adviceLinks
+      : [
+          { title: "Ako nakupovať", url: "#" },
+          { title: "Obchodné podmienky", url: "#" },
+          { title: "Ochrana osobných údajov", url: "#" },
+        ],
+    youtube: Array.isArray(body.youtube)
+      ? body.youtube
+      : [
+          { title: "YouTube kanál", url: "#" },
+        ],
+    customBlocks: Array.isArray(body.sidebarBlocks) ? body.sidebarBlocks : [],
+  };
 }
 
 async function indexAccount(kv, acc) {
@@ -163,7 +163,7 @@ export async function onRequestGet({ env }) {
 
   if (kv) {
     try {
-      await kv.put("site-editor-health", new Date().toISOString());
+      await kv.put("site-save-eshop-health", new Date().toISOString());
       ok = true;
     } catch (e) {
       err = String(e && e.message ? e.message : e);
@@ -173,11 +173,23 @@ export async function onRequestGet({ env }) {
   return j({
     success: true,
     endpoint: "/api/site/save",
-    mode: "customer-site-editor",
+    mode: "eshop-shoptet-style",
     kvBindingFound: Boolean(kv),
     kvWriteOk: ok,
     kvError: err,
-    supports: ["pages", "sections", "image URLs", "theme", "logo", "navigation"],
+    supports: [
+      "top menu",
+      "left categories",
+      "contact sidebar",
+      "search sidebar",
+      "advice links",
+      "youtube links",
+      "product grid",
+      "homepage description",
+      "footer",
+      "products",
+      "categories",
+    ],
   });
 }
 
@@ -201,49 +213,16 @@ export async function onRequestPost({ request, env }) {
       body.contactEmail
     );
 
-    if (!accountEmail) {
-      return j({
-        success: false,
-        error: "Chýba e-mail účtu. Zákazník musí byť prihlásený.",
-        receivedKeys: Object.keys(body),
-      });
-    }
+    if (!accountEmail) return j({ success: false, error: "Chýba e-mail účtu.", receivedKeys: Object.keys(body) });
 
     const acc = await getJson(kv, "user:" + accountEmail);
     if (!acc) return j({ success: false, error: "Účet neexistuje.", email: accountEmail });
     if (!active(acc)) return j({ success: false, error: "Licencia nie je aktívna.", account: pub(acc) });
 
-    const companyName = String(
-      body.companyName ||
-      body.company ||
-      body.businessName ||
-      body.name ||
-      acc.companyName ||
-      ""
-    ).trim();
+    const companyName = String(body.companyName || body.company || body.businessName || body.name || acc.companyName || "").trim();
 
-    let siteSlug = slugify(
-      body.slug ||
-      body.siteSlug ||
-      body.urlName ||
-      body.url ||
-      body.path ||
-      companyName ||
-      acc.companyName ||
-      "web"
-    );
-
+    let siteSlug = slugify(body.slug || body.siteSlug || body.urlName || body.url || body.path || companyName || acc.companyName || "web");
     if (!siteSlug) siteSlug = "web-" + Date.now();
-
-    const theme = {
-      accent: String(body.theme?.accent || body.accent || "cyan"),
-      dark: body.theme?.dark !== false,
-      luxury: body.theme?.luxury !== false,
-      logo: String(body.logo || body.theme?.logo || ""),
-      heroImage: String(body.heroImage || body.theme?.heroImage || body.image || ""),
-    };
-
-    const pages = normalizePages(body, siteSlug, companyName);
 
     const website = {
       slug: siteSlug,
@@ -251,11 +230,42 @@ export async function onRequestPost({ request, env }) {
       companyName: companyName || acc.companyName,
       headline: String(body.headline || body.title || companyName || acc.companyName || "").trim(),
       description: String(body.description || body.text || body.copy || "").trim(),
+      homepageText: String(body.homepageText || body.longDescription || body.mainDescription || body.description || "").trim(),
       phone: String(body.phone || body.telefon || "").trim(),
       email: String(body.siteEmail || body.publicEmail || body.contactEmail || acc.email).trim(),
-      template: String(body.template || body.templateName || acc.template || "Stavebná firma"),
-      theme,
-      pages,
+      template: String(body.template || body.templateName || acc.template || "E-shop"),
+      theme: {
+        accent: String(body.theme?.accent || body.accent || "turquoise"),
+        logo: String(body.logo || body.theme?.logo || ""),
+        heroImage: String(body.heroImage || body.theme?.heroImage || body.image || ""),
+      },
+      eshop: {
+        enabled: true,
+        topMenu: Array.isArray(body.topMenu) ? body.topMenu : [
+          { title: "Produkty", url: "#produkty" },
+          { title: "Akcie", url: "#produkty" },
+          { title: "Ako nakupovať", url: "#info" },
+          { title: "Kontakt", url: "#kontakt" },
+        ],
+        benefits: Array.isArray(body.benefits) ? body.benefits : [
+          { title: "Darček zdarma", text: "Ku každej objednávke." },
+          { title: "Rýchle dodanie", text: "Pre produkty skladom." },
+          { title: "Na splátky", text: "Rýchlo a bezpečne." },
+          { title: "Doprava zdarma", text: "Podľa podmienok predajcu." },
+        ],
+        sidebar: defaultSidebar(body, {
+          companyName: companyName || acc.companyName,
+          email: String(body.siteEmail || body.publicEmail || body.contactEmail || acc.email).trim(),
+          ownerEmail: acc.email,
+          phone: String(body.phone || body.telefon || "").trim(),
+        }),
+        products: normalizeProducts(body.products),
+        footerLinks: Array.isArray(body.footerLinks) ? body.footerLinks : [
+          { title: "Ako nakupovať", url: "#" },
+          { title: "Obchodné podmienky", url: "#" },
+          { title: "Ochrana osobných údajov", url: "#" },
+        ],
+      },
       source: "lech-web",
       status: "published",
       createdAt: acc.website && acc.website.createdAt ? acc.website.createdAt : new Date().toISOString(),
@@ -269,10 +279,9 @@ export async function onRequestPost({ request, env }) {
 
     return j({
       success: true,
-      message: "Web bol uložený.",
+      message: "E-shop web bol uložený.",
       url: "/site/" + siteSlug,
       publicUrl: "https://lech-web.pages.dev/site/" + siteSlug,
-      editModel: "pages + sections + images",
       website,
       account: pub(acc),
     });
