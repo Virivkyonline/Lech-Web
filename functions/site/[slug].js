@@ -24,75 +24,45 @@ function esc(v) {
     .replaceAll('"', "&quot;");
 }
 function palette(theme) {
-  const a = String(theme?.accent || "original").toLowerCase();
-  if (a === "neon") return ["#67e8f9", "#e879f9", "#061019"];
-  if (a === "pink") return ["#e879f9", "#67e8f9", "#120616"];
-  if (a === "violet") return ["#a78bfa", "#67e8f9", "#0b0719"];
-  if (a === "orange") return ["#fb923c", "#facc15", "#160b04"];
-  if (a === "lime") return ["#bef264", "#67e8f9", "#071308"];
-  if (a === "turquoise") return ["#4fc3c7", "#5ff3ee", "#ffffff"];
-  return ["#48bfc3", "#55e8e2", "#ffffff"];
+  const a = String(theme?.accent || "lechweb").toLowerCase();
+  if (a === "cyan") return ["#67e8f9", "#0f172a", "#03040a", "#ffffff"];
+  if (a === "fuchsia") return ["#e879f9", "#17051d", "#03040a", "#ffffff"];
+  if (a === "violet") return ["#a78bfa", "#111027", "#03040a", "#ffffff"];
+  if (a === "emerald") return ["#34d399", "#06251d", "#03040a", "#ffffff"];
+  if (a === "orange") return ["#fb923c", "#2a1003", "#03040a", "#ffffff"];
+  return ["#67e8f9", "#1e1030", "#03040a", "#ffffff"];
 }
-function renderLogo(site) {
+function logo(site) {
   if (site.theme?.logo) return `<img class="logo-img" src="${esc(site.theme.logo)}" alt="${esc(site.companyName)}"/>`;
   return `<div class="logo-text">${esc(site.companyName)}</div>`;
 }
-function renderTopMenu(menu) {
-  return (menu || []).map((m) => `<a href="${esc(m.url || "#")}">${esc(m.title || "")}</a>`).join("");
+function menu(items) {
+  return (items || []).map((m) => `<a href="${esc(m.url || "#")}">${esc(m.title || "")}</a>`).join("");
 }
-function renderBenefits(items) {
+function benefits(items) {
   return (items || []).map((b) => `<div class="benefit"><div class="benefit-icon">✦</div><div><strong>${esc(b.title)}</strong><span>${esc(b.text)}</span></div></div>`).join("");
 }
-function renderSidebar(sidebar) {
-  const cats = (sidebar.categories || []).map((c) => `<li><a href="#">${esc(c)}</a></li>`).join("");
-  const advice = (sidebar.adviceLinks || []).map((x) => `<li><a href="${esc(x.url || "#")}">${esc(x.title || "")}</a></li>`).join("");
-  const youtube = (sidebar.youtube || []).map((x) => `<li><a href="${esc(x.url || "#")}">${esc(x.title || "")}</a></li>`).join("");
-  const blocks = (sidebar.customBlocks || []).map((b) => `<div class="side-box"><h3>${esc(b.title || "")}</h3><p>${esc(b.text || "")}</p></div>`).join("");
+function sidebar(s) {
+  const cats = (s.categories || []).map((c) => `<li><a href="#">${esc(c)}</a></li>`).join("");
+  const advice = (s.adviceLinks || []).map((x) => `<li><a href="${esc(x.url || "#")}">${esc(x.title || "")}</a></li>`).join("");
+  const youtube = (s.youtube || []).map((x) => `<li><a href="${esc(x.url || "#")}">${esc(x.title || "")}</a></li>`).join("");
   return `<aside class="sidebar">
-    <div class="side-box"><h3>Kategórie</h3><ul class="cat-list">${cats}</ul></div>
-    <div class="side-box" id="kontakt"><h3>${esc(sidebar.contactTitle || "Kontakt")}</h3><div class="contact-name">${esc(sidebar.contactName || "")}</div>${sidebar.contactEmail ? `<a href="mailto:${esc(sidebar.contactEmail)}">✉ ${esc(sidebar.contactEmail)}</a>` : ""}${sidebar.contactPhone ? `<a href="tel:${esc(sidebar.contactPhone)}">☎ ${esc(sidebar.contactPhone)}</a>` : ""}</div>
-    ${sidebar.searchEnabled !== false ? `<div class="side-box"><h3>Vyhľadávanie</h3><form class="search-box"><input placeholder="Názov tovaru..."/><button type="button">→</button></form></div>` : ""}
-    <div class="side-box"><h3>Typy a rady</h3><ul class="link-list">${advice}</ul></div>
-    <div class="side-box"><h3>Videá YouTube</h3><ul class="link-list">${youtube}</ul></div>
-    ${blocks}
+    <div class="side-box"><h3>Kategórie</h3><ul>${cats}</ul></div>
+    <div class="side-box" id="kontakt"><h3>${esc(s.contactTitle || "Kontakt")}</h3><b>${esc(s.contactName || "")}</b>${s.contactEmail ? `<a href="mailto:${esc(s.contactEmail)}">✉ ${esc(s.contactEmail)}</a>` : ""}${s.contactPhone ? `<a href="tel:${esc(s.contactPhone)}">☎ ${esc(s.contactPhone)}</a>` : ""}</div>
+    <div class="side-box"><h3>Vyhľadávanie</h3><div class="search"><input placeholder="Názov tovaru..."/><button>→</button></div></div>
+    <div class="side-box"><h3>Typy a rady</h3><ul>${advice}</ul></div>
+    <div class="side-box"><h3>Videá YouTube</h3><ul>${youtube}</ul></div>
   </aside>`;
 }
-function renderProducts(products) {
-  return (products || []).map((p) => `<article class="product">
+function products(list) {
+  return (list || []).map((p) => `<article class="product">
     <div class="badges">${p.badge ? `<span>${esc(p.badge)}</span>` : ""}${p.oldPrice ? `<span class="sale">AKCIA</span>` : ""}</div>
-    <div class="product-img">${p.image ? `<img src="${esc(p.image)}" alt="${esc(p.title)}" loading="lazy"/>` : `<div class="placeholder">Produkt</div>`}</div>
+    <div class="pimg">${p.image ? `<img src="${esc(p.image)}" alt="${esc(p.title)}"/>` : `<div>Produkt</div>`}</div>
     <h3>${esc(p.title)}</h3>
     <div class="price">${p.oldPrice ? `<del>${esc(p.oldPrice)}</del>` : ""}<strong>${esc(p.price)}</strong></div>
-    <a class="detail" href="${esc(p.detailUrl || "#")}">DETAIL</a>
+    <a class="detail" href="#">DETAIL</a>
     <p>${esc(p.shortText || "")}</p>
   </article>`).join("");
-}
-function renderFooter(site) {
-  const links = site.eshop?.footerLinks || [];
-  return `<footer class="footer"><div class="footer-grid"><div><h3>${esc(site.companyName)}</h3><p>${esc(site.description || "")}</p></div><div><h3>Informácie pre vás</h3><ul>${links.map((l) => `<li><a href="${esc(l.url || "#")}">${esc(l.title || "")}</a></li>`).join("")}</ul></div><div><h3>Nákupný košík</h3><div class="cart-box">0 ks / €0</div></div></div><div class="copy">© ${new Date().getFullYear()} ${esc(site.companyName)}. Vytvorené cez Lech-Web.</div></footer>`;
-}
-function renderEshop(site) {
-  const e = site.eshop || {};
-  const sidebar = e.sidebar || {};
-  const products = e.products || [];
-  const [a, b, pageBg] = palette(site.theme);
-  const hero = site.theme?.heroImage;
-  return `<!doctype html><html lang="sk"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>${esc(site.companyName)}</title><meta name="description" content="${esc(site.description || "")}"/>
-<style>
-:root{--a:${a};--b:${b};--pageBg:${pageBg};--text:#10131a;--muted:#5b6573;--line:#d7e1e2;--soft:#f5f8f8}
-*{box-sizing:border-box}body{margin:0;background:${pageBg === "#ffffff" ? b : "#03040a"};font-family:Arial,Helvetica,sans-serif;color:var(--text)}a{color:inherit;text-decoration:none}
-.page{width:min(1420px,calc(100% - 48px));margin:0 auto;background:white;min-height:100vh}.topbar{height:92px;background:var(--a);display:grid;grid-template-columns:230px 1fr auto;align-items:center;border-bottom:1px solid rgba(255,255,255,.25)}
-.logo{padding:0 26px;display:flex;align-items:center;height:100%;background:rgba(255,255,255,.08)}.logo-img{max-width:190px;max-height:70px;object-fit:contain}.logo-text{font-size:30px;font-weight:900;letter-spacing:-.04em;color:white}
-.menu{display:flex;align-items:center;gap:34px;font-weight:800;color:white}.menu a{color:white}.icons{display:flex;height:100%}.icons div{width:74px;display:grid;place-items:center;border-left:1px solid rgba(255,255,255,.25);color:white;font-size:25px}
-.benefits{display:grid;grid-template-columns:repeat(4,1fr);gap:25px;padding:28px 38px 35px}.benefit{display:flex;gap:16px;align-items:center}.benefit-icon{width:54px;height:54px;border:3px solid var(--a);border-radius:16px;display:grid;place-items:center;color:var(--a);font-size:24px}.benefit strong{display:block;font-size:18px}.benefit span{display:block;color:#111;line-height:1.35}
-.main{display:grid;grid-template-columns:320px 1fr;gap:34px;padding:0 36px}.sidebar{border-right:1px solid var(--line);padding-right:28px}.side-box{border-bottom:1px solid var(--line);padding:22px 0}.side-box h3{font-size:22px;margin:0 0 15px;font-weight:900}.cat-list,.link-list{list-style:none;margin:0;padding:0;display:grid;gap:9px}.cat-list a,.link-list a{color:#111}.contact-name{font-weight:900;margin-bottom:10px}.side-box a{display:block;color:var(--a);margin:8px 0}.search-box{display:grid;grid-template-columns:1fr 50px;border:1px solid #aaa}.search-box input{border:0;padding:14px;font-size:15px;outline:none}.search-box button{border:0;border-left:1px solid #aaa;background:white;font-size:28px;cursor:pointer}
-.content{padding-bottom:40px}.hero{margin-bottom:28px;min-height:260px;border:1px solid var(--line);background:${hero ? `url("${esc(hero)}") center/cover` : "linear-gradient(135deg,#e7ffff,#fff)"};display:flex;align-items:end;padding:34px}.hero h1{font-size:42px;line-height:1.05;margin:0 0 12px;max-width:700px}.hero p{font-size:18px;max-width:760px;margin:0;color:#1e293b}
-.tabs{display:flex;justify-content:center;border-bottom:1px solid var(--line);margin-bottom:30px}.tabs span{padding:14px 28px;border:1px solid var(--line);border-bottom:0;background:white;font-weight:700}.product-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}.product{border:1px solid var(--line);padding:0 22px 24px;position:relative;text-align:center;min-height:530px}.badges{position:absolute;left:0;top:0;z-index:2;display:grid;gap:4px}.badges span{background:#009aa2;color:white;font-size:13px;font-weight:900;padding:7px 14px}.badges .sale{background:#d83a42}.product-img{height:245px;display:grid;place-items:center;margin-top:14px}.product-img img{max-width:100%;max-height:235px;object-fit:contain}.placeholder{width:100%;height:210px;background:#e8f7f8;display:grid;place-items:center;color:var(--a);font-size:22px;font-weight:900}.product h3{font-size:17px;line-height:1.35;font-weight:500;min-height:48px}.price{display:grid;gap:4px;margin:14px 0}.price del{color:#6b7280}.price strong{font-size:18px}.detail{display:inline-block;border:2px solid var(--a);color:var(--a);padding:12px 48px;margin:10px 0 16px;font-weight:700}.product p{line-height:1.45;margin:0}.home-text{max-width:760px;margin:55px auto 25px;font-size:18px;line-height:1.65}.home-text h2{font-size:36px;line-height:1.1;margin:0 0 20px}.footer{background:#f6f6f6;margin-top:20px;padding:36px}.footer-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px}.footer h3{font-size:22px;margin-top:0}.footer ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}.footer a{color:var(--a)}.cart-box{border:1px solid var(--a);height:58px;display:grid;place-items:center;color:var(--a)}.copy{border-top:1px solid #ddd;margin-top:34px;padding-top:22px;font-size:14px}
-@media(max-width:1050px){.page{width:100%}.topbar{grid-template-columns:1fr auto}.logo{grid-column:1/3}.menu{overflow:auto;padding:16px 20px}.benefits{grid-template-columns:1fr 1fr}.main{grid-template-columns:1fr}.sidebar{border-right:0;padding-right:0;order:2}.product-grid{grid-template-columns:1fr 1fr}}@media(max-width:650px){.benefits{grid-template-columns:1fr}.product-grid{grid-template-columns:1fr}.main{padding:0 18px}.footer-grid{grid-template-columns:1fr}.hero h1{font-size:32px}}
-</style></head><body><div class="page"><header class="topbar"><a class="logo" href="/site/${esc(site.slug)}">${renderLogo(site)}</a><nav class="menu">${renderTopMenu(e.topMenu)}</nav><div class="icons"><div>⌕</div><div>♙</div><div>🛒</div></div></header><section class="benefits">${renderBenefits(e.benefits)}</section><main class="main">${renderSidebar(sidebar)}<section class="content"><div class="hero"><div><h1>${esc(site.headline || site.companyName)}</h1><p>${esc(site.description || "")}</p></div></div><div class="tabs"><span>Akčný tovar</span><span>Novinky</span></div><div id="produkty" class="product-grid">${renderProducts(products)}</div><article id="info" class="home-text"><h2>${esc(site.headline || site.companyName)}</h2><p>${esc(site.homepageText || site.description || "Sem zákazník doplní dlhý popis hlavnej stránky, SEO text, rady, výhody a informácie o produktoch.")}</p></article></section></main>${renderFooter(site)}</div></body></html>`;
-}
-function renderFallback(site) {
-  return `<!doctype html><html><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>${esc(site.companyName)}</title></head><body><h1>${esc(site.companyName)}</h1><p>${esc(site.description || "")}</p></body></html>`;
 }
 export async function onRequestGet({ params, env }) {
   const store = kv(env);
@@ -102,6 +72,21 @@ export async function onRequestGet({ params, env }) {
   if (!site) return new Response("Web neexistuje.", { status: 404 });
   const acc = await getJson(store, "user:" + String(site.ownerEmail || "").toLowerCase());
   if (!active(acc)) return new Response("Web je pozastavený. Licencia nie je aktívna.", { status: 402 });
-  const isEshop = site.eshop?.enabled || String(site.template || "").toLowerCase().includes("shop") || String(site.template || "").toLowerCase().includes("e-shop");
-  return new Response(isEshop ? renderEshop(site) : renderFallback(site), { headers: { "content-type": "text/html; charset=utf-8" } });
+
+  const e = site.eshop || {};
+  const s = e.sidebar || {};
+  const [accent, panel, bg, text] = palette(site.theme);
+  const hero = site.theme?.heroImage;
+
+  const html = `<!doctype html><html lang="sk"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>${esc(site.companyName)}</title>
+<style>
+:root{--a:${accent};--panel:${panel};--bg:${bg};--text:${text};--line:rgba(255,255,255,.12)}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 12% 8%,color-mix(in srgb,var(--a) 26%,transparent),transparent 32%),radial-gradient(circle at 88% 8%,rgba(232,121,249,.18),transparent 32%),#03040a;color:white;font-family:Arial,Helvetica,sans-serif}a{text-decoration:none;color:inherit}.page{width:min(1440px,calc(100% - 40px));margin:0 auto;min-height:100vh;background:rgba(3,4,10,.82);border-left:1px solid var(--line);border-right:1px solid var(--line)}
+.top{height:88px;background:rgba(15,23,42,.88);display:grid;grid-template-columns:260px 1fr auto;align-items:center;border-bottom:1px solid var(--line);backdrop-filter:blur(18px)}.logo{height:100%;display:flex;align-items:center;padding:0 26px;background:linear-gradient(135deg,color-mix(in srgb,var(--a) 20%,transparent),rgba(255,255,255,.03))}.logo-img{max-width:205px;max-height:70px}.logo-text{font-size:30px;font-weight:950;color:white}.menu{display:flex;gap:34px;font-weight:900}.menu a{color:white}.icons{display:flex;height:100%}.icons div{width:72px;display:grid;place-items:center;border-left:1px solid var(--line);color:var(--a);font-size:24px}
+.benefits{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;padding:30px 36px}.benefit{display:flex;gap:14px;align-items:center;border:1px solid var(--line);border-radius:22px;background:rgba(255,255,255,.045);padding:18px}.benefit-icon{width:48px;height:48px;border-radius:15px;background:var(--a);color:#020617;display:grid;place-items:center;font-weight:950}.benefit strong{display:block}.benefit span{display:block;color:#cbd5e1;margin-top:3px}
+.main{display:grid;grid-template-columns:320px 1fr;gap:32px;padding:0 36px 42px}.sidebar{border-right:1px solid var(--line);padding-right:28px}.side-box{border-bottom:1px solid var(--line);padding:24px 0}.side-box h3{font-size:24px;margin:0 0 16px}.side-box ul{list-style:none;padding:0;margin:0;display:grid;gap:10px}.side-box a{color:var(--a);display:block;margin-top:9px}.search{display:grid;grid-template-columns:1fr 50px;border:1px solid var(--line);border-radius:12px;overflow:hidden}.search input{background:white;color:#111;border:0;padding:14px}.search button{border:0;background:var(--a);font-size:24px}
+.hero{min-height:270px;border:1px solid var(--line);border-radius:26px;background:${hero ? `url("${esc(hero)}") center/cover` : "linear-gradient(135deg,rgba(103,232,249,.12),rgba(232,121,249,.10))"};display:flex;align-items:end;padding:34px;margin-bottom:30px}.hero h1{font-size:46px;line-height:1.05;margin:0 0 12px}.hero p{font-size:18px;color:#cbd5e1;max-width:760px}.tabs{display:flex;justify-content:center;border-bottom:1px solid var(--line);margin-bottom:28px}.tabs span{border:1px solid var(--line);border-bottom:0;padding:14px 28px;font-weight:900}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}.product{position:relative;text-align:center;border:1px solid var(--line);border-radius:24px;background:rgba(255,255,255,.045);padding:0 18px 24px;min-height:520px}.badges{position:absolute;left:0;top:0;z-index:2;display:grid;gap:4px}.badges span{background:#009aa2;padding:7px 13px;font-size:12px;font-weight:950}.badges .sale{background:#e11d48}.pimg{height:240px;display:grid;place-items:center;margin-top:16px}.pimg img{max-width:100%;max-height:225px;object-fit:contain}.pimg div{width:100%;height:210px;border-radius:20px;background:rgba(103,232,249,.12);display:grid;place-items:center;color:var(--a);font-size:25px;font-weight:950}.product h3{font-size:17px;line-height:1.35;min-height:50px}.price{display:grid;gap:4px;margin:14px 0}.price strong{font-size:19px}.price del{color:#94a3b8}.detail{display:inline-block;border:2px solid var(--a);color:var(--a);padding:12px 48px;border-radius:10px;font-weight:950}.product p{color:#cbd5e1;line-height:1.5}.home{max-width:790px;margin:55px auto 20px;font-size:18px;line-height:1.65;color:#dbeafe}.home h2{font-size:38px;line-height:1.1;color:white}.footer{border-top:1px solid var(--line);background:rgba(15,23,42,.76);padding:34px}.copy{color:#94a3b8}
+@media(max-width:1050px){.page{width:100%}.top{grid-template-columns:1fr}.menu{overflow:auto;padding:15px 24px}.icons{display:none}.benefits{grid-template-columns:1fr 1fr}.main{grid-template-columns:1fr}.sidebar{border-right:0;padding-right:0;order:2}.grid{grid-template-columns:1fr 1fr}}@media(max-width:650px){.benefits,.grid{grid-template-columns:1fr}.main{padding:0 18px 35px}.hero h1{font-size:34px}}
+</style></head><body><div class="page"><header class="top"><a class="logo" href="/site/${esc(site.slug)}">${logo(site)}</a><nav class="menu">${menu(e.topMenu)}</nav><div class="icons"><div>⌕</div><div>♙</div><div>🛒</div></div></header><section class="benefits">${benefits(e.benefits)}</section><main class="main">${sidebar(s)}<section><div class="hero"><div><h1>${esc(site.headline || site.companyName)}</h1><p>${esc(site.description || "")}</p></div></div><div class="tabs"><span>Akčný tovar</span><span>Novinky</span></div><div id="produkty" class="grid">${products(e.products)}</div><article id="info" class="home"><h2>${esc(site.headline || site.companyName)}</h2><p>${esc(site.homepageText || site.description || "Sem zákazník doplní dlhý SEO text pod produktami.")}</p></article></section></main><footer class="footer"><div class="copy">© ${new Date().getFullYear()} ${esc(site.companyName)} • Vytvorené cez Lech-Web</div></footer></div></body></html>`;
+  return new Response(html, { headers: { "content-type": "text/html; charset=utf-8" } });
 }
