@@ -1,281 +1,130 @@
-import React, { useState } from "react";
-import { motion } from "framer-motion";
-import {
-  ArrowRight,
-  Zap,
-  Eye,
-  Palette,
-  ShoppingCart,
-  Smartphone,
-  Sparkles,
-  Search,
-  Code2,
-  BarChart3,
-  Globe2,
-  Mail,
-  Phone,
-  MapPin,
-  Flame,
-  Crown,
-  Brain,
-  UserPlus,
-  ShieldCheck,
-  CalendarClock,
-  Power,
-  KeyRound,
-} from "lucide-react";
+import React, { useMemo, useState } from "react";
+import { ArrowRight, CheckCircle2, Eye, Image, KeyRound, LayoutDashboard, Lock, Palette, Plus, Save, Trash2, UserPlus, Zap } from "lucide-react";
 
 const templates = [
-  {
-    name: "Stavebná firma",
-    tag: "Najlepšie pre remeslá",
-    text: "Pre stavebné firmy, kontajnery, garáže, montáže, strechy, ploty a technické služby.",
-    forWho: "Stavebníci, montážnici, predajcovia kontajnerov",
-    includes: ["Služby", "Realizácie", "Dopytový formulár"],
-  },
-  {
-    name: "E-shop oblečenie",
-    tag: "Móda a kolekcie",
-    text: "Luxusný predajný vzhľad pre oblečenie, doplnky, kolekcie, butik alebo prémiovú značku.",
-    forWho: "Butiky, módne značky, predajcovia oblečenia",
-    includes: ["Kolekcie", "Produkty", "Lookbook"],
-  },
-  {
-    name: "Autoservis",
-    tag: "Rýchle dopyty",
-    text: "Silný web pre autoservis, pneuservis, detailing, požičovňu alebo predaj áut.",
-    forWho: "Autoservisy, pneuservisy, detailing centrá",
-    includes: ["Služby", "Cenník", "Objednávka termínu"],
-  },
-  {
-    name: "Beauty salón",
-    tag: "Luxusný vzhľad",
-    text: "Moderný neónový web pre kozmetiku, nechty, kaderníctvo, masáže a estetické služby.",
-    forWho: "Salóny krásy, kozmetika, wellness",
-    includes: ["Služby", "Cenník", "Rezervácia"],
-  },
-  {
-    name: "Reštaurácia",
-    tag: "Chuť predáva",
-    text: "Predajný web pre reštaurácie, kaviarne, bistrá, donášku a denné menu.",
-    forWho: "Gastro prevádzky, kaviarne, donáška",
-    includes: ["Menu", "Rezervácia", "Otváracie hodiny"],
-  },
-  {
-    name: "Ubytovanie",
-    tag: "Rezervácie",
-    text: "Atmosférický web pre apartmány, penzióny, chaty, hotely a krátkodobé ubytovanie.",
-    forWho: "Apartmány, penzióny, chaty, hotely",
-    includes: ["Izby", "Galéria", "Rezervácia"],
-  },
-  {
-    name: "Reality",
-    tag: "Prémiový predaj",
-    text: "Web pre realitných maklérov, developerov, prenájmy a predaj nehnuteľností.",
-    forWho: "Makléri, developeri, realitné kancelárie",
-    includes: ["Ponuky", "Detail nehnuteľnosti", "Kontakt"],
-  },
-  {
-    name: "Fitness",
-    tag: "Energia a výkon",
-    text: "Web pre trénerov, výživových poradcov, wellness, fyzio a športové programy.",
-    forWho: "Tréneri, fyzio, wellness, fitness centrá",
-    includes: ["Programy", "Cenník", "Konzultácia"],
-  },
-  {
-    name: "Technika",
-    tag: "Čistý predaj",
-    text: "Moderný web alebo e-shop pre elektroniku, náradie, príslušenstvo a technické produkty.",
-    forWho: "Technické obchody, predajcovia náradia",
-    includes: ["Produkty", "Parametre", "Dopyt"],
-  },
-  {
-    name: "Landing page",
-    tag: "Na reklamu",
-    text: "Jedna silná predajná stránka pre Facebook, Google reklamu, kampaň alebo špeciálnu ponuku.",
-    forWho: "Reklamy, kampane, rýchly predaj",
-    includes: ["Hero", "Výhody", "Formulár"],
-  },
-];
-
-const features = [
-  { icon: Eye, title: "Zastaví pohľad", text: "Prvá obrazovka musí zákazníka chytiť. Neón, kontrast, veľké nadpisy a jasná akcia." },
-  { icon: Brain, title: "Psychológia kliknutia", text: "Web je vedený tak, aby zákazník neblúdil. Vidí problém, riešenie a okamžitú výzvu na akciu." },
-  { icon: Sparkles, title: "AI texty a reklamy", text: "Nadpisy, popisy služieb, SEO texty, reklamné vety a predajné formulácie bez trápenia." },
-  { icon: Crown, title: "Luxusný dojem", text: "Dizajn musí pôsobiť draho, aj keď je vytvorený zo šablóny. To zvyšuje dôveru." },
-  { icon: ShoppingCart, title: "Web aj e-shop", text: "Firemný web, landing page alebo jednoduchý e-shop s produktmi, službami a dopytmi." },
-  { icon: Smartphone, title: "Mobil ako priorita", text: "Väčšina zákazníkov príde z mobilu. Preto musí web vyzerať výborne hlavne na telefóne." },
+  "Stavebná firma", "Beauty salón / Wellness", "Autoservis", "E-shop oblečenie", "Reštaurácia", "Ubytovanie", "Reality", "Fitness", "Technika", "Landing page"
 ];
 
 const plans = [
+  { name: "Start Web", price: "39 €", items: ["14 dní zdarma", "Vlastný editor", "Viac stránok", "Základné SEO"] },
+  { name: "Business Web", price: "69 €", items: ["Všetko zo Start", "Galéria", "Viac sekcií", "Prioritná úprava"], popular: true },
+  { name: "Mini E-shop", price: "119 €", items: ["Produkty", "Kategórie", "Dopyty", "Mesačná starostlivosť"] },
+];
+
+const defaultPages = [
   {
-    name: "Start Web",
-    price: "39 €",
-    period: "/ mesiac",
-    setup: "0 € vytvorenie",
-    commitment: "min. 12 mesiacov",
-    desc: "Moderný jednostránkový web pre živnostníkov a malé firmy.",
-    items: ["Luxusný neon dizajn", "Kontaktný formulár", "Mobilná verzia", "Hosting a prevádzka", "Základné SEO", "Malé textové úpravy"],
+    id: "home",
+    title: "Domov",
+    slug: "",
+    headline: "Moderný web, ktorý predáva od prvého pohľadu",
+    description: "Luxusný neónový web pre firmy, ktoré chcú vyzerať profesionálne a získať viac dopytov.",
+    heroImage: "",
+    sections: [
+      { type: "services", title: "Služby", text: "Upravte si služby podľa svojej firmy.", items: ["Služba 1", "Služba 2", "Služba 3"], images: [] },
+      { type: "gallery", title: "Galéria", text: "Pridajte obrázky cez URL. Upload z počítača doplníme cez R2.", items: [], images: [] },
+      { type: "contact", title: "Kontakt", text: "Napíšte nám a ozveme sa späť.", items: [], images: [] },
+    ],
   },
   {
-    name: "Business Web",
-    price: "69 €",
-    period: "/ mesiac",
-    setup: "0 € vytvorenie",
-    commitment: "min. 12 mesiacov",
-    desc: "Silnejší firemný web pre služby, značku, referencie a dopyty.",
-    items: ["Viac podstránok", "AI texty pre služby", "Galéria a referencie", "SEO štruktúra", "Mesačná technická starostlivosť", "Rýchle úpravy obsahu"],
-    popular: true,
-  },
-  {
-    name: "Mini E-shop",
-    price: "119 €",
-    period: "/ mesiac",
-    setup: "0 € vytvorenie",
-    commitment: "min. 24 mesiacov",
-    desc: "Jednoduchý e-shop pre produkty, objednávky a predaj online.",
-    items: ["Produkty a kategórie", "Objednávky", "Základná administrácia", "E-mailové notifikácie", "Hosting a technická prevádzka", "Mesačná starostlivosť"],
+    id: "onas",
+    title: "O nás",
+    slug: "o-nas",
+    headline: "O našej firme",
+    description: "Tu si zákazník doplní príbeh, skúsenosti a výhody firmy.",
+    heroImage: "",
+    sections: [{ type: "text", title: "Kto sme", text: "Sme firma, ktorá stavia na kvalite, dôvere a jasnej komunikácii.", items: [], images: [] }],
   },
 ];
 
+function slugify(value) {
+  return String(value || "").trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9-]+/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
+}
+
+function emptySection(type = "text") {
+  if (type === "services") return { type, title: "Služby", text: "Popis služieb", items: ["Nová služba"], images: [] };
+  if (type === "gallery") return { type, title: "Galéria", text: "Ukážky realizácií", items: [], images: [{ url: "", title: "" }] };
+  if (type === "contact") return { type, title: "Kontakt", text: "Napíšte nám a ozveme sa späť.", items: [], images: [] };
+  return { type: "text", title: "Nová sekcia", text: "Text sekcie", items: [], images: [] };
+}
+
+function Field({ label, children }) {
+  return <label className="grid gap-2"><span className="text-xs font-black uppercase tracking-[0.22em] text-cyan-300">{label}</span>{children}</label>;
+}
+function Input(props) { return <input {...props} className={`rounded-2xl border border-white/10 bg-black/50 px-4 py-3 text-white outline-none placeholder:text-slate-500 focus:border-cyan-300 ${props.className || ""}`} />; }
+function Area(props) { return <textarea {...props} className={`min-h-28 rounded-2xl border border-white/10 bg-black/50 px-4 py-3 text-white outline-none placeholder:text-slate-500 focus:border-cyan-300 ${props.className || ""}`} />; }
+function Select(props) { return <select {...props} className={`rounded-2xl border border-white/10 bg-black/50 px-4 py-3 text-white outline-none focus:border-cyan-300 ${props.className || ""}`} />; }
+function Status({ status }) {
+  if (!status?.success && !status?.error) return null;
+  return <div className={`rounded-2xl border px-4 py-3 text-sm font-bold ${status.success ? "border-lime-300/40 bg-lime-300/10 text-lime-200" : "border-red-400/40 bg-red-400/10 text-red-200"}`}>{status.success || status.error}</div>;
+}
+
 export default function App() {
-  const [formData, setFormData] = useState({
-    name: "",
-    contact: "",
-    type: "Chcem firemný web",
-    message: "",
-  });
-
-  const [formStatus, setFormStatus] = useState({
-    loading: false,
-    success: "",
-    error: "",
-  });
-
-  const [accountMode, setAccountMode] = useState("register");
+  const [authMode, setAuthMode] = useState("register");
   const [account, setAccount] = useState(null);
-  const [accountStatus, setAccountStatus] = useState({ loading: false, success: "", error: "" });
-  const [accountForm, setAccountForm] = useState({
-    email: "",
-    password: "",
-    companyName: "",
-    plan: "Start Web",
-    template: "Stavebná firma",
+  const [authStatus, setAuthStatus] = useState({ loading: false, success: "", error: "" });
+  const [saveStatus, setSaveStatus] = useState({ loading: false, success: "", error: "" });
+  const [activePageIndex, setActivePageIndex] = useState(0);
+  const [authForm, setAuthForm] = useState({ companyName: "", email: "", password: "", plan: "Start Web", template: "Stavebná firma" });
+  const [site, setSite] = useState({
+    slug: "", companyName: "", headline: "", description: "", phone: "", siteEmail: "", template: "Stavebná firma",
+    theme: { accent: "cyan", logo: "", heroImage: "", dark: true, luxury: true },
+    pages: defaultPages,
   });
-  const [siteForm, setSiteForm] = useState({
-    slug: "",
-    title: "",
-    headline: "",
-    subheadline: "",
-    phone: "",
-    email: "",
-    primaryCta: "Nezáväzný dopyt",
-    servicesText: "",
-  });
-  const [siteStatus, setSiteStatus] = useState({ loading: false, success: "", error: "", publicUrl: "" });
 
-  function handleInputChange(event) {
-    const { name, value } = event.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+  const publicUrl = useMemo(() => site.slug ? `https://lech-web.pages.dev/site/${slugify(site.slug)}` : "", [site.slug]);
+  const page = site.pages[activePageIndex] || site.pages[0];
+
+  function updateAuth(name, value) { setAuthForm((p) => ({ ...p, [name]: value })); }
+  function updateSite(name, value) { setSite((p) => ({ ...p, [name]: value })); }
+  function updateTheme(name, value) { setSite((p) => ({ ...p, theme: { ...p.theme, [name]: value } })); }
+  function updatePage(i, name, value) {
+    setSite((p) => { const pages = [...p.pages]; pages[i] = { ...pages[i], [name]: value }; if (name === "title" && i !== 0) pages[i].slug = slugify(value); return { ...p, pages }; });
   }
+  function updateSection(pi, si, patch) {
+    setSite((p) => { const pages = [...p.pages]; const sections = [...pages[pi].sections]; sections[si] = { ...sections[si], ...patch }; pages[pi] = { ...pages[pi], sections }; return { ...p, pages }; });
+  }
+  function addPage() {
+    setSite((p) => ({ ...p, pages: [...p.pages, { id: `page-${Date.now()}`, title: "Nová stránka", slug: "nova-stranka", headline: "Nová stránka", description: "Popis novej stránky", heroImage: "", sections: [emptySection("text")] }] }));
+    setActivePageIndex(site.pages.length);
+  }
+  function removePage(i) { if (i === 0) return; setSite((p) => ({ ...p, pages: p.pages.filter((_, x) => x !== i) })); setActivePageIndex(0); }
+  function addSection(pi, type) { setSite((p) => { const pages = [...p.pages]; pages[pi] = { ...pages[pi], sections: [...pages[pi].sections, emptySection(type)] }; return { ...p, pages }; }); }
+  function removeSection(pi, si) { setSite((p) => { const pages = [...p.pages]; pages[pi] = { ...pages[pi], sections: pages[pi].sections.filter((_, x) => x !== si) }; return { ...p, pages }; }); }
 
-  async function handleSubmit(event) {
-    event.preventDefault();
-    setFormStatus({ loading: true, success: "", error: "" });
-
+  async function handleAuth(e) {
+    e.preventDefault(); setAuthStatus({ loading: true, success: "", error: "" });
     try {
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok || !data.success) {
-        throw new Error(data.error || "Formulár sa nepodarilo odoslať.");
-      }
-
-      setFormStatus({ loading: false, success: "Dopyt bol odoslaný. Čoskoro sa ozveme.", error: "" });
-      setFormData({ name: "", contact: "", type: "Chcem firemný web", message: "" });
-    } catch (error) {
-      setFormStatus({ loading: false, success: "", error: error.message || "Chyba pri odosielaní formulára." });
-    }
-  }
-
-  function handleAccountInput(event) {
-    const { name, value } = event.target;
-    setAccountForm((prev) => ({ ...prev, [name]: value }));
-  }
-
-  function handleSiteInput(event) {
-    const { name, value } = event.target;
-    setSiteForm((prev) => ({ ...prev, [name]: value }));
-  }
-
-  async function handleRegister(event) {
-    event.preventDefault();
-    setAccountStatus({ loading: true, success: "", error: "" });
-    try {
-      const response = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(accountForm),
-      });
-      const data = await response.json();
-      if (!response.ok || !data.success) throw new Error(data.error || "Registrácia zlyhala.");
-      setAccount(data.account);
-      setSiteForm((prev) => ({
-        ...prev,
-        title: data.account.companyName || "Moja firma",
-        slug: (data.account.companyName || data.account.email || "moj-web").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""),
-        email: data.account.email,
+      const url = authMode === "register" ? "/api/auth/register" : "/api/auth/login";
+      const payload = authMode === "register" ? authForm : { email: authForm.email, password: authForm.password };
+      const res = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error || "Akcia zlyhala.");
+      const acc = data.account; setAccount(acc);
+      setSite((p) => ({
+        ...p,
+        slug: acc.website?.slug || slugify(acc.companyName || authForm.companyName),
+        companyName: acc.website?.companyName || acc.companyName || authForm.companyName,
+        headline: acc.website?.headline || acc.companyName || authForm.companyName,
+        description: acc.website?.description || "Moderný web vytvorený cez Lech-Web. Text si upravíte vo vlastnom editore.",
+        siteEmail: acc.website?.email || acc.email,
+        template: acc.website?.template || acc.template || authForm.template,
+        theme: acc.website?.theme || p.theme,
+        pages: acc.website?.pages?.length ? acc.website.pages : p.pages,
       }));
-      setAccountStatus({ loading: false, success: "Účet je vytvorený. Máte 14 dní skúšobnú dobu.", error: "" });
-    } catch (error) {
-      setAccountStatus({ loading: false, success: "", error: error.message || "Registrácia zlyhala." });
-    }
+      setAuthStatus({ loading: false, success: authMode === "register" ? "Účet vytvorený. Trial je aktívny 14 dní." : "Prihlásenie prebehlo úspešne.", error: "" });
+    } catch (err) { setAuthStatus({ loading: false, success: "", error: err.message || "Chyba pri účte." }); }
   }
 
-  async function handleLogin(event) {
-    event.preventDefault();
-    setAccountStatus({ loading: true, success: "", error: "" });
+  async function saveWebsite() {
+    setSaveStatus({ loading: true, success: "", error: "" });
     try {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: accountForm.email, password: accountForm.password }),
-      });
-      const data = await response.json();
-      if (!response.ok || !data.success) throw new Error(data.error || "Prihlásenie zlyhalo.");
-      setAccount(data.account);
-      setSiteForm((prev) => ({ ...prev, title: data.account.companyName || prev.title, email: data.account.email }));
-      setAccountStatus({ loading: false, success: "Ste prihlásený.", error: "" });
-    } catch (error) {
-      setAccountStatus({ loading: false, success: "", error: error.message || "Prihlásenie zlyhalo." });
-    }
-  }
-
-  async function handleSaveSite(event) {
-    event.preventDefault();
-    if (!account?.id) {
-      setSiteStatus({ loading: false, success: "", error: "Najprv sa registrujte alebo prihláste.", publicUrl: "" });
-      return;
-    }
-
-    setSiteStatus({ loading: true, success: "", error: "", publicUrl: "" });
-    try {
-      const response = await fetch("/api/site/save", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ accountId: account.id, ...siteForm, template: account.template }),
-      });
-      const data = await response.json();
-      if (!response.ok || !data.success) throw new Error(data.error || "Uloženie webu zlyhalo.");
-      setSiteStatus({ loading: false, success: "Web je uložený a publikovaný.", error: "", publicUrl: data.publicUrl || "" });
-    } catch (error) {
-      setSiteStatus({ loading: false, success: "", error: error.message || "Uloženie webu zlyhalo.", publicUrl: "" });
-    }
+      const payload = { ...site, slug: slugify(site.slug || site.companyName), email: account?.email || authForm.email, accountEmail: account?.email || authForm.email };
+      const res = await fetch("/api/site/save", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error || "Web sa nepodarilo uložiť.");
+      setSite((p) => ({ ...p, slug: data.website.slug })); setAccount(data.account || account);
+      setSaveStatus({ loading: false, success: `Web uložený: ${data.publicUrl || `/site/${data.website.slug}`}`, error: "" });
+    } catch (err) { setSaveStatus({ loading: false, success: "", error: err.message || "Chyba pri ukladaní webu." }); }
   }
 
   return (
@@ -283,630 +132,51 @@ export default function App() {
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute -top-40 -left-40 h-[520px] w-[520px] rounded-full bg-cyan-500/25 blur-3xl" />
         <div className="absolute top-16 right-0 h-[560px] w-[560px] rounded-full bg-fuchsia-500/25 blur-3xl" />
-        <div className="absolute bottom-0 left-1/3 h-[460px] w-[460px] rounded-full bg-violet-500/20 blur-3xl" />
-        <div className="absolute bottom-20 right-1/4 h-[300px] w-[300px] rounded-full bg-lime-400/10 blur-3xl" />
         <div className="absolute inset-0 bg-[linear-gradient(rgba(34,211,238,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(217,70,239,0.04)_1px,transparent_1px)] [background-size:46px_46px]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(3,4,10,0.35)_45%,rgba(3,4,10,1)_100%)]" />
       </div>
 
       <header className="relative z-10 mx-auto flex max-w-7xl items-center justify-between px-5 py-6">
-        <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-300 text-black shadow-[0_0_45px_rgba(34,211,238,0.95)]">
-            <Zap className="h-7 w-7" />
-          </div>
-          <div>
-            <div className="text-2xl font-black tracking-tight">Lech<span className="text-cyan-300">-</span><span className="text-fuchsia-300">Web</span></div>
-            <div className="text-xs uppercase tracking-[0.34em] text-cyan-300">Neon AI weby</div>
-          </div>
-        </div>
-
-        <nav className="hidden items-center gap-8 text-sm font-semibold text-slate-300 md:flex">
-          <a href="#sablony" className="hover:text-cyan-300">Šablóny</a>
-          <a href="#funkcie" className="hover:text-cyan-300">Funkcie</a>
-          <a href="#cennik" className="hover:text-cyan-300">Cenník</a>
-          <a href="#kontakt" className="hover:text-cyan-300">Kontakt</a>
-        </nav>
-
-        <a href="#kontakt" className="rounded-full border border-cyan-300/70 bg-cyan-300/10 px-5 py-2 text-sm font-black text-cyan-100 shadow-[0_0_30px_rgba(34,211,238,0.35)] transition hover:bg-cyan-300 hover:text-black hover:shadow-[0_0_50px_rgba(34,211,238,0.95)]">
-          Chcem web
+        <a href="#top" className="flex items-center gap-3 text-white no-underline">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-300 text-black shadow-[0_0_45px_rgba(34,211,238,0.95)]"><Zap className="h-7 w-7" /></div>
+          <div><div className="text-2xl font-black tracking-tight">Lech<span className="text-cyan-300">-</span><span className="text-fuchsia-300">Web</span></div><div className="text-xs uppercase tracking-[0.34em] text-cyan-300">SaaS web builder</div></div>
         </a>
+        <nav className="hidden items-center gap-7 text-sm font-bold text-slate-300 md:flex"><a href="#editor" className="hover:text-cyan-300">Editor</a><a href="#sablony" className="hover:text-cyan-300">Šablóny</a><a href="#cennik" className="hover:text-cyan-300">Cenník</a></nav>
+        <a href="#editor" className="rounded-full bg-cyan-300 px-5 py-3 text-sm font-black text-black shadow-[0_0_30px_rgba(34,211,238,0.65)]">Vytvoriť web</a>
       </header>
 
-      <section className="relative z-10 mx-auto grid max-w-7xl items-center gap-14 px-5 pb-28 pt-12 lg:grid-cols-2 lg:pt-20">
-        <motion.div initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-fuchsia-400/50 bg-fuchsia-400/10 px-4 py-2 text-sm font-black text-fuchsia-200 shadow-[0_0_35px_rgba(217,70,239,0.35)]">
-            <Flame className="h-4 w-4" />
-            Tvorba webu bez vstupnej platby
-          </div>
-
-          <h1 className="text-5xl font-black leading-[0.9] tracking-tight sm:text-6xl lg:text-7xl">
-            Tvoj web má <span className="text-cyan-300 drop-shadow-[0_0_30px_rgba(34,211,238,1)]">3 sekundy</span>. Buď zaujme, alebo ho zákazník zavrie.
-          </h1>
-
-          <p className="mt-8 max-w-xl text-lg leading-8 text-slate-300">
-            Lech-Web tvorí luxusné neónové weby a e-shopy pre firmy, ktoré nechcú zapadnúť medzi nudné šablóny. Web vytvoríme bez vstupnej platby — platíte mesačnú prevádzku, servis, hosting a starostlivosť.
-          </p>
-
-          <div className="mt-10 flex flex-col gap-4 sm:flex-row">
-            <a href="#kontakt" className="group inline-flex items-center justify-center gap-3 rounded-full bg-cyan-300 px-8 py-4 font-black text-black shadow-[0_0_55px_rgba(34,211,238,0.95)] transition hover:scale-105 hover:bg-white">
-              Chcem dychberúci web
-              <ArrowRight className="h-5 w-5 transition group-hover:translate-x-1" />
-            </a>
-            <a href="#cennik" className="inline-flex items-center justify-center rounded-full border border-fuchsia-300/50 bg-fuchsia-500/10 px-8 py-4 font-black text-fuchsia-100 backdrop-blur transition hover:border-fuchsia-300 hover:bg-fuchsia-400 hover:text-black hover:shadow-[0_0_45px_rgba(217,70,239,0.8)]">
-              Pozrieť predplatné
-            </a>
-          </div>
-
-          <div className="mt-11 grid max-w-xl grid-cols-3 gap-4">
-            <div className="rounded-3xl border border-cyan-300/25 bg-white/5 p-4 shadow-[0_0_25px_rgba(34,211,238,0.12)]"><div className="text-3xl font-black text-cyan-300">0 €</div><div className="text-xs text-slate-400">vytvorenie webu</div></div>
-            <div className="rounded-3xl border border-fuchsia-300/25 bg-white/5 p-4 shadow-[0_0_25px_rgba(217,70,239,0.12)]"><div className="text-3xl font-black text-fuchsia-300">39 €</div><div className="text-xs text-slate-400">od / mesiac</div></div>
-            <div className="rounded-3xl border border-lime-300/25 bg-white/5 p-4 shadow-[0_0_25px_rgba(190,242,100,0.1)]"><div className="text-3xl font-black text-lime-300">WOW</div><div className="text-xs text-slate-400">prvý dojem</div></div>
-          </div>
-        </motion.div>
-
-        <motion.div initial={{ opacity: 0, scale: 0.92 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8, delay: 0.1 }} className="relative">
-          <div className="absolute -inset-6 rounded-[2.8rem] bg-gradient-to-r from-cyan-300 via-fuchsia-500 to-violet-500 opacity-80 blur-3xl" />
-          <div className="relative rounded-[2.8rem] border border-white/15 bg-slate-950/90 p-4 shadow-2xl backdrop-blur-xl">
-            <div className="rounded-[2.2rem] border border-cyan-300/20 bg-black p-5">
-              <div className="mb-5 flex items-center justify-between">
-                <div className="flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-red-400 shadow-[0_0_12px_rgba(248,113,113,0.9)]" /><span className="h-3 w-3 rounded-full bg-yellow-300 shadow-[0_0_12px_rgba(253,224,71,0.9)]" /><span className="h-3 w-3 rounded-full bg-green-400 shadow-[0_0_12px_rgba(74,222,128,0.9)]" /></div>
-                <div className="text-xs font-bold text-cyan-300">lech-web.sk</div>
-              </div>
-              <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-cyan-400/20 via-fuchsia-500/25 to-violet-600/20 p-6">
-                <div className="absolute -right-16 -top-16 h-40 w-40 rounded-full bg-cyan-300/30 blur-3xl" />
-                <div className="absolute -bottom-16 -left-16 h-40 w-40 rounded-full bg-fuchsia-400/30 blur-3xl" />
-                <div className="relative">
-                  <div className="mb-4 inline-block rounded-full bg-lime-300 px-3 py-1 text-xs font-black text-black shadow-[0_0_25px_rgba(190,242,100,0.8)]">0 € VYTVORENIE</div>
-                  <h2 className="text-4xl font-black leading-tight">Web, ktorý pôsobí draho ešte pred prvým kliknutím.</h2>
-                  <p className="mt-4 text-slate-300">Neón, kontrast, tlak na pozornosť a jasná akcia. Zákazník nesmie rozmýšľať, musí kliknúť.</p>
-                  <div className="mt-6 grid grid-cols-2 gap-3">
-                    {["Luxus", "Neón", "AI obsah", "Predplatné"].map((item) => <div key={item} className="rounded-2xl border border-white/10 bg-white/10 p-4 text-sm font-black shadow-[0_0_20px_rgba(255,255,255,0.06)]">{item}</div>)}
-                  </div>
-                  <button className="mt-6 w-full rounded-2xl bg-fuchsia-400 px-5 py-4 font-black text-black shadow-[0_0_45px_rgba(217,70,239,0.85)] transition hover:scale-[1.02] hover:bg-white">Chcem web od 39 € mesačne</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </motion.div>
+      <section id="top" className="relative z-10 mx-auto grid max-w-7xl items-center gap-14 px-5 pb-24 pt-12 lg:grid-cols-2 lg:pt-20">
+        <div><div className="mb-6 inline-flex rounded-full border border-fuchsia-400/50 bg-fuchsia-400/10 px-4 py-2 text-sm font-black text-fuchsia-200">Web builder s licenciou</div><h1 className="text-5xl font-black leading-[0.9] tracking-tight sm:text-6xl lg:text-7xl">Zákazník si vytvorí <span className="text-cyan-300 drop-shadow-[0_0_30px_rgba(34,211,238,1)]">vlastný web</span>, ty riadiš licenciu.</h1><p className="mt-8 max-w-xl text-lg leading-8 text-slate-300">Účet zákazníka, 14 dní trial, editor stránok, sekcie, obrázky cez URL, verejný web a časové obmedzenie licencie.</p><div className="mt-10 flex gap-4"><a href="#editor" className="inline-flex items-center gap-3 rounded-full bg-cyan-300 px-8 py-4 font-black text-black shadow-[0_0_55px_rgba(34,211,238,0.95)]">Otvoriť editor <ArrowRight className="h-5 w-5" /></a></div></div>
+        <div className="relative rounded-[2.8rem] border border-white/15 bg-slate-950/90 p-5 shadow-2xl"><div className="rounded-[2.2rem] border border-cyan-300/20 bg-gradient-to-br from-cyan-400/20 via-fuchsia-500/25 to-violet-600/20 p-8"><div className="mb-4 inline-block rounded-full bg-lime-300 px-3 py-1 text-xs font-black text-black">LIVE EDITOR</div><h2 className="text-4xl font-black leading-tight">Stránky, sekcie, obrázky, logo a farby.</h2><p className="mt-4 text-slate-300">Zákazník si upraví obsah. Ty vlastníš systém a vieš web vypnúť cez licenciu.</p></div></div>
       </section>
 
-      <section id="funkcie" className="relative z-10 mx-auto max-w-7xl px-5 py-20">
-        <div className="mb-12 max-w-3xl">
-          <div className="mb-3 text-sm font-black uppercase tracking-[0.35em] text-cyan-300">Psychológia pozornosti</div>
-          <h2 className="text-4xl font-black sm:text-5xl">Web nesmie byť tichý. Musí okamžite zaútočiť na zrak.</h2>
-          <p className="mt-5 text-lg leading-8 text-slate-300">Nudný web si nikto nepamätá. Lech-Web je postavený tak, aby prvý pohľad vytvoril emóciu, dôveru a chuť kliknúť.</p>
-        </div>
-        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {features.map(({ icon: Icon, title, text }) => (
-            <div key={title} className="rounded-[2rem] border border-white/10 bg-white/[0.06] p-6 backdrop-blur transition hover:-translate-y-1 hover:border-cyan-300/60 hover:bg-cyan-300/10 hover:shadow-[0_0_40px_rgba(34,211,238,0.28)]">
-              <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-300 text-black shadow-[0_0_30px_rgba(34,211,238,0.75)]"><Icon className="h-6 w-6" /></div>
-              <h3 className="text-xl font-black">{title}</h3>
-              <p className="mt-3 leading-7 text-slate-300">{text}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="relative z-10 mx-auto max-w-7xl px-5 py-20">
-        <div className="grid gap-5 md:grid-cols-4">
-          {[
-            { icon: Search, title: "SEO pripravené", text: "Štruktúra pre Google, titulky, popisy a rýchlosť." },
-            { icon: Code2, title: "Moderný kód", text: "React, Vite, Tailwind a Cloudflare Pages." },
-            { icon: BarChart3, title: "Konverzie", text: "CTA prvky a sekcie vedené na dopyt." },
-            { icon: Globe2, title: "Rýchlo online", text: "Nasadenie na Cloudflare a vlastná doména." },
-          ].map(({ icon: Icon, title, text }) => (
-            <div key={title} className="rounded-[2rem] border border-white/10 bg-black/40 p-6 transition hover:border-fuchsia-300 hover:shadow-[0_0_35px_rgba(217,70,239,0.22)]">
-              <Icon className="mb-4 h-8 w-8 text-fuchsia-300" />
-              <h3 className="text-lg font-black">{title}</h3>
-              <p className="mt-2 text-sm leading-6 text-slate-400">{text}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-
-
-      <section id="ucet-licencia" className="relative z-10 mx-auto max-w-7xl px-5 py-20">
-        <div className="mb-12 max-w-3xl">
-          <div className="mb-3 text-sm font-black uppercase tracking-[0.35em] text-lime-300">
-            Účet a licencia
-          </div>
-          <h2 className="text-4xl font-black sm:text-5xl">
-            Zákazník si vytvorí účet. Ty mu jedným klikom povolíš alebo vypneš web.
-          </h2>
-          <p className="mt-5 text-lg leading-8 text-slate-300">
-            Lech-Web bude fungovať ako prenájom digitálnej služby. Zákazník sa zaregistruje,
-            vyberie šablónu, odošle údaje a po schválení licencie získa prístup k svojmu webu.
-            Ak nezaplatí, licencia sa po dátume platnosti automaticky zablokuje.
-          </p>
-        </div>
-
-        <div className="grid gap-5 lg:grid-cols-3">
-          {[
-            {
-              icon: UserPlus,
-              title: "Registrácia zákazníka",
-              text: "Zákazník vytvorí účet, vyberie balík, šablónu a pošle podklady. Účet môže začať 14-dňovou skúšobnou dobou.",
-              badge: "14 dní zdarma",
-            },
-            {
-              icon: ShieldCheck,
-              title: "Ručné schválenie licencie",
-              text: "V administrácii uvidíš nového zákazníka. Licenciu vieš odkliknúť ako aktívnu, predĺžiť dátum platnosti alebo ju pozastaviť.",
-              badge: "admin potvrdenie",
-            },
-            {
-              icon: Power,
-              title: "Časové obmedzenie webu",
-              text: "Každý web má dátum platnosti. Keď zákazník nezaplatí, web sa prepne do stavu pozastavený a zákazník stratí prístup.",
-              badge: "paidUntil kontrola",
-            },
-          ].map(({ icon: Icon, title, text, badge }) => (
-            <div
-              key={title}
-              className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-black/45 p-6 transition hover:border-lime-300/60 hover:shadow-[0_0_40px_rgba(190,242,100,0.2)]"
-            >
-              <div className="absolute -right-16 -top-16 h-40 w-40 rounded-full bg-lime-300/10 blur-3xl" />
-              <div className="relative">
-                <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-lime-300 text-black shadow-[0_0_30px_rgba(190,242,100,0.7)]">
-                  <Icon className="h-6 w-6" />
-                </div>
-                <div className="mb-4 inline-flex rounded-full border border-lime-300/30 bg-lime-300/10 px-3 py-1 text-xs font-black text-lime-200">
-                  {badge}
-                </div>
-                <h3 className="text-2xl font-black">{title}</h3>
-                <p className="mt-4 leading-7 text-slate-300">{text}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-8 grid gap-5 lg:grid-cols-2">
-          <div className="rounded-[2rem] border border-cyan-300/20 bg-cyan-300/10 p-6">
-            <div className="mb-4 flex items-center gap-3">
-              <KeyRound className="h-6 w-6 text-cyan-300" />
-              <h3 className="text-2xl font-black">Stavy licencie</h3>
-            </div>
-            <div className="grid gap-3 sm:grid-cols-2">
-              {["trial", "active", "past_due", "suspended"].map((status) => (
-                <div key={status} className="rounded-2xl border border-white/10 bg-black/35 p-4">
-                  <div className="text-xs font-black uppercase tracking-[0.22em] text-cyan-300">status</div>
-                  <div className="mt-2 text-lg font-black">{status}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="rounded-[2rem] border border-fuchsia-300/20 bg-fuchsia-300/10 p-6">
-            <div className="mb-4 flex items-center gap-3">
-              <CalendarClock className="h-6 w-6 text-fuchsia-300" />
-              <h3 className="text-2xl font-black">Kontrola dátumov</h3>
-            </div>
-            <p className="leading-7 text-slate-300">
-              V databáze bude mať zákazník polia <strong>trialUntil</strong>, <strong>paidUntil</strong>
-              a <strong>licenseStatus</strong>. Frontend aj API vždy skontrolujú, či je licencia platná.
-              Ak nie je, zákazník uvidí obrazovku „Služba pozastavená – obnovte predplatné“.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <section id="klientsky-ucet" className="relative z-10 mx-auto max-w-7xl px-5 py-20">
-        <div className="mb-12 max-w-3xl">
-          <div className="mb-3 text-sm font-black uppercase tracking-[0.35em] text-cyan-300">
-            Klientsky účet + builder
-          </div>
-          <h2 className="text-4xl font-black sm:text-5xl">
-            Zákazník si vytvorí účet a vyskladá si svoj prvý web.
-          </h2>
-          <p className="mt-5 text-lg leading-8 text-slate-300">
-            Táto verzia pridáva základ registrácie, prihlásenie, 14-dňový trial, výber balíka, výber šablóny a jednoduchý formulár na vytvorenie prvého publikovaného webu.
-          </p>
-        </div>
-
-        <div className="grid gap-6 lg:grid-cols-2">
-          <div className="rounded-[2rem] border border-cyan-300/20 bg-cyan-300/10 p-6">
-            <div className="mb-5 flex gap-3">
-              <button type="button" onClick={() => setAccountMode("register")} className={`rounded-full px-4 py-2 text-sm font-black ${accountMode === "register" ? "bg-cyan-300 text-black" : "bg-white/10 text-white"}`}>Registrácia</button>
-              <button type="button" onClick={() => setAccountMode("login")} className={`rounded-full px-4 py-2 text-sm font-black ${accountMode === "login" ? "bg-fuchsia-300 text-black" : "bg-white/10 text-white"}`}>Prihlásenie</button>
-            </div>
-
-            <form onSubmit={accountMode === "register" ? handleRegister : handleLogin} className="grid gap-4">
-              {accountMode === "register" && (
-                <input name="companyName" value={accountForm.companyName} onChange={handleAccountInput} className="rounded-2xl border border-white/10 bg-black/60 px-5 py-4 text-white outline-none placeholder:text-slate-500 focus:border-cyan-300" placeholder="Názov firmy" />
-              )}
-              <input name="email" value={accountForm.email} onChange={handleAccountInput} type="email" className="rounded-2xl border border-white/10 bg-black/60 px-5 py-4 text-white outline-none placeholder:text-slate-500 focus:border-cyan-300" placeholder="E-mail" required />
-              <input name="password" value={accountForm.password} onChange={handleAccountInput} type="password" className="rounded-2xl border border-white/10 bg-black/60 px-5 py-4 text-white outline-none placeholder:text-slate-500 focus:border-cyan-300" placeholder="Heslo min. 8 znakov" required />
-
-              {accountMode === "register" && (
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <select name="plan" value={accountForm.plan} onChange={handleAccountInput} className="rounded-2xl border border-white/10 bg-black/60 px-5 py-4 text-white outline-none focus:border-cyan-300">
-                    {plans.map((plan) => <option key={plan.name}>{plan.name}</option>)}
-                  </select>
-                  <select name="template" value={accountForm.template} onChange={handleAccountInput} className="rounded-2xl border border-white/10 bg-black/60 px-5 py-4 text-white outline-none focus:border-cyan-300">
-                    {templates.map((template) => <option key={template.name}>{template.name}</option>)}
-                  </select>
-                </div>
-              )}
-
-              {accountStatus.success && <div className="rounded-2xl border border-lime-300/40 bg-lime-300/10 px-5 py-4 text-sm font-bold text-lime-200">{accountStatus.success}</div>}
-              {accountStatus.error && <div className="rounded-2xl border border-red-400/40 bg-red-400/10 px-5 py-4 text-sm font-bold text-red-200">{accountStatus.error}</div>}
-
-              <button type="submit" disabled={accountStatus.loading} className="rounded-2xl bg-cyan-300 px-6 py-4 font-black text-black shadow-[0_0_45px_rgba(34,211,238,0.75)] transition hover:scale-[1.02] hover:bg-white disabled:opacity-60">
-                {accountStatus.loading ? "Pracujem..." : accountMode === "register" ? "Vytvoriť účet a trial" : "Prihlásiť sa"}
-              </button>
+      <section id="editor" className="relative z-10 mx-auto max-w-7xl px-5 py-20">
+        <div className="mb-10"><div className="mb-3 text-sm font-black uppercase tracking-[0.35em] text-cyan-300">Zákaznícky dashboard</div><h2 className="text-4xl font-black sm:text-5xl">Prihlásenie, licencia a editor webu.</h2></div>
+        <div className="grid gap-6 xl:grid-cols-[0.8fr_1.2fr]">
+          <div className="rounded-[2rem] border border-white/10 bg-white/[0.055] p-6">
+            <div className="mb-5 flex rounded-2xl bg-black/40 p-1"><button type="button" onClick={() => setAuthMode("register")} className={`flex-1 rounded-xl px-4 py-3 text-sm font-black ${authMode === "register" ? "bg-cyan-300 text-black" : "text-slate-300"}`}>Registrácia</button><button type="button" onClick={() => setAuthMode("login")} className={`flex-1 rounded-xl px-4 py-3 text-sm font-black ${authMode === "login" ? "bg-cyan-300 text-black" : "text-slate-300"}`}>Prihlásenie</button></div>
+            <form onSubmit={handleAuth} className="grid gap-4">
+              {authMode === "register" && <><Field label="Názov firmy"><Input value={authForm.companyName} onChange={(e) => updateAuth("companyName", e.target.value)} required /></Field><Field label="Balík"><Select value={authForm.plan} onChange={(e) => updateAuth("plan", e.target.value)}>{plans.map((p) => <option key={p.name}>{p.name}</option>)}</Select></Field><Field label="Šablóna"><Select value={authForm.template} onChange={(e) => updateAuth("template", e.target.value)}>{templates.map((t) => <option key={t}>{t}</option>)}</Select></Field></>}
+              <Field label="E-mail"><Input type="email" value={authForm.email} onChange={(e) => updateAuth("email", e.target.value)} required /></Field>
+              <Field label="Heslo"><Input type="password" value={authForm.password} onChange={(e) => updateAuth("password", e.target.value)} required /></Field>
+              <button type="submit" disabled={authStatus.loading} className="inline-flex items-center justify-center gap-2 rounded-2xl bg-cyan-300 px-6 py-4 font-black text-black disabled:opacity-60">{authMode === "register" ? <UserPlus className="h-5 w-5" /> : <KeyRound className="h-5 w-5" />}{authStatus.loading ? "Pracujem..." : authMode === "register" ? "Vytvoriť účet" : "Prihlásiť sa"}</button><Status status={authStatus} />
             </form>
-
-            {account && (
-              <div className="mt-5 rounded-2xl border border-white/10 bg-black/40 p-5 text-sm leading-7 text-slate-300">
-                <div><strong>Účet:</strong> {account.email}</div>
-                <div><strong>Licencia:</strong> {account.licenseStatus}</div>
-                <div><strong>Trial do:</strong> {account.trialUntil ? new Date(account.trialUntil).toLocaleDateString("sk-SK") : "—"}</div>
-              </div>
-            )}
+            {account && <div className="mt-6 rounded-3xl border border-lime-300/25 bg-lime-300/10 p-5"><strong className="text-lime-300">Licencia aktívna</strong><div className="mt-2 text-sm leading-7 text-slate-300">Firma: {account.companyName}<br />Stav: {account.status}<br />Trial do: {account.trialUntil?.slice(0, 10)}<br />VS: {account.variableSymbol || "—"}</div></div>}
           </div>
 
-          <form onSubmit={handleSaveSite} className="rounded-[2rem] border border-fuchsia-300/20 bg-fuchsia-300/10 p-6">
-            <h3 className="text-2xl font-black">Rýchly builder webu</h3>
-            <p className="mt-3 text-sm leading-7 text-slate-300">Vyplň základné údaje a systém vytvorí prvú verejnú ukážku webu. Keď licencia vyprší alebo ju admin pozastaví, verejný web sa vypne.</p>
-
-            <div className="mt-5 grid gap-4">
-              <input name="slug" value={siteForm.slug} onChange={handleSiteInput} className="rounded-2xl border border-white/10 bg-black/60 px-5 py-4 text-white outline-none placeholder:text-slate-500 focus:border-fuchsia-300" placeholder="URL názov napr. autoservis-presov" required />
-              <input name="title" value={siteForm.title} onChange={handleSiteInput} className="rounded-2xl border border-white/10 bg-black/60 px-5 py-4 text-white outline-none placeholder:text-slate-500 focus:border-fuchsia-300" placeholder="Názov firmy" required />
-              <input name="headline" value={siteForm.headline} onChange={handleSiteInput} className="rounded-2xl border border-white/10 bg-black/60 px-5 py-4 text-white outline-none placeholder:text-slate-500 focus:border-fuchsia-300" placeholder="Hlavný nadpis webu" required />
-              <textarea name="subheadline" value={siteForm.subheadline} onChange={handleSiteInput} className="min-h-24 rounded-2xl border border-white/10 bg-black/60 px-5 py-4 text-white outline-none placeholder:text-slate-500 focus:border-fuchsia-300" placeholder="Krátky predajný popis" required />
-              <div className="grid gap-4 sm:grid-cols-2">
-                <input name="phone" value={siteForm.phone} onChange={handleSiteInput} className="rounded-2xl border border-white/10 bg-black/60 px-5 py-4 text-white outline-none placeholder:text-slate-500 focus:border-fuchsia-300" placeholder="Telefón" />
-                <input name="email" value={siteForm.email} onChange={handleSiteInput} type="email" className="rounded-2xl border border-white/10 bg-black/60 px-5 py-4 text-white outline-none placeholder:text-slate-500 focus:border-fuchsia-300" placeholder="E-mail" />
-              </div>
-              <textarea name="servicesText" value={siteForm.servicesText} onChange={handleSiteInput} className="min-h-24 rounded-2xl border border-white/10 bg-black/60 px-5 py-4 text-white outline-none placeholder:text-slate-500 focus:border-fuchsia-300" placeholder="Služby, každá na nový riadok" />
-
-              {siteStatus.success && <div className="rounded-2xl border border-lime-300/40 bg-lime-300/10 px-5 py-4 text-sm font-bold text-lime-200">{siteStatus.success} {siteStatus.publicUrl && <a className="underline" href={siteStatus.publicUrl} target="_blank" rel="noreferrer">Otvoriť web</a>}</div>}
-              {siteStatus.error && <div className="rounded-2xl border border-red-400/40 bg-red-400/10 px-5 py-4 text-sm font-bold text-red-200">{siteStatus.error}</div>}
-
-              <button type="submit" disabled={siteStatus.loading} className="rounded-2xl bg-fuchsia-400 px-6 py-4 font-black text-black shadow-[0_0_45px_rgba(217,70,239,0.75)] transition hover:scale-[1.02] hover:bg-white disabled:opacity-60">
-                {siteStatus.loading ? "Ukladám..." : "Vytvoriť / uložiť web"}
-              </button>
-            </div>
-          </form>
-        </div>
-      </section>
-
-      <section
-  id="sablony"
-  className="relative z-10 mx-auto max-w-7xl px-5 py-20"
->
-  <div className="mb-12 flex flex-col justify-between gap-6 md:flex-row md:items-end">
-    <div>
-      <div className="mb-3 text-sm font-black uppercase tracking-[0.35em] text-fuchsia-300">
-        Neon šablóny
-      </div>
-
-      <h2 className="text-4xl font-black sm:text-5xl">
-        10 šablón, ktoré predávajú skôr, než zákazník začne čítať.
-      </h2>
-    </div>
-
-    <p className="max-w-md text-slate-300">
-      Každá šablóna je pripravená ako predajný systém: prvý dojem,
-      dôvera, jasná ponuka a tlačidlo na akciu. Žiadna lacná kópia.
-    </p>
-  </div>
-
-  <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-    {templates.map((item, index) => (
-      <div
-        key={item.name}
-        className="group relative overflow-hidden rounded-[2rem] border border-white/10 bg-black/45 p-6 transition hover:-translate-y-1 hover:border-cyan-300/70 hover:shadow-[0_0_45px_rgba(34,211,238,0.25)]"
-      >
-        <div className="absolute -right-12 -top-12 h-32 w-32 rounded-full bg-cyan-300/10 blur-3xl transition group-hover:bg-cyan-300/25" />
-        <div className="absolute -bottom-12 -left-12 h-32 w-32 rounded-full bg-fuchsia-400/10 blur-3xl transition group-hover:bg-fuchsia-400/25" />
-
-        <div className="relative">
-          <div className="mb-5 flex items-center justify-between gap-4">
-            <div className="rounded-full bg-cyan-300 px-3 py-1 text-xs font-black text-black shadow-[0_0_25px_rgba(34,211,238,0.65)]">
-              {item.tag}
-            </div>
-
-            <div className="text-sm font-black text-fuchsia-300">
-              {String(index + 1).padStart(2, "0")}
-            </div>
-          </div>
-
-          <h3 className="text-2xl font-black">{item.name}</h3>
-
-          <p className="mt-4 min-h-20 text-sm leading-7 text-slate-300">
-            {item.text}
-          </p>
-
-          <div className="mt-5 rounded-2xl border border-white/10 bg-white/[0.05] p-4">
-            <div className="text-xs font-black uppercase tracking-[0.22em] text-cyan-300">
-              Pre koho
-            </div>
-            <div className="mt-2 text-sm text-slate-300">
-              {item.forWho}
-            </div>
-          </div>
-
-          <div className="mt-5 flex flex-wrap gap-2">
-            {item.includes.map((feature) => (
-              <span
-                key={feature}
-                className="rounded-full border border-fuchsia-300/25 bg-fuchsia-300/10 px-3 py-1 text-xs font-bold text-fuchsia-100"
-              >
-                {feature}
-              </span>
-            ))}
-          </div>
-
-          <a
-            href="#kontakt"
-            className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-white px-5 py-4 text-sm font-black text-black transition hover:bg-cyan-300 hover:shadow-[0_0_35px_rgba(34,211,238,0.75)]"
-          >
-            Chcem túto šablónu
-            <ArrowRight className="h-4 w-4" />
-          </a>
-        </div>
-      </div>
-    ))}
-  </div>
-</section>
-
-      {/* SEM VLOŽÍME DEMO ŠABLÓNU */}
-      <section className="relative z-10 mx-auto max-w-7xl px-5 py-20">
-        <div className="mb-12 text-center">
-          <div className="mb-3 text-sm font-black uppercase tracking-[0.35em] text-cyan-300">
-            Demo šablóna
-          </div>
-
-          <h2 className="text-4xl font-black sm:text-5xl">
-            Ukážka: Stavebná firma, kontajnery a technické služby
-          </h2>
-
-          <p className="mx-auto mt-4 max-w-2xl text-slate-300">
-            Takto môže vyzerať klientsky web vytvorený v systéme Lech-Web.
-            Silný prvý dojem, jasná ponuka a rýchly dopytový formulár.
-          </p>
-        </div>
-
-        <div className="relative overflow-hidden rounded-[2.8rem] border border-cyan-300/25 bg-black/50 p-5 shadow-[0_0_70px_rgba(34,211,238,0.18)]">
-          <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-cyan-300/20 blur-3xl" />
-          <div className="absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-fuchsia-400/20 blur-3xl" />
-
-          <div className="relative rounded-[2.2rem] border border-white/10 bg-[#050816] p-6 md:p-10">
-            <div className="mb-8 flex flex-col justify-between gap-5 md:flex-row md:items-center">
-              <div>
-                <div className="text-2xl font-black">
-                  STAVEX<span className="text-cyan-300">PRO</span>
-                </div>
-                <div className="text-xs uppercase tracking-[0.3em] text-slate-400">
-                  stavebné práce / kontajnery / montáže
-                </div>
-              </div>
-
-              <a
-                href="#kontakt"
-                className="rounded-full bg-cyan-300 px-6 py-3 text-sm font-black text-black shadow-[0_0_35px_rgba(34,211,238,0.75)] transition hover:scale-105 hover:bg-white"
-              >
-                Nezáväzný dopyt
-              </a>
-            </div>
-
-            <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
-              <div>
-                <div className="mb-5 inline-flex rounded-full border border-lime-300/30 bg-lime-300/10 px-4 py-2 text-sm font-black text-lime-200">
-                  Moderná stavebná firma bez nudného webu
-                </div>
-
-                <h3 className="text-4xl font-black leading-tight sm:text-5xl">
-                  Kontajnery, montáže a stavebné riešenia, ktoré pôsobia
-                  profesionálne na prvý pohľad.
-                </h3>
-
-                <p className="mt-6 text-lg leading-8 text-slate-300">
-                  Prémiová šablóna pre firmy, ktoré potrebujú ukázať služby,
-                  realizácie, dôveryhodnosť a získať dopyt od zákazníka čo najrýchlejšie.
-                </p>
-
-                <div className="mt-8 flex flex-col gap-4 sm:flex-row">
-                  <a
-                    href="#kontakt"
-                    className="inline-flex items-center justify-center gap-2 rounded-full bg-fuchsia-400 px-7 py-4 font-black text-black shadow-[0_0_45px_rgba(217,70,239,0.75)] transition hover:scale-105 hover:bg-white"
-                  >
-                    Chcem podobný web
-                    <ArrowRight className="h-5 w-5" />
-                  </a>
-
-                  <a
-                    href="#sablony"
-                    className="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/5 px-7 py-4 font-black text-white hover:border-cyan-300 hover:text-cyan-200"
-                  >
-                    Späť na šablóny
-                  </a>
-                </div>
-              </div>
-
-              <div className="grid gap-4">
-                <div className="rounded-[2rem] border border-cyan-300/20 bg-cyan-300/10 p-6">
-                  <div className="text-sm font-black uppercase tracking-[0.24em] text-cyan-300">
-                    Hlavné služby
-                  </div>
-                  <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                    {[
-                      "Predaj kontajnerov",
-                      "Montážne práce",
-                      "Stavebné úpravy",
-                      "Garáže a prístrešky",
-                    ].map((item) => (
-                      <div
-                        key={item}
-                        className="rounded-2xl border border-white/10 bg-black/35 p-4 text-sm font-bold"
-                      >
-                        {item}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="grid gap-4 sm:grid-cols-3">
-                  {[
-                    { number: "120+", label: "realizácií" },
-                    { number: "48h", label: "rýchly dopyt" },
-                    { number: "EU", label: "pôsobnosť" },
-                  ].map((item) => (
-                    <div
-                      key={item.label}
-                      className="rounded-[1.6rem] border border-white/10 bg-white/[0.06] p-5 text-center"
-                    >
-                      <div className="text-3xl font-black text-cyan-300">
-                        {item.number}
-                      </div>
-                      <div className="mt-1 text-xs text-slate-400">
-                        {item.label}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="rounded-[2rem] border border-fuchsia-300/20 bg-fuchsia-300/10 p-6">
-                  <div className="text-sm font-black uppercase tracking-[0.24em] text-fuchsia-300">
-                    Čo šablóna obsahuje
-                  </div>
-
-                  <div className="mt-5 flex flex-wrap gap-2">
-                    {[
-                      "Hero sekcia",
-                      "Služby",
-                      "Realizácie",
-                      "Referencie",
-                      "Kontakt",
-                      "Dopytový formulár",
-                    ].map((item) => (
-                      <span
-                        key={item}
-                        className="rounded-full border border-white/10 bg-black/35 px-3 py-1 text-xs font-bold text-slate-200"
-                      >
-                        {item}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
+          <div className="rounded-[2rem] border border-white/10 bg-black/35 p-6">
+            {!account ? <div className="grid min-h-[500px] place-items-center text-center"><div><Lock className="mx-auto mb-5 h-14 w-14 text-cyan-300" /><h3 className="text-3xl font-black">Najprv sa zaregistruj alebo prihlás.</h3><p className="mx-auto mt-4 max-w-md text-slate-300">Editor sa otvorí až po vytvorení účtu.</p></div></div> : <div className="grid gap-6">
+              <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-center"><div><div className="mb-2 text-sm font-black uppercase tracking-[0.3em] text-fuchsia-300">Editor webu</div><h3 className="text-3xl font-black">Môj web</h3></div><div className="flex flex-wrap gap-3">{publicUrl && <a href={publicUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-sm font-black"><Eye className="h-4 w-4" />Otvoriť web</a>}<button type="button" onClick={saveWebsite} disabled={saveStatus.loading} className="inline-flex items-center gap-2 rounded-2xl bg-fuchsia-400 px-5 py-3 text-sm font-black text-black disabled:opacity-60"><Save className="h-4 w-4" />{saveStatus.loading ? "Ukladám..." : "Uložiť web"}</button></div></div><Status status={saveStatus} />
+              <div className="grid gap-4 md:grid-cols-2"><Field label="URL názov webu"><Input value={site.slug} onChange={(e) => updateSite("slug", slugify(e.target.value))} /></Field><Field label="Názov firmy"><Input value={site.companyName} onChange={(e) => updateSite("companyName", e.target.value)} /></Field><Field label="Telefón"><Input value={site.phone} onChange={(e) => updateSite("phone", e.target.value)} /></Field><Field label="Kontaktný e-mail"><Input value={site.siteEmail} onChange={(e) => updateSite("siteEmail", e.target.value)} /></Field><Field label="Typ šablóny"><Select value={site.template} onChange={(e) => updateSite("template", e.target.value)}>{templates.map((t) => <option key={t}>{t}</option>)}</Select></Field><Field label="Farba témy"><Select value={site.theme.accent} onChange={(e) => updateTheme("accent", e.target.value)}><option value="cyan">Cyan neon</option><option value="pink">Pink luxury</option><option value="violet">Violet premium</option><option value="orange">Orange energy</option><option value="lime">Lime fresh</option></Select></Field><Field label="Logo URL"><Input value={site.theme.logo} onChange={(e) => updateTheme("logo", e.target.value)} placeholder="https://..." /></Field><Field label="Hlavný obrázok URL"><Input value={site.theme.heroImage} onChange={(e) => updateTheme("heroImage", e.target.value)} placeholder="https://..." /></Field></div>
+              <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-5"><div className="mb-4 flex flex-col justify-between gap-3 sm:flex-row sm:items-center"><div><div className="text-sm font-black uppercase tracking-[0.3em] text-cyan-300">Stránky</div><div className="mt-1 text-sm text-slate-400">Domov, O nás, Služby, Kontakt alebo vlastné podstránky.</div></div><button type="button" onClick={addPage} className="inline-flex items-center gap-2 rounded-2xl bg-cyan-300 px-4 py-3 text-sm font-black text-black"><Plus className="h-4 w-4" />Pridať stránku</button></div><div className="mb-5 flex flex-wrap gap-2">{site.pages.map((p, i) => <button key={p.id || i} type="button" onClick={() => setActivePageIndex(i)} className={`rounded-full px-4 py-2 text-sm font-black ${activePageIndex === i ? "bg-fuchsia-400 text-black" : "bg-white/10 text-slate-200"}`}>{p.title}</button>)}</div><div className="grid gap-4"><div className="grid gap-4 md:grid-cols-2"><Field label="Názov stránky"><Input value={page.title} onChange={(e) => updatePage(activePageIndex, "title", e.target.value)} /></Field><Field label="Slug podstránky"><Input value={page.slug} onChange={(e) => updatePage(activePageIndex, "slug", slugify(e.target.value))} disabled={activePageIndex === 0} /></Field></div><Field label="Nadpis stránky"><Input value={page.headline} onChange={(e) => updatePage(activePageIndex, "headline", e.target.value)} /></Field><Field label="Popis stránky"><Area value={page.description} onChange={(e) => updatePage(activePageIndex, "description", e.target.value)} /></Field><Field label="Hero obrázok URL"><Input value={page.heroImage} onChange={(e) => updatePage(activePageIndex, "heroImage", e.target.value)} placeholder="https://..." /></Field>{activePageIndex !== 0 && <button type="button" onClick={() => removePage(activePageIndex)} className="inline-flex w-fit items-center gap-2 rounded-2xl border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm font-black text-red-200"><Trash2 className="h-4 w-4" />Zmazať stránku</button>}</div></div>
+              <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-5"><div className="mb-4 flex flex-col justify-between gap-3 sm:flex-row sm:items-center"><div><div className="text-sm font-black uppercase tracking-[0.3em] text-cyan-300">Sekcie stránky</div><div className="mt-1 text-sm text-slate-400">Texty, služby, galéria a kontakt.</div></div><div className="flex flex-wrap gap-2">{["text", "services", "gallery", "contact"].map((type) => <button key={type} type="button" onClick={() => addSection(activePageIndex, type)} className="rounded-2xl bg-white/10 px-3 py-2 text-xs font-black text-slate-200">+ {type}</button>)}</div></div><div className="grid gap-4">{page.sections.map((section, si) => <div key={`${section.type}-${si}`} className="rounded-3xl border border-white/10 bg-black/35 p-5"><div className="mb-4 flex items-center justify-between gap-3"><div className="inline-flex items-center gap-2 rounded-full bg-cyan-300/10 px-3 py-1 text-xs font-black uppercase tracking-[0.2em] text-cyan-300"><LayoutDashboard className="h-4 w-4" />{section.type}</div><button type="button" onClick={() => removeSection(activePageIndex, si)} className="rounded-full bg-red-400/10 p-2 text-red-200"><Trash2 className="h-4 w-4" /></button></div><div className="grid gap-4"><Field label="Názov sekcie"><Input value={section.title} onChange={(e) => updateSection(activePageIndex, si, { title: e.target.value })} /></Field><Field label="Text sekcie"><Area value={section.text || ""} onChange={(e) => updateSection(activePageIndex, si, { text: e.target.value })} /></Field>{section.type === "services" && <Field label="Služby, každá na nový riadok"><Area value={(section.items || []).join("\n")} onChange={(e) => updateSection(activePageIndex, si, { items: e.target.value.split("\n").map((x) => x.trim()).filter(Boolean) })} /></Field>}{section.type === "gallery" && <div className="grid gap-3"><div className="text-xs font-black uppercase tracking-[0.22em] text-fuchsia-300">Galéria obrázkov cez URL</div>{(section.images || []).map((img, ii) => <div key={ii} className="grid gap-2 rounded-2xl border border-white/10 bg-white/[0.04] p-3 md:grid-cols-[1fr_1fr_auto]"><Input placeholder="URL obrázka" value={img.url || ""} onChange={(e) => { const images = [...(section.images || [])]; images[ii] = { ...images[ii], url: e.target.value }; updateSection(activePageIndex, si, { images }); }} /><Input placeholder="Popis obrázka" value={img.title || ""} onChange={(e) => { const images = [...(section.images || [])]; images[ii] = { ...images[ii], title: e.target.value }; updateSection(activePageIndex, si, { images }); }} /><button type="button" onClick={() => { const images = [...(section.images || [])].filter((_, x) => x !== ii); updateSection(activePageIndex, si, { images }); }} className="rounded-2xl bg-red-400/10 px-3 py-2 text-red-200"><Trash2 className="h-4 w-4" /></button></div>)}<button type="button" onClick={() => updateSection(activePageIndex, si, { images: [...(section.images || []), { url: "", title: "" }] })} className="inline-flex w-fit items-center gap-2 rounded-2xl bg-fuchsia-400 px-4 py-3 text-sm font-black text-black"><Image className="h-4 w-4" />Pridať obrázok</button></div>}</div></div>)}</div></div>
+            </div>}
           </div>
         </div>
       </section>
 
-      <section id="cennik" className="relative z-10 mx-auto max-w-7xl px-5 py-20">
-        <div className="mb-12 text-center">
-          <div className="mb-3 text-sm font-black uppercase tracking-[0.35em] text-lime-300">Cenník</div>
-          <h2 className="text-4xl font-black sm:text-5xl">Moderný web bez vstupnej platby.</h2>
-          <p className="mx-auto mt-4 max-w-2xl text-slate-300">Web vytvoríme bez vstupnej platby a zákazník má 14 dní skúšobnú dobu
-zadarmo. Po skúšobnej dobe sa služba fakturuje vždy vopred minimálne
-na 1 mesiac. Pri ročnej platbe získate zľavu 10 %, pri dvojročnej
-platbe zľavu 20 %. Zdrojový kód, systém a šablóny ostávajú súčasťou
-služby Lech-Web.</p>
-        </div>
-        <div className="grid gap-5 lg:grid-cols-3">
-          {plans.map((plan) => (
-            <div key={plan.name} className={`relative rounded-[2rem] border p-6 ${plan.popular ? "border-fuchsia-300 bg-fuchsia-400/10 shadow-[0_0_55px_rgba(217,70,239,0.45)]" : "border-white/10 bg-white/[0.05]"}`}>
-              {plan.popular && <div className="absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-fuchsia-400 px-4 py-1 text-xs font-black text-black shadow-[0_0_30px_rgba(217,70,239,0.9)]">NAJPREDAJNEJŠÍ</div>}
-              <h3 className="text-2xl font-black">{plan.name}</h3>
-              <div className="mt-4">
-                <div className="inline-flex rounded-full bg-lime-300 px-4 py-1 text-xs font-black text-black shadow-[0_0_25px_rgba(190,242,100,0.8)]">{plan.setup}</div>
-                <div className="mt-4 flex items-end gap-2"><span className="text-5xl font-black text-cyan-300 drop-shadow-[0_0_18px_rgba(34,211,238,0.8)]">{plan.price}</span><span className="pb-2 text-slate-400">{plan.period}</span></div>
-                <div className="mt-2 text-sm font-bold text-fuchsia-300">{plan.commitment}</div>
-              </div>
-              <p className="mt-4 leading-7 text-slate-300">{plan.desc}</p>
-              <ul className="mt-6 space-y-3 text-sm text-slate-300">
-                {plan.items.map((item) => <li key={item} className="flex items-center gap-3"><span className="h-2 w-2 rounded-full bg-lime-300 shadow-[0_0_12px_rgba(190,242,100,0.8)]" />{item}</li>)}
-              </ul>
-              <button className="mt-8 w-full rounded-2xl bg-cyan-300 px-5 py-4 font-black text-black shadow-[0_0_40px_rgba(34,211,238,0.75)] transition hover:scale-[1.02] hover:bg-white">Vybrať balík</button>
-            </div>
-          ))}
-        </div>
-        <div className="mt-8 grid gap-4 md:grid-cols-3">
-  <div className="rounded-3xl border border-lime-300/20 bg-lime-300/10 p-5">
-    <div className="text-lg font-black text-lime-300">
-      14 dní zadarmo
-    </div>
-    <p className="mt-3 text-sm leading-7 text-slate-300">
-      Zákazník si môže službu vyskúšať 14 dní bez poplatku. Ak službu
-      počas skúšobnej doby ukončí, nič neplatí.
-    </p>
-  </div>
-
-  <div className="rounded-3xl border border-cyan-300/20 bg-cyan-300/10 p-5">
-    <div className="text-lg font-black text-cyan-300">
-      Platba vopred
-    </div>
-    <p className="mt-3 text-sm leading-7 text-slate-300">
-      Po skúšobnej dobe sa predplatné fakturuje vždy vopred, minimálne
-      na 1 mesiac. Ročná platba má zľavu 10 %, dvojročná platba 20 %.
-    </p>
-  </div>
-
-  <div className="rounded-3xl border border-fuchsia-300/20 bg-fuchsia-300/10 p-5">
-    <div className="text-lg font-black text-fuchsia-300">
-      Prenájom služby
-    </div>
-    <p className="mt-3 text-sm leading-7 text-slate-300">
-      Web je poskytovaný ako digitálna služba Lech-Web. Zdrojový kód,
-      šablóny, systém a technické riešenie ostávajú vlastníctvom
-      poskytovateľa.
-    </p>
-  </div>
-</div>
-
-<div className="mt-5 rounded-3xl border border-white/10 bg-black/40 p-5 text-sm leading-7 text-slate-400">
-  Klient vlastní svoj dodaný obsah: texty, fotografie, logo, produkty
-  a obchodné údaje. Reklamovať je možné technickú nefunkčnosť služby
-  alebo rozpor s objednaným rozsahom. Za reklamáciu sa nepovažuje
-  subjektívna zmena názoru po schválení webu, zmena obchodného zámeru
-  klienta alebo požiadavka na funkcie mimo dohodnutého balíka.
-</div>
-      </section>
-
-      <section id="kontakt" className="relative z-10 mx-auto max-w-6xl px-5 py-24">
-        <div className="rounded-[2.8rem] border border-cyan-300/30 bg-gradient-to-br from-cyan-400/10 via-white/[0.06] to-fuchsia-500/10 p-6 shadow-[0_0_70px_rgba(34,211,238,0.22)] md:p-12">
-          <div className="grid gap-10 lg:grid-cols-2">
-            <div>
-              <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-3xl bg-fuchsia-400 text-black shadow-[0_0_55px_rgba(217,70,239,0.95)]"><Palette className="h-8 w-8" /></div>
-              <h2 className="text-4xl font-black sm:text-5xl">Lech-Web: weby, ktoré svietia medzi nudou.</h2>
-              <p className="mt-6 text-lg leading-8 text-slate-300">Nerobíme weby, ktoré len existujú. Robíme weby, ktoré priťahujú zrak, budujú dôveru a tlačia zákazníka ku kliknutiu.</p>
-              <div className="mt-8 space-y-4 text-slate-300">
-                <div className="flex items-center gap-3"><Mail className="h-5 w-5 text-cyan-300" /> info@lech-web.sk</div>
-                <div className="flex items-center gap-3"><Phone className="h-5 w-5 text-cyan-300" /> +421 900 000 000</div>
-                <div className="flex items-center gap-3"><MapPin className="h-5 w-5 text-cyan-300" /> Slovensko / EU</div>
-              </div>
-            </div>
-
-            <form onSubmit={handleSubmit} className="grid gap-4 rounded-[2rem] border border-white/10 bg-black/35 p-5 backdrop-blur">
-              <input name="name" value={formData.name} onChange={handleInputChange} className="rounded-2xl border border-white/10 bg-black/60 px-5 py-4 text-white outline-none placeholder:text-slate-500 focus:border-cyan-300" placeholder="Meno / firma" required />
-              <input name="contact" value={formData.contact} onChange={handleInputChange} className="rounded-2xl border border-white/10 bg-black/60 px-5 py-4 text-white outline-none placeholder:text-slate-500 focus:border-cyan-300" placeholder="Telefón / e-mail" required />
-              <select name="type" value={formData.type} onChange={handleInputChange} className="rounded-2xl border border-white/10 bg-black/60 px-5 py-4 text-white outline-none focus:border-cyan-300">
-                <option>Chcem firemný web</option>
-                <option>Chcem e-shop</option>
-                <option>Chcem landing page</option>
-                <option>Chcem šablónu na mieru</option>
-              </select>
-              <textarea name="message" value={formData.message} onChange={handleInputChange} className="min-h-32 rounded-2xl border border-white/10 bg-black/60 px-5 py-4 text-white outline-none placeholder:text-slate-500 focus:border-cyan-300" placeholder="Aký web alebo e-shop chceš?" required />
-              {formStatus.success && <div className="rounded-2xl border border-lime-300/40 bg-lime-300/10 px-5 py-4 text-sm font-bold text-lime-200">{formStatus.success}</div>}
-              {formStatus.error && <div className="rounded-2xl border border-red-400/40 bg-red-400/10 px-5 py-4 text-sm font-bold text-red-200">{formStatus.error}</div>}
-              <button type="submit" disabled={formStatus.loading} className="rounded-2xl bg-cyan-300 px-6 py-4 font-black text-black shadow-[0_0_45px_rgba(34,211,238,0.85)] transition hover:scale-[1.02] hover:bg-white disabled:cursor-not-allowed disabled:opacity-60">
-                {formStatus.loading ? "Odosielam..." : "Poslať dopyt"}
-              </button>
-            </form>
-          </div>
-        </div>
-      </section>
-
-      <footer className="relative z-10 border-t border-white/10 px-5 py-10">
-        <div className="mx-auto flex max-w-7xl flex-col justify-between gap-6 text-sm text-slate-400 md:flex-row md:items-center">
-          <div><div className="text-xl font-black text-white">Lech<span className="text-cyan-300">-</span><span className="text-fuchsia-300">Web</span></div><div className="mt-2">Luxusné neon AI weby a e-shopy na mesačné predplatné.</div></div>
-          <div className="flex flex-wrap gap-5"><a href="#sablony" className="hover:text-cyan-300">Šablóny</a><a href="#funkcie" className="hover:text-cyan-300">Funkcie</a><a href="#cennik" className="hover:text-cyan-300">Cenník</a><a href="#kontakt" className="hover:text-cyan-300">Kontakt</a></div>
-        </div>
-      </footer>
+      <section id="sablony" className="relative z-10 mx-auto max-w-7xl px-5 py-20"><div className="mb-12"><div className="mb-3 text-sm font-black uppercase tracking-[0.35em] text-fuchsia-300">Šablóny</div><h2 className="text-4xl font-black sm:text-5xl">Reálne šablóny pre rôzne odbory.</h2></div><div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">{templates.slice(0,6).map((t,i) => <div key={t} className="rounded-[2rem] border border-white/10 bg-black/45 p-6"><div className="mb-5 flex items-center justify-between"><div className="rounded-full bg-cyan-300 px-3 py-1 text-xs font-black text-black">Šablóna</div><div className="text-sm font-black text-fuchsia-300">{String(i+1).padStart(2,"0")}</div></div><h3 className="text-2xl font-black">{t}</h3><p className="mt-4 text-sm leading-7 text-slate-300">Zákazník si vyberie šablónu, upraví obsah a systém vygeneruje verejný web.</p><a href="#editor" className="mt-6 inline-flex w-full items-center justify-center rounded-2xl bg-white px-5 py-4 text-sm font-black text-black">Vytvoriť</a></div>)}</div></section>
+      <section id="cennik" className="relative z-10 mx-auto max-w-7xl px-5 py-20"><div className="mb-12 text-center"><div className="mb-3 text-sm font-black uppercase tracking-[0.35em] text-lime-300">Cenník</div><h2 className="text-4xl font-black sm:text-5xl">Web bez vstupnej platby.</h2><p className="mx-auto mt-4 max-w-2xl text-slate-300">14 dní skúšobná doba zdarma. Potom mesačné predplatné vopred.</p></div><div className="grid gap-5 lg:grid-cols-3">{plans.map((plan) => <div key={plan.name} className={`relative rounded-[2rem] border p-6 ${plan.popular ? "border-fuchsia-300 bg-fuchsia-400/10" : "border-white/10 bg-white/[0.05]"}`}><h3 className="text-2xl font-black">{plan.name}</h3><div className="mt-4 flex items-end gap-2"><span className="text-5xl font-black text-cyan-300">{plan.price}</span><span className="pb-2 text-slate-400">/ mesiac</span></div><ul className="mt-6 space-y-3 text-sm text-slate-300">{plan.items.map((item) => <li key={item} className="flex items-center gap-3"><CheckCircle2 className="h-4 w-4 text-lime-300" />{item}</li>)}</ul><a href="#editor" className="mt-8 inline-flex w-full items-center justify-center rounded-2xl bg-cyan-300 px-5 py-4 font-black text-black">Vybrať</a></div>)}</div></section>
+      <footer className="relative z-10 border-t border-white/10 px-5 py-10"><div className="mx-auto max-w-7xl text-sm text-slate-400">Lech-Web • SaaS web builder s licenciou a zákazníckym editorom.</div></footer>
     </main>
   );
 }
