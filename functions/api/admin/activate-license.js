@@ -17,7 +17,7 @@ export async function onRequestPost({ request, env }) {
       .bind(status, licenseEndsAt, now, email)
       .run();
     return json({ success: true, email, status, licenseEndsAt });
-  } catch (error) {
+  } catch {
     return json({ success: false, error: "Aktivácia licencie zlyhala." }, 500);
   }
 }

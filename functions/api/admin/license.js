@@ -31,7 +31,7 @@ export async function onRequestPost({ request, env }) {
       .run();
 
     return json({ success: true, accountId, licenseStatus: status, paidUntil });
-  } catch (error) {
+  } catch {
     return json({ success: false, error: "Zmena licencie zlyhala." }, 500);
   }
 }

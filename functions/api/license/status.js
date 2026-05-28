@@ -22,7 +22,7 @@ export async function onRequestPost({ request, env }) {
         active: isActiveLicense(account),
       },
     });
-  } catch (error) {
+  } catch {
     return json({ success: false, error: "Kontrola licencie zlyhala." }, 500);
   }
 }

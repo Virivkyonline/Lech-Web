@@ -21,7 +21,7 @@ export async function onRequestGet({ request, env }) {
     `).all();
 
     return json({ success: true, accounts: result.results || [] });
-  } catch (error) {
+  } catch {
     return json({ success: false, error: "Načítanie zákazníkov zlyhalo." }, 500);
   }
 }

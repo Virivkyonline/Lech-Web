@@ -53,13 +53,6 @@ function ownerEmail(site, env) {
     "lechstav@gmail.com"
   );
 }
-
-function moneyText(items) {
-  return items
-    .map((x) => `${x.qty}× ${x.title} — ${x.price || ""}`)
-    .join("<br>");
-}
-
 function escapeHtml(v) {
   return String(v || "")
     .replaceAll("&", "&amp;")

@@ -93,7 +93,7 @@ function normalizeSite(site) {
   const categoryObjects = visible(modules.categoriesAdvanced?.items);
   const categories = categoryObjects.length
     ? categoryObjects.map((x) => x.title).filter(Boolean)
-    : (list(sidebar.categories).length ? list(sidebar.categories) : ["HlavnĂˇ kategĂłria", "AkÄŤnĂ˝ tovar", "Novinky"]);
+    : (list(sidebar.categories).length ? list(sidebar.categories) : ["HlavnĂˇ kategĂłria", "Akčný tovar", "Novinky"]);
 
   const products = list(eshop.products).length
     ? list(eshop.products)
@@ -158,7 +158,7 @@ function renderProducts(products) {
         <h3>${esc(p.title)}</h3>
         <div class="price">${p.oldPrice ? `<del>${esc(p.oldPrice)}</del>` : ""}<strong>${esc(p.price)}</strong></div>
         ${p.availability ? `<div class="availability">${esc(p.availability)}</div>` : ""}
-        <div class="product-actions"><button class="detail" type="button" onclick="addToCart(${index})">DO KOĹ ĂŤKA</button>${p.detailUrl && p.detailUrl !== "#" ? `<a class="ghost-link" href="${esc(p.detailUrl)}">Detail</a>` : ""}</div>
+        <div class="product-actions"><button class="detail" type="button" onclick="addToCart(${index})">DO KOŠÍKA</button>${p.detailUrl && p.detailUrl !== "#" ? `<a class="ghost-link" href="${esc(p.detailUrl)}">Detail</a>` : ""}</div>
         <p>${esc(p.shortText || p.description || "")}</p>
       </article>
     `).join("");
@@ -316,13 +316,13 @@ select,
 </head>
 <body>
 <div class="page">
-  <header class="top"><a class="logo" href="/site/${esc(slug)}">${renderLogo(site)}</a><nav class="menu">${renderMenu(data.menu)}</nav><div class="icons"><div>HÄ˝ADAĹ¤</div><div>ĂšÄŚET</div><button class="cart-btn" type="button" onclick="openCart()">KOĹ ĂŤK<span class="cart-count" id="cartCount">0</span></button></div></header>
+  <header class="top"><a class="logo" href="/site/${esc(slug)}">${renderLogo(site)}</a><nav class="menu">${renderMenu(data.menu)}</nav><div class="icons"><div>HĽADAŤ</div><div>ÚČET</div><button class="cart-btn" type="button" onclick="openCart()">KOŠÍK<span class="cart-count" id="cartCount">0</span></button></div></header>
   <section class="benefits">${renderBenefits(data.benefits)}</section>
   <main class="main">
     ${renderSidebar(site, data, slug)}
     <section>
-      <div class="hero"><div><h1>${esc(heroTitle)}</h1><p>${esc(heroSubtitle)}</p><div class="hero-buttons"><a class="primary" href="#produkty">PozrieĹĄ produkty</a><a href="#kontakt">Kontakt</a></div></div></div>
-      <div class="tabs"><span>AkÄŤnĂ˝ tovar</span><span>Novinky</span></div>
+      <div class="hero"><div><h1>${esc(heroTitle)}</h1><p>${esc(heroSubtitle)}</p><div class="hero-buttons"><a class="primary" href="#produkty">Pozrieť produkty</a><a href="#kontakt">Kontakt</a></div></div></div>
+      <div class="tabs"><span>Akčný tovar</span><span>Novinky</span></div>
       <div id="produkty" class="grid">${renderProducts(data.products)}</div>
       <article id="info" class="home"><h2>${esc(titlePage.seoTitle || site.headline || site.companyName)}</h2><p>${esc(titlePage.seoText || site.homepageText || site.description || "Sem zĂˇkaznĂ­k doplnĂ­ dlhĂ˝ SEO text pod produktami.")}</p></article>
       ${titlePage.actionBlock?.enabled ? `<section class="action-block"><h2>${esc(titlePage.actionBlock.title)}</h2><p>${esc(titlePage.actionBlock.text)}</p><a class="detail" href="${esc(titlePage.actionBlock.buttonUrl || "#produkty")}">${esc(titlePage.actionBlock.buttonText || "ZobraziĹĄ")}</a></section>` : ""}

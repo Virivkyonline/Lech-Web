@@ -19,7 +19,7 @@ export async function onRequestPost({ request, env }) {
       .bind(siteId, user.id, businessName, template, phone, description, "requested", now, now)
       .run();
     return json({ success: true, siteId });
-  } catch (error) {
+  } catch {
     return json({ success: false, error: "Požiadavku na web sa nepodarilo uložiť." }, 500);
   }
 }

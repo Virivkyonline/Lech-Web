@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import "./App.css";
 
 const ownerNav = [
@@ -216,6 +216,23 @@ function UploadButton({ folder = "images", label = "Nahrať", onUploaded, setSta
 function jsonPretty(obj) { try { return JSON.stringify(obj || {}, null, 2); } catch { return "{}"; } }
 function parseJson(text, fallback) { try { return JSON.parse(text); } catch { return fallback; } }
 
+function readSavedCustomerLogin() {
+  const empty = { login: { email: "", password: "" }, remember: false };
+  if (typeof localStorage === "undefined") return empty;
+  try {
+    const saved = localStorage.getItem("lechweb_customer_login");
+    if (!saved) return empty;
+    const parsed = JSON.parse(saved);
+    return {
+      login: { email: parsed.email || "", password: parsed.password || "" },
+      remember: true,
+    };
+  } catch {
+    localStorage.removeItem("lechweb_customer_login");
+    return empty;
+  }
+}
+
 export default function App() {
   const [area, setArea] = useState("owner");
   const [active, setActive] = useState("owner-dashboard");
@@ -228,24 +245,10 @@ export default function App() {
   const [orders, setOrders] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [site, setSite] = useState(defaultSite);
-  const [customerLogin, setCustomerLogin] = useState({ email: "", password: "" });
+  const savedCustomerLogin = readSavedCustomerLogin();
+  const [customerLogin, setCustomerLogin] = useState(savedCustomerLogin.login);
   const [customerLogged, setCustomerLogged] = useState(false);
-  const [rememberCustomerLogin, setRememberCustomerLogin] = useState(false);
-
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem("lechweb_customer_login");
-      if (!saved) return;
-      const parsed = JSON.parse(saved);
-      setCustomerLogin({
-        email: parsed.email || "",
-        password: parsed.password || "",
-      });
-      setRememberCustomerLogin(true);
-    } catch {
-      localStorage.removeItem("lechweb_customer_login");
-    }
-  }, []);
+  const [rememberCustomerLogin, setRememberCustomerLogin] = useState(savedCustomerLogin.remember);
 
   const publicUrl = useMemo(() => site.slug ? `https://lech-web.pages.dev/site/${slugify(site.slug)}` : "", [site.slug]);
 
@@ -362,7 +365,9 @@ export default function App() {
         } else {
           localStorage.removeItem("lechweb_customer_login");
         }
-      } catch {}
+      } catch {
+        setStatus("Prihlásenie prebehlo, ale uloženie prihlasovacích údajov v prehliadači zlyhalo.");
+      }
       setSelectedEmail(data.account.email);
       loadWebsite(data.account.website);
       setArea("customer");

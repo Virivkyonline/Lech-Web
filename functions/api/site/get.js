@@ -21,7 +21,7 @@ export async function onRequestPost({ request, env }) {
 
     const account = await env.DB.prepare("SELECT * FROM accounts WHERE id = ?").bind(website.account_id).first();
     return json({ success: true, website: mapWebsite(website), licenseActive: isActiveLicense(account) });
-  } catch (error) {
+  } catch {
     return json({ success: false, error: "Načítanie webu zlyhalo." }, 500);
   }
 }

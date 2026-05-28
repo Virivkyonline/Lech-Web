@@ -73,7 +73,7 @@ export async function onRequestPost({ request, env }) {
       success: true,
       message: "Dopyt bol úspešne odoslaný.",
     });
-  } catch (error) {
+  } catch {
     return jsonResponse(
       {
         success: false,
