@@ -6,7 +6,11 @@ function kv(env) {
 async function getJson(store, key) {
   const raw = await store.get(key);
   if (!raw) return null;
-  try { return JSON.parse(raw); } catch { return null; }
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
 }
 
 function active(acc) {
@@ -17,7 +21,6 @@ function active(acc) {
   const now = Date.now();
   const trial = acc.trialUntil ? Date.parse(acc.trialUntil) : 0;
   const paid = acc.paidUntil ? Date.parse(acc.paidUntil) : 0;
-
   return trial > now || paid > now;
 }
 
@@ -37,7 +40,6 @@ function palette(theme) {
   if (a === "violet") return ["#a78bfa", "#111027", "#03040a"];
   if (a === "emerald") return ["#34d399", "#06251d", "#03040a"];
   if (a === "orange") return ["#fb923c", "#2a1003", "#03040a"];
-
   return ["#67e8f9", "#1e1030", "#03040a"];
 }
 
@@ -58,6 +60,7 @@ function normalizeEshop(site) {
   const oldServices = homePage.sections?.find((s) => s.type === "services")?.items || [];
 
   const existing = site.eshop || {};
+  const sidebar = existing.sidebar || {};
 
   const products =
     Array.isArray(existing.products) && existing.products.length
@@ -106,8 +109,6 @@ function normalizeEshop(site) {
           },
         ];
 
-  const sidebar = existing.sidebar || {};
-
   return {
     enabled: true,
     topMenu:
@@ -132,14 +133,7 @@ function normalizeEshop(site) {
       categories:
         Array.isArray(sidebar.categories) && sidebar.categories.length
           ? sidebar.categories
-          : [
-              "Hlavná kategória",
-              "Akčný tovar",
-              "Novinky",
-              "Najpredávanejšie",
-              "Doplnky",
-              "Výpredaj",
-            ],
+          : ["Hlavná kategória", "Akčný tovar", "Novinky", "Najpredávanejšie", "Doplnky", "Výpredaj"],
       contactTitle: sidebar.contactTitle || "Kontakt",
       contactName: sidebar.contactName || site.companyName || "",
       contactEmail: sidebar.contactEmail || site.email || site.ownerEmail || "",
@@ -172,9 +166,7 @@ function normalizeEshop(site) {
 }
 
 function renderMenu(items) {
-  return (items || [])
-    .map((m) => `<a href="${esc(m.url || "#")}">${esc(m.title || "")}</a>`)
-    .join("");
+  return (items || []).map((m) => `<a href="${esc(m.url || "#")}">${esc(m.title || "")}</a>`).join("");
 }
 
 function renderBenefits(items) {
@@ -194,27 +186,11 @@ function renderBenefits(items) {
 }
 
 function renderSidebar(sidebar) {
-  const cats = (sidebar.categories || [])
-    .map((c) => `<li><a href="#">${esc(c)}</a></li>`)
-    .join("");
-
-  const advice = (sidebar.adviceLinks || [])
-    .map((x) => `<li><a href="${esc(x.url || "#")}">${esc(x.title || "")}</a></li>`)
-    .join("");
-
-  const youtube = (sidebar.youtube || [])
-    .map((x) => `<li><a href="${esc(x.url || "#")}">${esc(x.title || "")}</a></li>`)
-    .join("");
-
+  const cats = (sidebar.categories || []).map((c) => `<li><a href="#">${esc(c)}</a></li>`).join("");
+  const advice = (sidebar.adviceLinks || []).map((x) => `<li><a href="${esc(x.url || "#")}">${esc(x.title || "")}</a></li>`).join("");
+  const youtube = (sidebar.youtube || []).map((x) => `<li><a href="${esc(x.url || "#")}">${esc(x.title || "")}</a></li>`).join("");
   const blocks = (sidebar.customBlocks || [])
-    .map(
-      (b) => `
-      <div class="side-box">
-        <h3>${esc(b.title || "")}</h3>
-        <p>${esc(b.text || "")}</p>
-      </div>
-    `
-    )
+    .map((b) => `<div class="side-box"><h3>${esc(b.title || "")}</h3><p>${esc(b.text || "")}</p></div>`)
     .join("");
 
   return `
@@ -233,15 +209,7 @@ function renderSidebar(sidebar) {
 
       ${
         sidebar.searchEnabled !== false
-          ? `
-        <div class="side-box">
-          <h3>Vyhľadávanie</h3>
-          <div class="search">
-            <input placeholder="Názov tovaru..." />
-            <button>→</button>
-          </div>
-        </div>
-      `
+          ? `<div class="side-box"><h3>Vyhľadávanie</h3><div class="search"><input placeholder="Názov tovaru..." /><button>→</button></div></div>`
           : ""
       }
 
@@ -271,11 +239,7 @@ function renderProducts(products) {
         </div>
 
         <div class="pimg">
-          ${
-            p.image
-              ? `<img src="${esc(p.image)}" alt="${esc(p.title)}" loading="lazy"/>`
-              : `<div>Produkt</div>`
-          }
+          ${p.image ? `<img src="${esc(p.image)}" alt="${esc(p.title)}" loading="lazy"/>` : `<div>Produkt</div>`}
         </div>
 
         <h3>${esc(p.title)}</h3>
@@ -306,9 +270,7 @@ function renderFooter(site, e) {
 
         <div>
           <h3>Informácie pre vás</h3>
-          <ul>
-            ${links.map((l) => `<li><a href="${esc(l.url || "#")}">${esc(l.title || "")}</a></li>`).join("")}
-          </ul>
+          <ul>${links.map((l) => `<li><a href="${esc(l.url || "#")}">${esc(l.title || "")}</a></li>`).join("")}</ul>
         </div>
 
         <div>
@@ -325,25 +287,19 @@ function renderFooter(site, e) {
 export async function onRequestGet({ params, env }) {
   const store = kv(env);
 
-  if (!store) {
-    return new Response("KV nie je nastavené.", { status: 500 });
-  }
+  if (!store) return new Response("KV nie je nastavené.", { status: 500 });
 
   const slug = String(params.slug || "").trim().toLowerCase();
   const site = await getJson(store, "site:" + slug);
 
-  if (!site) {
-    return new Response("Web neexistuje.", { status: 404 });
-  }
+  if (!site) return new Response("Web neexistuje.", { status: 404 });
 
   const acc = await getJson(store, "user:" + String(site.ownerEmail || "").toLowerCase());
 
-  if (!active(acc)) {
-    return new Response("Web je pozastavený. Licencia nie je aktívna.", { status: 402 });
-  }
+  if (!active(acc)) return new Response("Web je pozastavený. Licencia nie je aktívna.", { status: 402 });
 
   const e = normalizeEshop(site);
-  const [accent, panel, bg] = palette(site.theme);
+  const [accent] = palette(site.theme);
   const hero = site.theme?.heroImage;
 
   const html = `<!doctype html>
@@ -356,8 +312,6 @@ export async function onRequestGet({ params, env }) {
 <style>
 :root{
   --a:${accent};
-  --panel:${panel};
-  --bg:${bg};
   --line:rgba(255,255,255,.12);
   --muted:#cbd5e1;
 }
