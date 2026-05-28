@@ -27,14 +27,26 @@ function isActive(acc) {
   return trial > now || paid > now;
 }
 
-function accent(site) {
-  const a = String(site.theme?.accent || "lechweb").toLowerCase();
-  if (a === "fuchsia") return "#e879f9";
-  if (a === "violet") return "#a78bfa";
-  if (a === "emerald") return "#34d399";
-  if (a === "orange") return "#fb923c";
-  return "#67e8f9";
+function getTheme(theme) {
+  const id = String(theme?.accent || theme || "lechweb").toLowerCase();
+  const themes = {
+    lechweb: ["#67e8f9", "#e879f9", "#03040a", "#0f172a", "rgba(103,232,249,.65)", false],
+    cyan: ["#67e8f9", "#22d3ee", "#03040a", "#0f172a", "rgba(34,211,238,.65)", false],
+    fuchsia: ["#e879f9", "#67e8f9", "#05030a", "#14091f", "rgba(232,121,249,.65)", false],
+    violet: ["#a78bfa", "#e879f9", "#070512", "#141026", "rgba(167,139,250,.65)", false],
+    emerald: ["#34d399", "#67e8f9", "#03110c", "#082018", "rgba(52,211,153,.65)", false],
+    orange: ["#fb923c", "#facc15", "#130902", "#211006", "rgba(251,146,60,.65)", false],
+    kawasaki: ["#39ff14", "#b6ff00", "#020800", "#061a03", "rgba(57,255,20,.78)", false],
+    acidyellow: ["#fff200", "#39ff14", "#0b0b00", "#1a1800", "rgba(255,242,0,.76)", false],
+    sharpered: ["#ff073a", "#ff7a00", "#110004", "#210008", "rgba(255,7,58,.72)", false],
+    rgbglow: ["#00f5ff", "#ff00f5", "#02020a", "#09091a", "rgba(0,245,255,.74)", true],
+  };
+  const t = themes[id] || themes.lechweb;
+  return { accent: t[0], accent2: t[1], dark: t[2], panel: t[3], glow: t[4], rgb: t[5] };
 }
+// THEME_PATCH_V1
+
+function accent(site) { return getTheme(site.theme).accent; }
 
 export async function onRequestGet({ params, env }) {
   const store = kv(env);

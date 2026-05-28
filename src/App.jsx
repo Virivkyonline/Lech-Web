@@ -31,7 +31,11 @@ const colorPresets = [
   ["violet", "Violet luxury"],
   ["emerald", "Emerald fresh"],
   ["orange", "Orange action"],
-];
+  ["kawasaki", "Kawasaki neon zelená"],
+  ["acidYellow", "Ostrá neon žltá"],
+  ["sharpRed", "Ostrá neon červená"],
+  ["rgbGlow", "RGB svietiaca"],
+]; // THEME_PATCH_V1
 
 const defaultProducts = [
   {
