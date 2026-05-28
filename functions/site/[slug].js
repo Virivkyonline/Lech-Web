@@ -1,4 +1,4 @@
-﻿function htmlResponse(html, status = 200) {
+function htmlResponse(html, status = 200) {
   return new Response(new TextEncoder().encode(html), {
     status,
     headers: {
@@ -77,28 +77,28 @@ function normalizeSite(site) {
     : (visible(eshop.topMenu).length ? visible(eshop.topMenu) : [
         { title: "Produkty", url: "#produkty" },
         { title: "Akcie", url: "#produkty" },
-        { title: "Ako nakupovaĹĄ", url: "#info" },
+        { title: "Ako nakupovať", url: "#info" },
         { title: "Kontakt", url: "#kontakt" },
       ]);
 
   const benefits = visible(modules.banners?.advantages).length
     ? visible(modules.banners.advantages)
     : [
-        { title: "DarÄŤek zdarma", text: "Ku kaĹľdej objednĂˇvke.", icon: "*" },
-        { title: "RĂ˝chle dodanie", text: "Pre produkty skladom.", icon: "R" },
-        { title: "Na splĂˇtky", text: "RĂ˝chlo a bezpeÄŤne.", icon: "OK" },
-        { title: "Doprava zdarma", text: "PodÄľa podmienok predajcu.", icon: "DOM" },
+        { title: "Darček zdarma", text: "Ku každej objednávke.", icon: "*" },
+        { title: "Rýchle dodanie", text: "Pre produkty skladom.", icon: "R" },
+        { title: "Na splátky", text: "RĂ˝chlo a bezpečne.", icon: "OK" },
+        { title: "Doprava zdarma", text: "Podľa podmienok predajcu.", icon: "DOM" },
       ];
 
   const categoryObjects = visible(modules.categoriesAdvanced?.items);
   const categories = categoryObjects.length
     ? categoryObjects.map((x) => x.title).filter(Boolean)
-    : (list(sidebar.categories).length ? list(sidebar.categories) : ["HlavnĂˇ kategĂłria", "Akčný tovar", "Novinky"]);
+    : (list(sidebar.categories).length ? list(sidebar.categories) : ["Hlavná kategória", "Akčný tovar", "Novinky"]);
 
   const products = list(eshop.products).length
     ? list(eshop.products)
     : (list(site.products).length ? list(site.products) : [
-        { id: "p1", title: "UkĂˇĹľkovĂ˝ produkt", price: "â‚¬999", shortText: "Produkt upravĂ­te v admine zĂˇkaznĂ­ka.", badge: "TIP", availability: "Skladom", visibility: "visible" },
+        { id: "p1", title: "Ukážkový produkt", price: "â‚¬999", shortText: "Produkt upravíte v admine zákazníka.", badge: "TIP", availability: "Skladom", visibility: "visible" },
       ]);
 
   return { modules, eshop, menu, benefits, categories, products };
@@ -125,16 +125,16 @@ function renderBenefits(items) {
 function renderSidebar(site, data, slug) {
   const email = site.email || site.siteEmail || site.ownerEmail || "";
   const phone = site.phone || "";
-  const links = visible(data.modules.links?.items).length ? visible(data.modules.links.items) : [{ title: "Ako nakupovaĹĄ", url: "#info" }];
+  const links = visible(data.modules.links?.items).length ? visible(data.modules.links.items) : [{ title: "Ako nakupovať", url: "#info" }];
   const youtube = list(data.eshop.sidebar?.youtube).length ? list(data.eshop.sidebar.youtube) : [];
 
   return `
     <aside class="sidebar">
-      <section class="side-box"><h2>KategĂłrie</h2><ul>${data.categories.map((c) => `<li><a href="#produkty">${esc(c)}</a></li>`).join("")}</ul></section>
-      <section class="side-box" id="kontakt"><h2>Kontakt</h2><b>${esc(site.companyName || "")}</b>${email ? `<a href="mailto:${esc(email)}">Email: ${esc(email)}</a>` : ""}${phone ? `<a href="tel:${esc(phone)}">Tel: ${esc(phone)}</a>` : ""}<a class="side-button" href="/site/${esc(slug)}/kontakt">KontaktnĂ˝ formulĂˇr</a></section>
-      <section class="side-box"><h2>VyhÄľadĂˇvanie</h2><div class="search"><input id="productSearch" placeholder="NĂˇzov tovaru..." oninput="filterProducts()"><button type="button" onclick="filterProducts()">HÄľadaĹĄ</button></div></section>
+      <section class="side-box"><h2>Kategórie</h2><ul>${data.categories.map((c) => `<li><a href="#produkty">${esc(c)}</a></li>`).join("")}</ul></section>
+      <section class="side-box" id="kontakt"><h2>Kontakt</h2><b>${esc(site.companyName || "")}</b>${email ? `<a href="mailto:${esc(email)}">Email: ${esc(email)}</a>` : ""}${phone ? `<a href="tel:${esc(phone)}">Tel: ${esc(phone)}</a>` : ""}<a class="side-button" href="/site/${esc(slug)}/kontakt">Kontaktný formulár</a></section>
+      <section class="side-box"><h2>Vyhľadávanie</h2><div class="search"><input id="productSearch" placeholder="Názov tovaru..." oninput="filterProducts()"><button type="button" onclick="filterProducts()">Hľadať</button></div></section>
       <section class="side-box"><h2>Typy a rady</h2><ul>${links.map((x) => `<li><a href="${esc(x.url || "#")}">${esc(x.title)}</a></li>`).join("")}</ul></section>
-      ${youtube.length ? `<section class="side-box"><h2>VideĂˇ YouTube</h2><ul>${youtube.map((x) => `<li><a href="${esc(x.url || "#")}">${esc(x.title)}</a></li>`).join("")}</ul></section>` : ""}
+      ${youtube.length ? `<section class="side-box"><h2>Videá YouTube</h2><ul>${youtube.map((x) => `<li><a href="${esc(x.url || "#")}">${esc(x.title)}</a></li>`).join("")}</ul></section>` : ""}
     </aside>
   `;
 }
@@ -170,10 +170,10 @@ function renderFooter(site, data) {
     <footer class="footer">
       <div class="footer-grid">
         <div><h3>${esc(site.companyName)}</h3><p>${esc(site.description || "")}</p></div>
-        <div><h3>InformĂˇcie</h3><ul>${links.map((l) => `<li><a href="${esc(l.url || "#")}">${esc(l.title)}</a></li>`).join("")}</ul></div>
+        <div><h3>Informácie</h3><ul>${links.map((l) => `<li><a href="${esc(l.url || "#")}">${esc(l.title)}</a></li>`).join("")}</ul></div>
         <div><h3>Kontakt</h3><p>${esc(site.phone || "")}<br>${esc(site.email || site.siteEmail || "")}</p></div>
       </div>
-      <div class="copy">Â© ${new Date().getFullYear()} ${esc(site.companyName)}. VytvorenĂ© cez Lech-Web.</div>
+      <div class="copy">Â© ${new Date().getFullYear()} ${esc(site.companyName)}. Vytvorené cez Lech-Web.</div>
     </footer>
   `;
 }
@@ -182,8 +182,8 @@ function renderCookie(mod) {
   if (!mod?.enabled) return "";
   return `
     <div class="cookie" id="cookieBox">
-      <div>${esc(mod.bannerText || "PouĹľĂ­vame cookies, aby sme vĂˇm zabezpeÄŤili ÄŤo najlepĹˇĂ­ zĂˇĹľitok na webe.")}</div>
-      <div class="cookie-actions"><button onclick="rejectCookies()">OdmietnuĹĄ</button><button class="accept" onclick="acceptCookies()">${esc(mod.acceptText || "SĂşhlasĂ­m")}</button></div>
+      <div>${esc(mod.bannerText || "Používame cookies, aby sme vám zabezpečili čo najlepší zážitok na webe.")}</div>
+      <div class="cookie-actions"><button onclick="rejectCookies()">Odmietnuť</button><button class="accept" onclick="acceptCookies()">${esc(mod.acceptText || "Súhlasím")}</button></div>
     </div>
   `;
 }
@@ -324,14 +324,14 @@ select,
       <div class="hero"><div><h1>${esc(heroTitle)}</h1><p>${esc(heroSubtitle)}</p><div class="hero-buttons"><a class="primary" href="#produkty">Pozrieť produkty</a><a href="#kontakt">Kontakt</a></div></div></div>
       <div class="tabs"><span>Akčný tovar</span><span>Novinky</span></div>
       <div id="produkty" class="grid">${renderProducts(data.products)}</div>
-      <article id="info" class="home"><h2>${esc(titlePage.seoTitle || site.headline || site.companyName)}</h2><p>${esc(titlePage.seoText || site.homepageText || site.description || "Sem zĂˇkaznĂ­k doplnĂ­ dlhĂ˝ SEO text pod produktami.")}</p></article>
-      ${titlePage.actionBlock?.enabled ? `<section class="action-block"><h2>${esc(titlePage.actionBlock.title)}</h2><p>${esc(titlePage.actionBlock.text)}</p><a class="detail" href="${esc(titlePage.actionBlock.buttonUrl || "#produkty")}">${esc(titlePage.actionBlock.buttonText || "ZobraziĹĄ")}</a></section>` : ""}
+      <article id="info" class="home"><h2>${esc(titlePage.seoTitle || site.headline || site.companyName)}</h2><p>${esc(titlePage.seoText || site.homepageText || site.description || "Sem zákazník doplní dlhý SEO text pod produktami.")}</p></article>
+      ${titlePage.actionBlock?.enabled ? `<section class="action-block"><h2>${esc(titlePage.actionBlock.title)}</h2><p>${esc(titlePage.actionBlock.text)}</p><a class="detail" href="${esc(titlePage.actionBlock.buttonUrl || "#produkty")}">${esc(titlePage.actionBlock.buttonText || "Zobraziť")}</a></section>` : ""}
     </section>
   </main>
   ${renderFooter(site, data)}
 </div>
 
-<div class="modal" id="cartModal"><div class="modal-card"><div class="modal-head"><h2>ObjednĂˇvka</h2><button class="close" type="button" onclick="closeCart()">ZavrieĹĄ</button></div><div class="cart-lines" id="cartLines"></div><form class="form" onsubmit="sendOrder(event)"><input id="cName" placeholder="Meno a priezvisko" required><input id="cEmail" placeholder="E-mail"><input id="cPhone" placeholder="TelefĂłn"><input id="cAddress" placeholder="Adresa / mesto"><textarea id="cNote" placeholder="PoznĂˇmka"></textarea><button class="submit" type="submit">OdoslaĹĄ objednĂˇvku</button><div class="msg" id="cartMsg"></div></form></div></div>
+<div class="modal" id="cartModal"><div class="modal-card"><div class="modal-head"><h2>Objednávka</h2><button class="close" type="button" onclick="closeCart()">Zavrieť</button></div><div class="cart-lines" id="cartLines"></div><form class="form" onsubmit="sendOrder(event)"><input id="cName" placeholder="Meno a priezvisko" required><input id="cEmail" placeholder="E-mail"><input id="cPhone" placeholder="Telefón"><input id="cAddress" placeholder="Adresa / mesto"><textarea id="cNote" placeholder="Poznámka"></textarea><button class="submit" type="submit">Odoslať objednávku</button><div class="msg" id="cartMsg"></div></form></div></div>
 ${renderCookie(data.modules.cookies)}
 <script>
 const SITE_SLUG=${slugJson};
@@ -343,9 +343,9 @@ function addToCart(index){const product=PRODUCTS[index];if(!product)return;const
 function changeQty(id,delta){const item=cart.find((x)=>x.id===id);if(!item)return;item.qty+=delta;if(item.qty<=0)cart=cart.filter((x)=>x.id!==id);updateCart();}
 function openCart(){document.getElementById("cartModal").classList.add("open");renderCart();}
 function closeCart(){document.getElementById("cartModal").classList.remove("open");}
-function renderCart(){const el=document.getElementById("cartLines");if(!el)return;if(!cart.length){el.innerHTML="<p>KoĹˇĂ­k je prĂˇzdny.</p>";return;}el.innerHTML=cart.map((item)=>'<div class="cart-line"><strong>'+safeText(item.title)+'</strong><span>'+safeText(item.price)+'</span><span class="qty"><button type="button" onclick="changeQty('+JSON.stringify(item.id)+',-1)">-</button>'+item.qty+'<button type="button" onclick="changeQty('+JSON.stringify(item.id)+',1)">+</button></span></div>').join("");}
+function renderCart(){const el=document.getElementById("cartLines");if(!el)return;if(!cart.length){el.innerHTML="<p>Košík je prázdny.</p>";return;}el.innerHTML=cart.map((item)=>'<div class="cart-line"><strong>'+safeText(item.title)+'</strong><span>'+safeText(item.price)+'</span><span class="qty"><button type="button" onclick="changeQty('+JSON.stringify(item.id)+',-1)">-</button>'+item.qty+'<button type="button" onclick="changeQty('+JSON.stringify(item.id)+',1)">+</button></span></div>').join("");}
 function filterProducts(){const q=(document.getElementById("productSearch")?.value||"").trim().toLowerCase();document.querySelectorAll(".product").forEach((card)=>{const title=card.dataset.title||"";const cat=card.dataset.category||"";card.style.display=(title.includes(q)||cat.includes(q))?"":"none";});}
-async function sendOrder(event){event.preventDefault();const msg=document.getElementById("cartMsg");if(!cart.length){msg.textContent="KoĹˇĂ­k je prĂˇzdny.";return;}msg.textContent="Odosielam...";const payload={siteSlug:SITE_SLUG,items:cart,customer:{name:document.getElementById("cName").value,email:document.getElementById("cEmail").value,phone:document.getElementById("cPhone").value,address:document.getElementById("cAddress").value,note:document.getElementById("cNote").value}};try{const res=await fetch("/api/orders/create",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(payload)});const data=await res.json();if(!data.success)throw new Error(data.error||"ObjednĂˇvka zlyhala.");cart=[];updateCart();msg.textContent="ObjednĂˇvka odoslanĂˇ. ÄŚĂ­slo: "+data.order.number;}catch(err){msg.textContent=err.message;}}
+async function sendOrder(event){event.preventDefault();const msg=document.getElementById("cartMsg");if(!cart.length){msg.textContent="Košík je prázdny.";return;}msg.textContent="Odosielam...";const payload={siteSlug:SITE_SLUG,items:cart,customer:{name:document.getElementById("cName").value,email:document.getElementById("cEmail").value,phone:document.getElementById("cPhone").value,address:document.getElementById("cAddress").value,note:document.getElementById("cNote").value}};try{const res=await fetch("/api/orders/create",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(payload)});const data=await res.json();if(!data.success)throw new Error(data.error||"Objednávka zlyhala.");cart=[];updateCart();msg.textContent="Objednávka odoslanĂˇ. Číslo: "+data.order.number;}catch(err){msg.textContent=err.message;}}
 function acceptCookies(){localStorage.setItem("lechweb_cookie","yes");document.getElementById("cookieBox").style.display="none";}
 function rejectCookies(){localStorage.setItem("lechweb_cookie","no");document.getElementById("cookieBox").style.display="none";}
 if(document.getElementById("cookieBox") && !localStorage.getItem("lechweb_cookie")) document.getElementById("cookieBox").style.display="flex";

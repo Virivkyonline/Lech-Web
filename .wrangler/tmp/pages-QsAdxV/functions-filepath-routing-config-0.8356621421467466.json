@@ -1,0 +1,589 @@
+{
+  "routes": [
+    {
+      "routePath": "/api/admin/customers/mail",
+      "mountPath": "/api/admin/customers",
+      "method": "OPTIONS",
+      "module": [
+        "api/admin/customers/mail.js:onRequestOptions"
+      ]
+    },
+    {
+      "routePath": "/api/admin/customers/mail",
+      "mountPath": "/api/admin/customers",
+      "method": "POST",
+      "module": [
+        "api/admin/customers/mail.js:onRequestPost"
+      ]
+    },
+    {
+      "routePath": "/api/admin/inquiries/reply",
+      "mountPath": "/api/admin/inquiries",
+      "method": "OPTIONS",
+      "module": [
+        "api/admin/inquiries/reply.js:onRequestOptions"
+      ]
+    },
+    {
+      "routePath": "/api/admin/inquiries/reply",
+      "mountPath": "/api/admin/inquiries",
+      "method": "POST",
+      "module": [
+        "api/admin/inquiries/reply.js:onRequestPost"
+      ]
+    },
+    {
+      "routePath": "/api/admin/inquiries/update",
+      "mountPath": "/api/admin/inquiries",
+      "method": "OPTIONS",
+      "module": [
+        "api/admin/inquiries/update.js:onRequestOptions"
+      ]
+    },
+    {
+      "routePath": "/api/admin/inquiries/update",
+      "mountPath": "/api/admin/inquiries",
+      "method": "POST",
+      "module": [
+        "api/admin/inquiries/update.js:onRequestPost"
+      ]
+    },
+    {
+      "routePath": "/api/admin/modules/defaults",
+      "mountPath": "/api/admin/modules",
+      "method": "GET",
+      "module": [
+        "api/admin/modules/defaults.js:onRequestGet"
+      ]
+    },
+    {
+      "routePath": "/api/admin/modules/defaults",
+      "mountPath": "/api/admin/modules",
+      "method": "OPTIONS",
+      "module": [
+        "api/admin/modules/defaults.js:onRequestOptions"
+      ]
+    },
+    {
+      "routePath": "/api/admin/modules/save",
+      "mountPath": "/api/admin/modules",
+      "method": "OPTIONS",
+      "module": [
+        "api/admin/modules/save.js:onRequestOptions"
+      ]
+    },
+    {
+      "routePath": "/api/admin/modules/save",
+      "mountPath": "/api/admin/modules",
+      "method": "POST",
+      "module": [
+        "api/admin/modules/save.js:onRequestPost"
+      ]
+    },
+    {
+      "routePath": "/api/admin/orders/update",
+      "mountPath": "/api/admin/orders",
+      "method": "OPTIONS",
+      "module": [
+        "api/admin/orders/update.js:onRequestOptions"
+      ]
+    },
+    {
+      "routePath": "/api/admin/orders/update",
+      "mountPath": "/api/admin/orders",
+      "method": "POST",
+      "module": [
+        "api/admin/orders/update.js:onRequestPost"
+      ]
+    },
+    {
+      "routePath": "/api/admin/accounts",
+      "mountPath": "/api/admin",
+      "method": "GET",
+      "module": [
+        "api/admin/accounts.js:onRequestGet"
+      ]
+    },
+    {
+      "routePath": "/api/admin/accounts",
+      "mountPath": "/api/admin",
+      "method": "OPTIONS",
+      "module": [
+        "api/admin/accounts.js:onRequestOptions"
+      ]
+    },
+    {
+      "routePath": "/api/admin/activate-license",
+      "mountPath": "/api/admin",
+      "method": "POST",
+      "module": [
+        "api/admin/activate-license.js:onRequestPost"
+      ]
+    },
+    {
+      "routePath": "/api/admin/customers",
+      "mountPath": "/api/admin",
+      "method": "GET",
+      "module": [
+        "api/admin/customers.js:onRequestGet"
+      ]
+    },
+    {
+      "routePath": "/api/admin/customers",
+      "mountPath": "/api/admin",
+      "method": "OPTIONS",
+      "module": [
+        "api/admin/customers.js:onRequestOptions"
+      ]
+    },
+    {
+      "routePath": "/api/admin/inquiries",
+      "mountPath": "/api/admin",
+      "method": "GET",
+      "module": [
+        "api/admin/inquiries.js:onRequestGet"
+      ]
+    },
+    {
+      "routePath": "/api/admin/inquiries",
+      "mountPath": "/api/admin",
+      "method": "OPTIONS",
+      "module": [
+        "api/admin/inquiries.js:onRequestOptions"
+      ]
+    },
+    {
+      "routePath": "/api/admin/license",
+      "mountPath": "/api/admin",
+      "method": "OPTIONS",
+      "module": [
+        "api/admin/license.js:onRequestOptions"
+      ]
+    },
+    {
+      "routePath": "/api/admin/license",
+      "mountPath": "/api/admin",
+      "method": "POST",
+      "module": [
+        "api/admin/license.js:onRequestPost"
+      ]
+    },
+    {
+      "routePath": "/api/admin/licenses",
+      "mountPath": "/api/admin",
+      "method": "GET",
+      "module": [
+        "api/admin/licenses.js:onRequestGet"
+      ]
+    },
+    {
+      "routePath": "/api/admin/licenses",
+      "mountPath": "/api/admin",
+      "method": "OPTIONS",
+      "module": [
+        "api/admin/licenses.js:onRequestOptions"
+      ]
+    },
+    {
+      "routePath": "/api/admin/licenses",
+      "mountPath": "/api/admin",
+      "method": "POST",
+      "module": [
+        "api/admin/licenses.js:onRequestPost"
+      ]
+    },
+    {
+      "routePath": "/api/admin/orders",
+      "mountPath": "/api/admin",
+      "method": "GET",
+      "module": [
+        "api/admin/orders.js:onRequestGet"
+      ]
+    },
+    {
+      "routePath": "/api/admin/orders",
+      "mountPath": "/api/admin",
+      "method": "OPTIONS",
+      "module": [
+        "api/admin/orders.js:onRequestOptions"
+      ]
+    },
+    {
+      "routePath": "/api/admin/site-save",
+      "mountPath": "/api/admin",
+      "method": "GET",
+      "module": [
+        "api/admin/site-save.js:onRequestGet"
+      ]
+    },
+    {
+      "routePath": "/api/admin/site-save",
+      "mountPath": "/api/admin",
+      "method": "OPTIONS",
+      "module": [
+        "api/admin/site-save.js:onRequestOptions"
+      ]
+    },
+    {
+      "routePath": "/api/admin/site-save",
+      "mountPath": "/api/admin",
+      "method": "POST",
+      "module": [
+        "api/admin/site-save.js:onRequestPost"
+      ]
+    },
+    {
+      "routePath": "/api/admin/sites",
+      "mountPath": "/api/admin",
+      "method": "GET",
+      "module": [
+        "api/admin/sites.js:onRequestGet"
+      ]
+    },
+    {
+      "routePath": "/api/admin/sites",
+      "mountPath": "/api/admin",
+      "method": "OPTIONS",
+      "module": [
+        "api/admin/sites.js:onRequestOptions"
+      ]
+    },
+    {
+      "routePath": "/api/admin/users",
+      "mountPath": "/api/admin",
+      "method": "GET",
+      "module": [
+        "api/admin/users.js:onRequestGet"
+      ]
+    },
+    {
+      "routePath": "/api/auth/login",
+      "mountPath": "/api/auth",
+      "method": "OPTIONS",
+      "module": [
+        "api/auth/login.js:onRequestOptions"
+      ]
+    },
+    {
+      "routePath": "/api/auth/login",
+      "mountPath": "/api/auth",
+      "method": "POST",
+      "module": [
+        "api/auth/login.js:onRequestPost"
+      ]
+    },
+    {
+      "routePath": "/api/auth/logout",
+      "mountPath": "/api/auth",
+      "method": "POST",
+      "module": [
+        "api/auth/logout.js:onRequestPost"
+      ]
+    },
+    {
+      "routePath": "/api/auth/me",
+      "mountPath": "/api/auth",
+      "method": "GET",
+      "module": [
+        "api/auth/me.js:onRequestGet"
+      ]
+    },
+    {
+      "routePath": "/api/auth/me",
+      "mountPath": "/api/auth",
+      "method": "OPTIONS",
+      "module": [
+        "api/auth/me.js:onRequestOptions"
+      ]
+    },
+    {
+      "routePath": "/api/auth/register",
+      "mountPath": "/api/auth",
+      "method": "GET",
+      "module": [
+        "api/auth/register.js:onRequestGet"
+      ]
+    },
+    {
+      "routePath": "/api/auth/register",
+      "mountPath": "/api/auth",
+      "method": "OPTIONS",
+      "module": [
+        "api/auth/register.js:onRequestOptions"
+      ]
+    },
+    {
+      "routePath": "/api/auth/register",
+      "mountPath": "/api/auth",
+      "method": "POST",
+      "module": [
+        "api/auth/register.js:onRequestPost"
+      ]
+    },
+    {
+      "routePath": "/api/builder/save",
+      "mountPath": "/api/builder",
+      "method": "GET",
+      "module": [
+        "api/builder/save.js:onRequestGet"
+      ]
+    },
+    {
+      "routePath": "/api/builder/save",
+      "mountPath": "/api/builder",
+      "method": "OPTIONS",
+      "module": [
+        "api/builder/save.js:onRequestOptions"
+      ]
+    },
+    {
+      "routePath": "/api/builder/save",
+      "mountPath": "/api/builder",
+      "method": "POST",
+      "module": [
+        "api/builder/save.js:onRequestPost"
+      ]
+    },
+    {
+      "routePath": "/api/email/test",
+      "mountPath": "/api/email",
+      "method": "GET",
+      "module": [
+        "api/email/test.js:onRequestGet"
+      ]
+    },
+    {
+      "routePath": "/api/email/test",
+      "mountPath": "/api/email",
+      "method": "OPTIONS",
+      "module": [
+        "api/email/test.js:onRequestOptions"
+      ]
+    },
+    {
+      "routePath": "/api/inquiries/create",
+      "mountPath": "/api/inquiries",
+      "method": "OPTIONS",
+      "module": [
+        "api/inquiries/create.js:onRequestOptions"
+      ]
+    },
+    {
+      "routePath": "/api/inquiries/create",
+      "mountPath": "/api/inquiries",
+      "method": "POST",
+      "module": [
+        "api/inquiries/create.js:onRequestPost"
+      ]
+    },
+    {
+      "routePath": "/api/license/status",
+      "mountPath": "/api/license",
+      "method": "OPTIONS",
+      "module": [
+        "api/license/status.js:onRequestOptions"
+      ]
+    },
+    {
+      "routePath": "/api/license/status",
+      "mountPath": "/api/license",
+      "method": "POST",
+      "module": [
+        "api/license/status.js:onRequestPost"
+      ]
+    },
+    {
+      "routePath": "/api/orders/create",
+      "mountPath": "/api/orders",
+      "method": "OPTIONS",
+      "module": [
+        "api/orders/create.js:onRequestOptions"
+      ]
+    },
+    {
+      "routePath": "/api/orders/create",
+      "mountPath": "/api/orders",
+      "method": "POST",
+      "module": [
+        "api/orders/create.js:onRequestPost"
+      ]
+    },
+    {
+      "routePath": "/api/site/get",
+      "mountPath": "/api/site",
+      "method": "OPTIONS",
+      "module": [
+        "api/site/get.js:onRequestOptions"
+      ]
+    },
+    {
+      "routePath": "/api/site/get",
+      "mountPath": "/api/site",
+      "method": "POST",
+      "module": [
+        "api/site/get.js:onRequestPost"
+      ]
+    },
+    {
+      "routePath": "/api/site/save",
+      "mountPath": "/api/site",
+      "method": "GET",
+      "module": [
+        "api/site/save.js:onRequestGet"
+      ]
+    },
+    {
+      "routePath": "/api/site/save",
+      "mountPath": "/api/site",
+      "method": "OPTIONS",
+      "module": [
+        "api/site/save.js:onRequestOptions"
+      ]
+    },
+    {
+      "routePath": "/api/site/save",
+      "mountPath": "/api/site",
+      "method": "POST",
+      "module": [
+        "api/site/save.js:onRequestPost"
+      ]
+    },
+    {
+      "routePath": "/api/sites/create",
+      "mountPath": "/api/sites",
+      "method": "POST",
+      "module": [
+        "api/sites/create.js:onRequestPost"
+      ]
+    },
+    {
+      "routePath": "/site/:slug/admin-dopyty",
+      "mountPath": "/site/:slug",
+      "method": "GET",
+      "module": [
+        "site/[slug]/admin-dopyty.js:onRequestGet"
+      ]
+    },
+    {
+      "routePath": "/site/:slug/admin-zakaznici",
+      "mountPath": "/site/:slug",
+      "method": "GET",
+      "module": [
+        "site/[slug]/admin-zakaznici.js:onRequestGet"
+      ]
+    },
+    {
+      "routePath": "/site/:slug/kontakt",
+      "mountPath": "/site/:slug",
+      "method": "GET",
+      "module": [
+        "site/[slug]/kontakt.js:onRequestGet"
+      ]
+    },
+    {
+      "routePath": "/site/:slug/:page",
+      "mountPath": "/site/:slug",
+      "method": "GET",
+      "module": [
+        "site/[slug]/[page].js:onRequestGet"
+      ]
+    },
+    {
+      "routePath": "/api/builder",
+      "mountPath": "/api",
+      "method": "GET",
+      "module": [
+        "api/builder.js:onRequestGet"
+      ]
+    },
+    {
+      "routePath": "/api/builder",
+      "mountPath": "/api",
+      "method": "OPTIONS",
+      "module": [
+        "api/builder.js:onRequestOptions"
+      ]
+    },
+    {
+      "routePath": "/api/builder",
+      "mountPath": "/api",
+      "method": "POST",
+      "module": [
+        "api/builder.js:onRequestPost"
+      ]
+    },
+    {
+      "routePath": "/api/contact",
+      "mountPath": "/api",
+      "method": "OPTIONS",
+      "module": [
+        "api/contact.js:onRequestOptions"
+      ]
+    },
+    {
+      "routePath": "/api/contact",
+      "mountPath": "/api",
+      "method": "POST",
+      "module": [
+        "api/contact.js:onRequestPost"
+      ]
+    },
+    {
+      "routePath": "/api/health",
+      "mountPath": "/api",
+      "method": "GET",
+      "module": [
+        "api/health.js:onRequestGet"
+      ]
+    },
+    {
+      "routePath": "/api/upload",
+      "mountPath": "/api",
+      "method": "GET",
+      "module": [
+        "api/upload.js:onRequestGet"
+      ]
+    },
+    {
+      "routePath": "/api/upload",
+      "mountPath": "/api",
+      "method": "OPTIONS",
+      "module": [
+        "api/upload.js:onRequestOptions"
+      ]
+    },
+    {
+      "routePath": "/api/upload",
+      "mountPath": "/api",
+      "method": "POST",
+      "module": [
+        "api/upload.js:onRequestPost"
+      ]
+    },
+    {
+      "routePath": "/site/:slug",
+      "mountPath": "/site",
+      "method": "GET",
+      "module": [
+        "site/[slug].js:onRequestGet"
+      ]
+    },
+    {
+      "routePath": "/uploads/:path*",
+      "mountPath": "/uploads",
+      "method": "GET",
+      "module": [
+        "uploads/[[path]].js:onRequestGet"
+      ]
+    },
+    {
+      "routePath": "/uploads/:path*",
+      "mountPath": "/uploads",
+      "method": "HEAD",
+      "module": [
+        "uploads/[[path]].js:onRequestHead"
+      ]
+    }
+  ],
+  "baseURL": "/"
+}
