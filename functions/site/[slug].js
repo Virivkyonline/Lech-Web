@@ -1,4 +1,13 @@
-﻿function kv(env) {
+﻿function htmlResponse(html, status = 200) {
+  return new Response(new TextEncoder().encode(html), {
+    status,
+    headers: {
+      "content-type": "text/html; charset=UTF-8",
+      "cache-control": "no-store"
+    }
+  });
+}
+function kv(env) {
   return env.LECHWEB_KV || env.LICENSE_KV || env.KV || env.USERS || null;
 }
 
@@ -344,9 +353,10 @@ updateCart();
 </script>
 </body></html>`;
 
-    return new Response(html, { headers: { "content-type": "text/html; charset=UTF-8" } });
+    return htmlResponse(html);
   } catch (err) {
     return new Response("Chyba renderovania verejnĂ©ho webu: " + String(err?.message || err), { status: 500, headers: { "content-type": "text/plain; charset=UTF-8" } });
   }
 }
+
 
