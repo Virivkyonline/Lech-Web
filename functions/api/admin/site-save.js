@@ -4,7 +4,7 @@ function h() {
     "content-type": "application/json; charset=utf-8",
     "access-control-allow-origin": "*",
     "access-control-allow-methods": "GET,POST,OPTIONS",
-    "access-control-allow-headers": "content-type,authorization,x-admin-pin",
+    "access-control-allow-headers": "content-type,x-admin-pin,authorization",
   };
 }
 
@@ -19,15 +19,18 @@ function kv(env) {
 async function getJson(store, key) {
   const raw = await store.get(key);
   if (!raw) return null;
-  try {
-    return JSON.parse(raw);
-  } catch {
-    return null;
-  }
+  try { return JSON.parse(raw); } catch { return null; }
 }
 
 async function putJson(store, key, value) {
   await store.put(key, JSON.stringify(value));
+}
+
+function adminOk(request, env) {
+  const pin = env.ADMIN_PIN || env.ADMIN_PASSWORD || "";
+  if (!pin) return true;
+  const url = new URL(request.url);
+  return (request.headers.get("x-admin-pin") || "") === pin || (url.searchParams.get("pin") || "") === pin;
 }
 
 function slugify(v) {
@@ -41,81 +44,165 @@ function slugify(v) {
     .replace(/^-|-$/g, "");
 }
 
-function adminOk(request, env) {
-  const pin = env.ADMIN_PIN || env.ADMIN_PASSWORD || "";
-  if (!pin) return true;
-
-  const url = new URL(request.url);
-  return (request.headers.get("x-admin-pin") || "") === pin || (url.searchParams.get("pin") || "") === pin;
+function normalizeProduct(p, index) {
+  return {
+    id: String(p.id || "p" + (index + 1)),
+    title: String(p.title || p.name || "Produkt " + (index + 1)),
+    code: String(p.code || ""),
+    price: String(p.price || ""),
+    oldPrice: String(p.oldPrice || ""),
+    image: String(p.image || ""),
+    gallery: Array.isArray(p.gallery) ? p.gallery : [],
+    shortText: String(p.shortText || p.description || ""),
+    longText: String(p.longText || ""),
+    badge: String(p.badge || ""),
+    category: String(p.category || ""),
+    availability: String(p.availability || "Skladom"),
+    visibility: String(p.visibility || "visible"),
+    stock: String(p.stock || ""),
+    vat: String(p.vat || ""),
+    detailUrl: String(p.detailUrl || "#"),
+    seoTitle: String(p.seoTitle || ""),
+    seoDescription: String(p.seoDescription || ""),
+    relatedProducts: String(p.relatedProducts || ""),
+    youtube: String(p.youtube || ""),
+    ...p,
+  };
 }
 
-function cleanEmail(v) {
-  return String(v || "").trim().toLowerCase();
-}
+function normalizeWebsite(input, account) {
+  const w = input && typeof input === "object" ? input : {};
+  const companyName = String(w.companyName || account.companyName || "");
+  const slug = slugify(w.slug || companyName || account.email || account.id);
 
-function publicAccount(acc) {
-  const clean = { ...acc };
-  delete clean.password;
-  delete clean.passwordHash;
-  return clean;
-}
+  const existingProducts =
+    Array.isArray(w.eshop?.products) ? w.eshop.products :
+    Array.isArray(w.products) ? w.products :
+    [];
 
-async function indexAccount(store, acc) {
-  await putJson(store, "user:" + acc.email, acc);
-  await putJson(store, "account:" + acc.id, acc);
+  const products = existingProducts.map(normalizeProduct);
 
-  const list = (await getJson(store, "accounts:index")) || [];
-
-  const row = {
-    id: acc.id,
-    email: acc.email,
-    companyName: acc.companyName,
-    plan: acc.plan,
-    template: acc.template,
-    status: acc.status,
-    trialUntil: acc.trialUntil,
-    paidUntil: acc.paidUntil || null,
-    source: acc.source || "lech-web",
-    createdAt: acc.createdAt,
-    updatedAt: new Date().toISOString(),
-    website: acc.website || null,
+  const theme = {
+    accent: "lechweb",
+    logo: "",
+    heroImage: "",
+    ...(w.theme || {}),
   };
 
-  const next = list.some((x) => x.id === acc.id)
-    ? list.map((x) => (x.id === acc.id ? row : x))
-    : [row, ...list];
+  const modules = {
+    ...(w.modules || {}),
+  };
 
-  await putJson(store, "accounts:index", next.slice(0, 1000));
-}
-
-function extendDate(currentIso, days) {
-  const base = currentIso && Date.parse(currentIso) > Date.now() ? new Date(currentIso) : new Date();
-  return new Date(base.getTime() + days * 24 * 60 * 60 * 1000).toISOString();
-}
-
-function normalizeWebsite(acc, bodyWebsite) {
-  const old = acc.website || {};
-  const w = bodyWebsite || {};
-
-  const slug = slugify(w.slug || old.slug || acc.companyName || acc.email);
+  const eshop = {
+    enabled: true,
+    ...(w.eshop || {}),
+    products,
+    sidebar: {
+      ...(w.eshop?.sidebar || {}),
+    },
+  };
 
   return {
-    ...old,
     ...w,
     slug,
-    ownerEmail: acc.email,
-    companyName: String(w.companyName || old.companyName || acc.companyName || "").trim(),
-    email: String(w.email || w.siteEmail || old.email || acc.email || "").trim(),
-    phone: String(w.phone || old.phone || "").trim(),
-    template: String(w.template || old.template || acc.template || "E-shop").trim(),
-    status: "published",
+    companyName,
+    headline: String(w.headline || companyName || ""),
+    description: String(w.description || ""),
+    homepageText: String(w.homepageText || ""),
+    phone: String(w.phone || ""),
+    email: String(w.email || w.siteEmail || account.email || ""),
+    siteEmail: String(w.siteEmail || w.email || account.email || ""),
+    ownerEmail: account.email,
+    template: String(w.template || account.template || "E-shop"),
+    theme,
+    modules,
+    eshop,
+    products,
     updatedAt: new Date().toISOString(),
-    createdAt: old.createdAt || new Date().toISOString(),
   };
+}
+
+function addDays(date, days) {
+  const d = new Date(date || Date.now());
+  d.setUTCDate(d.getUTCDate() + days);
+  return d.toISOString();
+}
+
+function addMonths(date, months) {
+  const d = new Date(date || Date.now());
+  d.setUTCMonth(d.getUTCMonth() + months);
+  return d.toISOString();
+}
+
+function applyLicense(account, action) {
+  const now = new Date().toISOString();
+  const base = account.paidUntil && Date.parse(account.paidUntil) > Date.now() ? account.paidUntil : now;
+
+  if (action === "trial14") {
+    account.status = "trial";
+    account.trialUntil = addDays(now, 14);
+  }
+
+  if (action === "activate_month") {
+    account.status = "active";
+    account.paidUntil = addMonths(base, 1);
+  }
+
+  if (action === "activate_year") {
+    account.status = "active";
+    account.paidUntil = addMonths(base, 12);
+  }
+
+  if (action === "activate_2years") {
+    account.status = "active";
+    account.paidUntil = addMonths(base, 24);
+  }
+
+  if (action === "suspend") {
+    account.status = "suspended";
+  }
+
+  if (action === "unsuspend") {
+    account.status = "active";
+  }
+
+  return account;
 }
 
 export async function onRequestOptions() {
   return new Response(null, { status: 204, headers: h() });
+}
+
+export async function onRequestGet({ env }) {
+  const store = kv(env);
+  let kvOk = false;
+  let error = null;
+
+  if (store) {
+    try {
+      await store.put("_health/admin-site-save.txt", "ok " + new Date().toISOString());
+      kvOk = true;
+    } catch (e) {
+      error = String(e && e.message ? e.message : e);
+    }
+  }
+
+  return j({
+    success: true,
+    endpoint: "/api/admin/site-save",
+    mode: "robust-product-saving",
+    kvBindingFound: Boolean(store),
+    kvWriteOk: kvOk,
+    kvError: error,
+    saves: [
+      "website",
+      "website.eshop.products",
+      "website.products",
+      "website.modules",
+      "website.theme",
+      "license actions"
+    ],
+  });
 }
 
 export async function onRequestPost({ request, env }) {
@@ -127,72 +214,41 @@ export async function onRequestPost({ request, env }) {
     const body = await request.json().catch(() => null);
     if (!body) return j({ success: false, error: "Neplatný JSON." }, 400);
 
-    const email = cleanEmail(body.email || body.accountEmail || body.customerEmail);
+    const email = String(body.email || body.accountEmail || "").trim().toLowerCase();
     if (!email) return j({ success: false, error: "Chýba email účtu." }, 400);
 
-    const acc = await getJson(store, "user:" + email);
-    if (!acc) return j({ success: false, error: "Účet neexistuje." }, 404);
+    const account = await getJson(store, "user:" + email);
+    if (!account) return j({ success: false, error: "Účet neexistuje: " + email }, 404);
 
-    if (body.licenseAction === "activate_month") {
-      acc.status = "active";
-      acc.paidUntil = extendDate(acc.paidUntil, 30);
-    }
+    if (body.licenseAction) applyLicense(account, String(body.licenseAction));
 
-    if (body.licenseAction === "activate_year") {
-      acc.status = "active";
-      acc.paidUntil = extendDate(acc.paidUntil, 365);
-    }
+    const website = normalizeWebsite(body.website || body.site || {}, account);
+    account.website = website;
+    account.updatedAt = new Date().toISOString();
 
-    if (body.licenseAction === "activate_2years") {
-      acc.status = "active";
-      acc.paidUntil = extendDate(acc.paidUntil, 730);
-    }
+    await putJson(store, "user:" + account.email, account);
+    if (account.id) await putJson(store, "account:" + account.id, account);
+    await putJson(store, "site:" + website.slug, website);
 
-    if (body.licenseAction === "trial14") {
-      acc.status = "trial";
-      acc.trialUntil = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString();
-    }
-
-    if (body.licenseAction === "suspend") {
-      acc.status = "suspended";
-    }
-
-    if (body.licenseAction === "reactivate") {
-      acc.status = "active";
-    }
-
-    if (body.accountPatch && typeof body.accountPatch === "object") {
-      const allowed = ["companyName", "plan", "template", "source"];
-      for (const key of allowed) {
-        if (key in body.accountPatch) acc[key] = body.accountPatch[key];
-      }
-    }
-
-    if (body.website && typeof body.website === "object") {
-      const oldSlug = acc.website?.slug;
-      const website = normalizeWebsite(acc, body.website);
-      acc.website = website;
-
-      await putJson(store, "site:" + website.slug, website);
-
-      if (oldSlug && oldSlug !== website.slug) {
-        await store.delete("site:" + oldSlug);
-      }
-    }
-
-    acc.updatedAt = new Date().toISOString();
-    await indexAccount(store, acc);
+    const siteIndex = (await getJson(store, "sites:index")) || [];
+    const nextIndex = [website.slug, ...siteIndex.filter((x) => x !== website.slug)].slice(0, 1000);
+    await putJson(store, "sites:index", nextIndex);
 
     return j({
       success: true,
-      message: "Admin zmena uložená.",
-      account: publicAccount(acc),
-      publicUrl: acc.website?.slug ? "https://lech-web.pages.dev/site/" + acc.website.slug : null,
+      message: "Web zákazníka bol uložený.",
+      mode: "robust-product-saving",
+      account,
+      website,
+      publicUrl: new URL(request.url).origin + "/site/" + website.slug,
+      savedProducts: website.eshop?.products?.length || 0,
+      savedModules: Boolean(website.modules),
+      savedTheme: Boolean(website.theme),
     });
   } catch (e) {
     return j({
       success: false,
-      error: "Admin uloženie zlyhalo.",
+      error: "Uloženie webu zlyhalo.",
       detail: String(e && e.message ? e.message : e),
       stack: String(e && e.stack ? e.stack : ""),
     }, 500);

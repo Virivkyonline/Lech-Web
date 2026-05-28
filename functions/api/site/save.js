@@ -4,7 +4,7 @@ function h() {
     "content-type": "application/json; charset=utf-8",
     "access-control-allow-origin": "*",
     "access-control-allow-methods": "GET,POST,OPTIONS",
-    "access-control-allow-headers": "content-type,authorization,x-admin-pin",
+    "access-control-allow-headers": "content-type,authorization",
   };
 }
 
@@ -12,22 +12,18 @@ function j(data, status = 200) {
   return new Response(JSON.stringify(data, null, 2), { status, headers: h() });
 }
 
-function store(env) {
+function kv(env) {
   return env.LECHWEB_KV || env.LICENSE_KV || env.KV || env.USERS || null;
 }
 
-async function getJson(kv, key) {
-  const raw = await kv.get(key);
+async function getJson(store, key) {
+  const raw = await store.get(key);
   if (!raw) return null;
   try { return JSON.parse(raw); } catch { return null; }
 }
 
-async function putJson(kv, key, value) {
-  await kv.put(key, JSON.stringify(value));
-}
-
-function email(v) {
-  return String(v || "").trim().toLowerCase();
+async function putJson(store, key, value) {
+  await store.put(key, JSON.stringify(value));
 }
 
 function slugify(v) {
@@ -41,115 +37,76 @@ function slugify(v) {
     .replace(/^-|-$/g, "");
 }
 
-function active(acc) {
-  if (!acc) return false;
-  if (acc.status === "blocked" || acc.status === "suspended") return false;
-  if (acc.status === "active") return true;
-  const now = Date.now();
-  const trial = acc.trialUntil ? Date.parse(acc.trialUntil) : 0;
-  const paid = acc.paidUntil ? Date.parse(acc.paidUntil) : 0;
-  return trial > now || paid > now;
-}
-
-function pub(acc) {
-  const x = { ...acc };
-  delete x.password;
-  return x;
-}
-
-function lines(value) {
-  if (Array.isArray(value)) return value.map(String).filter(Boolean);
-  return String(value || "").split("\n").map((x) => x.trim()).filter(Boolean);
-}
-
-function normalizeProducts(value) {
-  if (Array.isArray(value) && value.length) {
-    return value.map((p, i) => ({
-      id: String(p.id || `product-${i + 1}`),
-      title: String(p.title || p.name || `Produkt ${i + 1}`),
-      price: String(p.price || ""),
-      oldPrice: String(p.oldPrice || ""),
-      image: String(p.image || p.imageUrl || ""),
-      shortText: String(p.shortText || p.description || ""),
-      category: String(p.category || ""),
-      badge: String(p.badge || ""),
-      detailUrl: String(p.detailUrl || ""),
-    }));
-  }
-
-  return [
-    {
-      id: "product-1",
-      title: "Ukážkový produkt",
-      price: "€999",
-      oldPrice: "",
-      image: "",
-      shortText: "Krátky popis produktu.",
-      category: "Novinky",
-      badge: "TIP",
-      detailUrl: "",
-    },
-  ];
-}
-
-function defaultSidebar(body, site) {
+function normalizeProduct(p, index) {
   return {
-    categories: lines(body.categories).length
-      ? lines(body.categories)
-      : [
-          "Hlavná kategória",
-          "Akčný tovar",
-          "Novinky",
-          "Najpredávanejšie",
-          "Doplnky",
-          "Výpredaj",
-        ],
-    contactTitle: String(body.sidebarContactTitle || "Kontakt"),
-    contactName: String(body.sidebarContactName || site.companyName || ""),
-    contactEmail: String(body.sidebarContactEmail || site.email || site.ownerEmail || ""),
-    contactPhone: String(body.sidebarContactPhone || site.phone || ""),
-    searchEnabled: body.searchEnabled !== false,
-    adviceLinks: Array.isArray(body.adviceLinks)
-      ? body.adviceLinks
-      : [
-          { title: "Ako nakupovať", url: "#" },
-          { title: "Obchodné podmienky", url: "#" },
-          { title: "Ochrana osobných údajov", url: "#" },
-        ],
-    youtube: Array.isArray(body.youtube)
-      ? body.youtube
-      : [
-          { title: "YouTube kanál", url: "#" },
-        ],
-    customBlocks: Array.isArray(body.sidebarBlocks) ? body.sidebarBlocks : [],
+    id: String(p.id || "p" + (index + 1)),
+    title: String(p.title || p.name || "Produkt " + (index + 1)),
+    code: String(p.code || ""),
+    price: String(p.price || ""),
+    oldPrice: String(p.oldPrice || ""),
+    image: String(p.image || ""),
+    gallery: Array.isArray(p.gallery) ? p.gallery : [],
+    shortText: String(p.shortText || p.description || ""),
+    longText: String(p.longText || ""),
+    badge: String(p.badge || ""),
+    category: String(p.category || ""),
+    availability: String(p.availability || "Skladom"),
+    visibility: String(p.visibility || "visible"),
+    stock: String(p.stock || ""),
+    vat: String(p.vat || ""),
+    detailUrl: String(p.detailUrl || "#"),
+    seoTitle: String(p.seoTitle || ""),
+    seoDescription: String(p.seoDescription || ""),
+    relatedProducts: String(p.relatedProducts || ""),
+    youtube: String(p.youtube || ""),
+    ...p,
   };
 }
 
-async function indexAccount(kv, acc) {
-  await putJson(kv, "user:" + acc.email, acc);
-  await putJson(kv, "account:" + acc.id, acc);
+function normalizeWebsite(input, account) {
+  const w = input && typeof input === "object" ? input : {};
+  const companyName = String(w.companyName || account.companyName || "");
+  const slug = slugify(w.slug || companyName || account.email || account.id);
 
-  const list = (await getJson(kv, "accounts:index")) || [];
-  const row = {
-    id: acc.id,
-    email: acc.email,
-    companyName: acc.companyName,
-    plan: acc.plan,
-    template: acc.template,
-    status: acc.status,
-    trialUntil: acc.trialUntil,
-    paidUntil: acc.paidUntil || null,
-    source: acc.source || "lech-web",
-    createdAt: acc.createdAt,
+  const existingProducts =
+    Array.isArray(w.eshop?.products) ? w.eshop.products :
+    Array.isArray(w.products) ? w.products :
+    [];
+
+  const products = existingProducts.map(normalizeProduct);
+
+  return {
+    ...w,
+    slug,
+    companyName,
+    headline: String(w.headline || companyName || ""),
+    description: String(w.description || ""),
+    homepageText: String(w.homepageText || ""),
+    phone: String(w.phone || ""),
+    email: String(w.email || w.siteEmail || account.email || ""),
+    siteEmail: String(w.siteEmail || w.email || account.email || ""),
+    ownerEmail: account.email,
+    template: String(w.template || account.template || "E-shop"),
+    theme: {
+      accent: "lechweb",
+      logo: "",
+      heroImage: "",
+      ...(w.theme || {}),
+    },
+    modules: {
+      ...(w.modules || {}),
+    },
+    eshop: {
+      enabled: true,
+      ...(w.eshop || {}),
+      products,
+      sidebar: {
+        ...(w.eshop?.sidebar || {}),
+      },
+    },
+    products,
     updatedAt: new Date().toISOString(),
-    website: acc.website || null,
   };
-
-  const next = list.some((a) => a.id === acc.id)
-    ? list.map((a) => (a.id === acc.id ? row : a))
-    : [row, ...list];
-
-  await putJson(kv, "accounts:index", next.slice(0, 500));
 }
 
 export async function onRequestOptions() {
@@ -157,140 +114,78 @@ export async function onRequestOptions() {
 }
 
 export async function onRequestGet({ env }) {
-  const kv = store(env);
-  let ok = false;
-  let err = null;
+  const store = kv(env);
+  let kvOk = false;
+  let error = null;
 
-  if (kv) {
+  if (store) {
     try {
-      await kv.put("site-save-eshop-health", new Date().toISOString());
-      ok = true;
+      await store.put("_health/site-save.txt", "ok " + new Date().toISOString());
+      kvOk = true;
     } catch (e) {
-      err = String(e && e.message ? e.message : e);
+      error = String(e && e.message ? e.message : e);
     }
   }
 
   return j({
     success: true,
     endpoint: "/api/site/save",
-    mode: "eshop-shoptet-style",
-    kvBindingFound: Boolean(kv),
-    kvWriteOk: ok,
-    kvError: err,
-    supports: [
-      "top menu",
-      "left categories",
-      "contact sidebar",
-      "search sidebar",
-      "advice links",
-      "youtube links",
-      "product grid",
-      "homepage description",
-      "footer",
-      "products",
-      "categories",
+    mode: "robust-customer-product-saving",
+    kvBindingFound: Boolean(store),
+    kvWriteOk: kvOk,
+    kvError: error,
+    saves: [
+      "website",
+      "website.eshop.products",
+      "website.products",
+      "website.modules",
+      "website.theme"
     ],
   });
 }
 
 export async function onRequestPost({ request, env }) {
   try {
-    const kv = store(env);
-    if (!kv) return j({ success: false, error: "Chýba KV binding LECHWEB_KV." });
+    const store = kv(env);
+    if (!store) return j({ success: false, error: "Chýba KV binding LECHWEB_KV." }, 500);
 
     const body = await request.json().catch(() => null);
-    if (!body) return j({ success: false, error: "Neplatný JSON." });
+    if (!body) return j({ success: false, error: "Neplatný JSON." }, 400);
 
-    const accountEmail = email(
-      body.accountEmail ||
-      body.userEmail ||
-      body.ownerEmail ||
-      body.customerEmail ||
-      body.loginEmail ||
-      body.email ||
-      body.siteEmail ||
-      body.publicEmail ||
-      body.contactEmail
-    );
+    const email = String(body.email || body.accountEmail || body.ownerEmail || "").trim().toLowerCase();
+    if (!email) return j({ success: false, error: "Chýba email účtu." }, 400);
 
-    if (!accountEmail) return j({ success: false, error: "Chýba e-mail účtu.", receivedKeys: Object.keys(body) });
+    const account = await getJson(store, "user:" + email);
+    if (!account) return j({ success: false, error: "Účet neexistuje: " + email }, 404);
 
-    const acc = await getJson(kv, "user:" + accountEmail);
-    if (!acc) return j({ success: false, error: "Účet neexistuje.", email: accountEmail });
-    if (!active(acc)) return j({ success: false, error: "Licencia nie je aktívna.", account: pub(acc) });
+    const website = normalizeWebsite(body.website || body.site || body, account);
 
-    const companyName = String(body.companyName || body.company || body.businessName || body.name || acc.companyName || "").trim();
+    account.website = website;
+    account.updatedAt = new Date().toISOString();
 
-    let siteSlug = slugify(body.slug || body.siteSlug || body.urlName || body.url || body.path || companyName || acc.companyName || "web");
-    if (!siteSlug) siteSlug = "web-" + Date.now();
+    await putJson(store, "user:" + account.email, account);
+    if (account.id) await putJson(store, "account:" + account.id, account);
+    await putJson(store, "site:" + website.slug, website);
 
-    const website = {
-      slug: siteSlug,
-      ownerEmail: acc.email,
-      companyName: companyName || acc.companyName,
-      headline: String(body.headline || body.title || companyName || acc.companyName || "").trim(),
-      description: String(body.description || body.text || body.copy || "").trim(),
-      homepageText: String(body.homepageText || body.longDescription || body.mainDescription || body.description || "").trim(),
-      phone: String(body.phone || body.telefon || "").trim(),
-      email: String(body.siteEmail || body.publicEmail || body.contactEmail || acc.email).trim(),
-      template: String(body.template || body.templateName || acc.template || "E-shop"),
-      theme: {
-        accent: String(body.theme?.accent || body.accent || "turquoise"),
-        logo: String(body.logo || body.theme?.logo || ""),
-        heroImage: String(body.heroImage || body.theme?.heroImage || body.image || ""),
-      },
-      eshop: {
-        enabled: true,
-        topMenu: Array.isArray(body.topMenu) ? body.topMenu : [
-          { title: "Produkty", url: "#produkty" },
-          { title: "Akcie", url: "#produkty" },
-          { title: "Ako nakupovať", url: "#info" },
-          { title: "Kontakt", url: "#kontakt" },
-        ],
-        benefits: Array.isArray(body.benefits) ? body.benefits : [
-          { title: "Darček zdarma", text: "Ku každej objednávke." },
-          { title: "Rýchle dodanie", text: "Pre produkty skladom." },
-          { title: "Na splátky", text: "Rýchlo a bezpečne." },
-          { title: "Doprava zdarma", text: "Podľa podmienok predajcu." },
-        ],
-        sidebar: defaultSidebar(body, {
-          companyName: companyName || acc.companyName,
-          email: String(body.siteEmail || body.publicEmail || body.contactEmail || acc.email).trim(),
-          ownerEmail: acc.email,
-          phone: String(body.phone || body.telefon || "").trim(),
-        }),
-        products: normalizeProducts(body.products),
-        footerLinks: Array.isArray(body.footerLinks) ? body.footerLinks : [
-          { title: "Ako nakupovať", url: "#" },
-          { title: "Obchodné podmienky", url: "#" },
-          { title: "Ochrana osobných údajov", url: "#" },
-        ],
-      },
-      source: "lech-web",
-      status: "published",
-      createdAt: acc.website && acc.website.createdAt ? acc.website.createdAt : new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-
-    acc.website = website;
-
-    await putJson(kv, "site:" + siteSlug, website);
-    await indexAccount(kv, acc);
+    const siteIndex = (await getJson(store, "sites:index")) || [];
+    const nextIndex = [website.slug, ...siteIndex.filter((x) => x !== website.slug)].slice(0, 1000);
+    await putJson(store, "sites:index", nextIndex);
 
     return j({
       success: true,
-      message: "E-shop web bol uložený.",
-      url: "/site/" + siteSlug,
-      publicUrl: "https://lech-web.pages.dev/site/" + siteSlug,
+      message: "Web bol uložený.",
+      mode: "robust-customer-product-saving",
+      account,
       website,
-      account: pub(acc),
+      publicUrl: new URL(request.url).origin + "/site/" + website.slug,
+      savedProducts: website.eshop?.products?.length || 0,
     });
   } catch (e) {
     return j({
       success: false,
-      error: "Serverová chyba pri ukladaní webu.",
+      error: "Uloženie webu zlyhalo.",
       detail: String(e && e.message ? e.message : e),
       stack: String(e && e.stack ? e.stack : ""),
-    });
+    }, 500);
   }
 }
